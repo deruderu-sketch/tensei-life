@@ -166,6 +166,7 @@
   </div>
 <h2>📜 更新履歴</h2>
   <div class="panel" style="font-size:12.5px;line-height:1.9;text-align:left">
+    <details><summary><b>2026-11-23 v27</b></summary>「徳で家柄を引き直す」を廃止した。生まれる家は、徳でもお金でも変えられない。それがこのゲームの約束だから。</details>
     <details><summary><b>2026-11-23 v26</b></summary>「ご意見・ご感想」の窓口を追加。フィルムは購入前に、いま終えた人生の見本をそのまま見られるようにした。</details>
     <details><summary><b>2026-11-23 v25</b></summary>「📖 できるまでの話」を追加。生まれた一日の物語『選べなかった転生』と、つくり方『のんちゃんの作業室』を公開。</details>
     <details><summary><b>2026-11-23 v24</b></summary>「この人生の手ざわり」「転生の村」「授業用モード」を追加。返金ポリシー（30日・理由不問）とギフト表記を明記。</details>
@@ -221,7 +222,6 @@
     <div style="text-align:center;font-size:30px">✦ 転生 ✦</div>
     <div id="revealStep" style="text-align:center;color:#a79fd0;font-size:12px;margin-top:8px"></div>
     <div id="revealBody" style="font-size:15px;line-height:2.0;background:#171233;border:1px solid #3a2f7a;border-radius:14px;padding:18px;margin:12px 0;min-height:190px"></div>
-    <button class="sub2 hidden" id="btnReroll">🎲 徳30を消費して家柄を引き直す</button>
     <button class="gold" id="btnRevealNext">次へ ▶</button>
     <button class="gold hidden" id="btnBegin">この人生を始める</button>
   </div>
@@ -651,7 +651,6 @@ function renderRevealStep() {
   el('revealBody').style.borderColor = isRareStep ? '#ffd54f' : '#3a2f7a';
   el('revealBody').style.boxShadow = isRareStep ? '0 0 24px rgba(255,213,79,.35)' : '';
   const famStep = revealSteps.findIndex(s => s.title.includes('家柄'));
-  el('btnReroll').classList.toggle('hidden', !(revealIdx === famStep && SAVE.toku >= 30 && !G.rerolled));
   el('btnRevealNext').classList.toggle('hidden', revealIdx >= revealSteps.length - 1);
   el('btnBegin').classList.toggle('hidden', revealIdx < revealSteps.length - 1);
 }
@@ -890,19 +889,7 @@ el('btnRescue').addEventListener('click', () => {
   G.nextEventAge = G.age + 2;
   G.paused = false; renderClock();
 });
-el('btnReroll').addEventListener('click', () => {
-  if (SAVE.toku < 30 || G.rerolled) return;
-  SAVE.toku -= 30; G.rerolled = true; saveSave();
-  const better = FAMILIES.filter(f => f.w <= G.birth.fam.w);
-  const nf = wpick(better.map(f => [f, Math.max(1, 14 - f.w)]));
-  for (const k in G.birth.fam.mod) G.birth.stats[k] = clamp(G.birth.stats[k] - G.birth.fam.mod[k]);
-  G.birth.fam = nf;
-  for (const k in nf.mod) G.birth.stats[k] = clamp(G.birth.stats[k] + nf.mod[k]);
-  showReveal();
-  revealIdx = revealSteps.findIndex(s => s.title.includes('家柄'));
-  renderRevealStep(); renderStats();
-  el('tokuView').textContent = SAVE.toku;
-});
+
 document.querySelectorAll('.spd').forEach(b => b.addEventListener('click', () => {
   if (!G) return;
   const v = Number(b.dataset.spd);
