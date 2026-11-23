@@ -261,7 +261,7 @@
     <button class="sub" id="btnFilm">🎬 Play Film (Preview without Pass)</button>
     <button class="sub" id="btnMemorial">🕯️ Export Memorial (Memory Pass)</button>
   <button class="center" id="btnAlbum">📖 View Life Album</button>
-  <button class="gold" id="btnAgain">✦ To Next Reincarnation (Virtue +<span id="tokuGain"></span>）</button>
+  <button class="gold" id="btnAgain">✦ To Next Reincarnation (Virtue +<span id="tokuGain"></span>)</button>
 </div></div>
 
 <script>
@@ -340,11 +340,11 @@ function genBirth(world, toku) {
   const race = wpick(racePool.map(r => [r, r.w + toku * 0.02]));
   const fam = wpick(FAMILIES.map(f => [f, f.w + (f.name.includes("Royalty") || f.name.includes("Knight") ? toku * 0.03 : 0)]));
   const talentB = world.magic === 0 ? TALENT_B.filter(t => t !== "Magical Talent") : TALENT_B;  // 魔力のない世界に魔才は宿らない
-  const talents = [pick(TALENT_A) + pick(talentB), pick(TALENT_A) + pick(talentB)];
+  const talents = [pick(TALENT_A) + ' ' + pick(talentB), pick(TALENT_A) + ' ' + pick(talentB)];
   const stats = { health: 55, int: 40, charm: 40, wealth: 30, fame: 20, happy: 55 };
   for (const src of [race.mod, fam.mod]) for (const k in src) stats[k] = clamp((stats[k] || 40) + src[k]);
   const B = { race, fam, gender: pick(["Male", "Female"]), talents, stats, lifeSpan: RI(race.life[0], race.life[1]), anomaly: null };
-  // ★ 特異点: ごく稀に、世界のルールを破る出生が起きる（約1.2%）
+  // ★ 特異点: ごく稀に, 世界のルールを破る出生が起きる (約1.2%)
   if (Math.random() < 0.012) {
     const cands = [];
     if (world.magic === 0) cands.push('soleMage');
@@ -913,13 +913,13 @@ function showReveal() {
   const lifeHint = b.lifeSpan < 70 ? "The mark of a short life" : b.lifeSpan < 130 ? "Signs of an average lifespan" : b.lifeSpan < 250 ? "Signs of longevity" : "A face destined for eternity";
   const talentDesc = t => '「' + t + '」― ' + (t.includes("A head for business") ? "You have a sharp nose for where the gold goes." : t.includes("Sword") ? "I feel at peace with a weapon in my hand." : t.includes("Magic") ? "You can see the flow of mana." : t.includes("Luck") ? "Somehow, you slip through the crisis." : t.includes("Body") ? "You have a strong body and are resistant to illness." : "It will bloom at some point in your life.");
   revealSteps = [
-    { title: "🌍 Your New World", html: '<b>' + w.name + "</b><br>Mana is " + ["Does not exist", "Faint", "Abundant", "To an excessive degree"][w.magic] + ". Technology is " + techLabel(w) + "level." },
+    { title: "🌍 Your New World", html: '<b>' + w.name + "</b><br>Mana is " + ["Does not exist", "Faint", "Abundant", "To an excessive degree"][w.magic] + ". Technology level: " + techLabel(w) + "." },
     { title: "⚔️ World Status", html: "The situation is..." + ["Peace", "During the Cold War", "In the midst of the Great War"][w.war] + ". The deities are " + (w.gods ? "Interfere frequently" : "Remaining silent") + ".<br>Omen of Calamity: <b>" + w.disaster + '</b>' },
-    { title: "👶 Race & Gender", html: "You are <b>" + b.race.name + "</b> of <b>" + b.gender + "</b> as a species.<br>(Species draw rate: " + pctOf(RACES.filter(r => raceAllowed(r, w)), b.race) + '%）' },
-    { title: "🏠 Family Lineage & Birthplace", html: "Lineage: <b>" + b.fam.name + "</b> (Draw rate: " + pctOf(FAMILIES, b.fam) + "%).<br>Place of birth: " + G.place + '。' },
-    { title: "👨‍👩‍👧 Parents", html: jobByFam[b.fam.name] + ".<br>Father's name is <b>" + father + "</b>, and your mother's name is <b>" + mother + '</b>。' },
+    { title: "👶 Race & Gender", html: "You are <b>" + b.race.name + "</b> of <b>" + b.gender + "</b> as a species.<br>(Species draw rate: " + pctOf(RACES.filter(r => raceAllowed(r, w)), b.race) + '%)' },
+    { title: "🏠 Family Lineage & Birthplace", html: "Lineage: <b>" + b.fam.name + "</b> (Draw rate: " + pctOf(FAMILIES, b.fam) + "%).<br>Place of birth: " + G.place + '.' },
+    { title: "👨‍👩‍👧 Parents", html: jobByFam[b.fam.name] + ".<br>Father's name is <b>" + father + "</b>, and your mother's name is <b>" + mother + '</b>.' },
     { title: "🎁 Your Bestowed Talents", html: talentDesc(b.talents[0]) + '<br>' + talentDesc(b.talents[1]) },
-    { title: "📊 Starting Potential", html: "Health " + b.stats.health + "／ Intellect " + b.stats.int + "／ Charisma " + b.stats.charm + "<br>Wealth " + b.stats.wealth + "／ Fame " + b.stats.fame + "／ Happiness " + b.stats.happy },
+    { title: "📊 Starting Potential", html: "Health " + b.stats.health + " /  Intellect " + b.stats.int + " /  Charisma " + b.stats.charm + "<br>Wealth " + b.stats.wealth + " /  Fame " + b.stats.fame + " /  Happiness " + b.stats.happy },
     ...(b.anomaly ? [{ title: '★ ' + b.anomaly.name, html: b.anomaly.desc + "<br><br>* This is a very rare birth that defies the laws of the world." }] : []),
     { title: "🔮 Whispers of Your Lifespan", html: '<b>' + lifeHint + "</b><br>(However, it may change depending on how you live)<br><br>Now, let's begin this life." },
   ];
@@ -948,12 +948,12 @@ function startLife() {
   const w = world;
   el('worldName').textContent = '✦ ' + w.name + ' ✦';
   el('worldParams').innerHTML =
-    "Mana: " + ["None", "Faint", "Abundant", "Excessive"][w.magic] + "／ Technology: " + techLabel(w) +
-    "／ World Status: " + ["Peace", "Cold War", "During the Great War"][w.war] + "／ Deities: " + (w.gods ? "Meddlesome" : "Silence") +
-    "／ Omen of Calamity: " + w.disaster + "／ Disposition: ??? (Revealed after death)";
+    "Mana: " + ["None", "Faint", "Abundant", "Excessive"][w.magic] + " /  Technology: " + techLabel(w) +
+    " /  World Status: " + ["Peace", "Cold War", "During the Great War"][w.war] + " /  Deities: " + (w.gods ? "Meddlesome" : "Silence") +
+    " /  Omen of Calamity: " + w.disaster + " /  Disposition: ??? (Revealed after death)";
   el('birthInfo').innerHTML = "Birth: <b>" + birth.race.name + "</b> · <b>" + birth.gender + "</b> · <b>" + birth.fam.name + "</b><br>Talent: <b>" +
     birth.talents[0] + '</b> / <b>' + birth.talents[1] + '</b>';
-  log(0, birth.race.name + "of " + birth.fam.name + "as a " + G.place + "Born in.");
+  log(0, "Born as a " + birth.race.name + " of the " + birth.fam.name + " in " + G.place + ".");
   G.speed = 1; G.paused = true; G.nextEventAge = R(2, 5);
   renderStats(); drawAvatar(); showReveal();
 }
@@ -989,8 +989,8 @@ function yearPassage() {
   saveRun();
   if (G.peers) for (const p of G.peers) {
     if (p.dead) continue;
-    if (G.age > p.lifeSpan) { p.dead = true; log(Math.floor(G.age), "Born on the same day" + p.name + '（' + p.race + ") is " + Math.floor(p.lifeSpan) + "Passed away at the age of ."); }
-    else if (Math.random() < 0.10) log(Math.floor(G.age), pick(["Born on the same day" + p.name + "seems to be doing well.", p.name + "Rumors of their success reached your ears.", p.name + "Time passes without ever meeting "]));
+    if (G.age > p.lifeSpan) { p.dead = true; log(Math.floor(G.age), p.name + " (" + p.race + "), born on the same day as you, passed away at " + Math.floor(p.lifeSpan) + "."); }
+    else if (Math.random() < 0.10) log(Math.floor(G.age), pick([p.name + ", born on the same day as you, seems to be doing well.", p.name + " — rumors of their success reached your ears.", "You never crossed paths with " + p.name + " again as the years went by."]));
   }
   const age = Math.floor(G.age);
   const phase = phaseOf(age, G.lifeSpan);
@@ -1031,7 +1031,7 @@ function tickInner() {
   if (G.age > G.lifeSpan * 0.7 && Math.random() < 0.1) G.stats.health = clamp(G.stats.health - 1);
   renderClock();
   const msAge = [5, 15, 30, 50, 70].find(a => G.age >= a && !(G.milestonesDone || new Set()).has(a) && a < G.lifeSpan);
-  if (msAge !== undefined) { G.milestonesDone.add(msAge); G.paused = true; renderClock(); log(msAge, "【Milestone】" + msAge + " — a milestone question"); showBigEvent(MILESTONES[msAge], MILESTONES[msAge].text, msAge); return; }
+  if (msAge !== undefined) { G.milestonesDone.add(msAge); G.paused = true; renderClock(); log(msAge, "[Milestone]" + msAge + " — a milestone question"); showBigEvent(MILESTONES[msAge], MILESTONES[msAge].text, msAge); return; }
   if (G.age >= G.nextEventAge) { presentEvent(); return; }
   // death check (evaluated as time passes)
   const over = G.age >= G.lifeSpan;
@@ -1046,7 +1046,7 @@ function renderClock() {
   el('yearBar').style.width = ((G.age % 1) * 100).toFixed(1) + '%';
   el('dayView').textContent = "Day " + Math.floor(G.age * 365).toLocaleString() + " of this life";
   const pv = el('peersView');
-  if (pv && G.peers) pv.innerHTML = "👥 Those Born on the Same Day: " + G.peers.map(p => p.dead ? '<s>' + p.name + '（' + p.race + '）</s>' : p.name + '（' + p.race + '）').join('、');
+  if (pv && G.peers) pv.innerHTML = "👥 Those Born on the Same Day: " + G.peers.map(p => p.dead ? '<s>' + p.name + ' (' + p.race + ')</s>' : p.name + ' (' + p.race + ')').join(', ');
   const stuck = G.paused && !G.dead && !G.eventOpen && !G.revealOpen;
   el('btnRescue').classList.toggle('hidden', !stuck);
   const ph = phaseOf(Math.floor(G.age), G.lifeSpan);
@@ -1102,8 +1102,8 @@ function showBigEvent(ev, text, age) {
     const b = document.createElement('button');
     b.textContent = c.label;
     b.addEventListener('click', () => {
-      log(age, "【Important Event】" + text.slice(0, 40) + '…');
-      log(age, "【Choice】\"" + c.label + '"');
+      log(age, "[Important Event]" + text.slice(0, 40) + '…');
+      log(age, "[Choice]\"" + c.label + '"');
       let res;
       try { res = c.run(G); } catch (e) { res = "Something happened, but life goes on."; }
       el('bigEventResult').textContent = res;
@@ -1172,18 +1172,18 @@ function die() {
   rankEl.style.textShadow = rank === 'S' ? '0 0 22px rgba(255,213,79,.7)' : 'none';
   const tokuGain = Math.max(1, Math.round(score / 40));
   const epi =
-    G.world.name + '。\n' + G.birth.race.name + "of " + G.birth.fam.name + "Born as a " + G.place + "You were raised in. \n" +
-    "Talent is \"" + G.birth.talents[0] + "\" and \"" + G.birth.talents[1] + '」。\n' +
-    (G.flags.partner ? G.flags.partner + "Met with, and " : '') + (G.flags.path ? G.flags.path + "Walked the path of, and " : '') +
+    G.world.name + '.\n' + "Born as a " + G.birth.race.name + " of the " + G.birth.fam.name + " in " + G.place + ", and raised there.\n" +
+    "Talent is \"" + G.birth.talents[0] + "\" and \"" + G.birth.talents[1] + '".\n' +
+    (G.flags.partner ? "Met " + G.flags.partner + ", and " : '') + (G.flags.path ? "Walked the path of " + G.flags.path + ", and " : '') +
     (G.flags.warHero ? "Made a name on the battlefield, and..." : '') + (G.flags.sailor ? "Saw the new continent, and..." : '') + (G.flags.revolutionary ? "Accomplished a revolution, and..." : '') + (G.flags.relic ? "Seized the treasure of the ruins, and..." : '') + (G.flags.rivalFriend ? "Becoming friends with your rival," : '') + (G.flags.partner ? '' : '') + (G.flags.lastWork ? "Accomplished a great feat in later years, and..." : '') + '\n' +
-    age + " years old," + cause + ". Passed away. The world called them \"" + title + ".\" \n" +
+    "At " + age + " years old, died of " + cause + ". The world called them \"" + title + ".\" \n" +
     "This world is actually—" + G.world.temper.name + ".";
   SAVE.toku += tokuGain;
   SAVE.lives.unshift({ name: G.name, tezawari: (typeof tezawariOf === 'function' ? tezawariOf(G, s) : ''), title, age, cause, epitaph: epi, race: G.birth.race.name, fam: G.birth.fam.name, world: G.world.name, temper: G.world.temper.name, score, chronicle: G.chronicle.slice().reverse() });
   persist();
   el('deathTitle').textContent = title + " — died at age " + age;
   el('deathTezawari').textContent = age >= 18 ? "🖐 The Vibe of This Life: " + tezawariOf(G, s) : '';
-  el('deathCause').textContent = "Cause of death: " + cause + "／ World Lived In: " + G.world.name;
+  el('deathCause').textContent = "Cause of death: " + cause + " /  World Lived In: " + G.world.name;
   const dnames = { health: "Health", int: "Intelligence", charm: "Charm", wealth: "Wealth", fame: "Fame", happy: "Happiness" };
   el('deathStats').innerHTML = Object.keys(dnames).map(k => '<div style="background:#171233;border:1px solid #3a2f7a;border-radius:8px;padding:7px">' + dnames[k] + '<br><b style="font-size:15px;color:#ffd54f">' + s[k] + '</b></div>').join('');
   el('epitaph').textContent = epi;
@@ -1199,10 +1199,10 @@ function renderCollection() {
   const gotTitles = new Set(SAVE.lives.map(l => l.title));
   const best = SAVE.lives.reduce((m, l) => Math.max(m, l.score || 0), 0);
   const pct = Math.round(gotRaces.size / RACES.length * 100);
-  box.innerHTML = "🧬 Race Encyclopedia <b style=\"color:#ffd54f\">" + gotRaces.size + ' / ' + RACES.length + '</b>（' + pct + '%）' +
+  box.innerHTML = "🧬 Race Encyclopedia <b style=\"color:#ffd54f\">" + gotRaces.size + ' / ' + RACES.length + '</b> (' + pct + '%)' +
     RACES.map(r => '<span style="display:inline-block;margin:2px 3px;padding:2px 8px;border-radius:99px;font-size:11px;' +
-      (gotRaces.has(r.name) ? 'background:#4a2a96;color:#fff' : 'background:#241d4d;color:#6f68a0') + '">' + (gotRaces.has(r.name) ? r.name : '？？？') + '</span>').join('') +
-    "<br>🏠 Lineage <b style=\"color:#ffd54f\">" + gotFams.size + ' / ' + FAMILIES.length + "</b>　🏆 Title <b style=\"color:#ffd54f\">" + gotTitles.size + "</b> species　⭐ High Score <b style=\"color:#ffd54f\">" + best + '</b>';
+      (gotRaces.has(r.name) ? 'background:#4a2a96;color:#fff' : 'background:#241d4d;color:#6f68a0') + '">' + (gotRaces.has(r.name) ? r.name : '???') + '</span>').join('') +
+    "<br>🏠 Lineage <b style=\"color:#ffd54f\">" + gotFams.size + ' / ' + FAMILIES.length + "</b> 🏆 Title <b style=\"color:#ffd54f\">" + gotTitles.size + "</b> species ⭐ High Score <b style=\"color:#ffd54f\">" + best + '</b>';
 }
 function renderLives() {
   renderCollection();
@@ -1246,8 +1246,8 @@ function restoreRun(d) {
   el('startPanel').classList.add('hidden');
   el('gamePanel').classList.remove('hidden');
   el('worldName').textContent = G.world.name;
-  el('worldParams').textContent = "Mana: " + ["None", "Faint", "Abundant", "Excessive"][G.world.magic] + "／ Technology: " + techLabel(G.world) + "／ World Status: " + ["Peace", "Cold War", "Great War"][G.world.war] + "／ Deities: " + (G.world.gods ? "Meddlesome" : "Silence") + "／ Calamity: " + G.world.disaster;
-  el('birthInfo').innerHTML = "Race: <b>" + G.birth.race.name + "</b> ／ Gender: " + G.birth.gender + "／ Lineage: <b>" + G.birth.fam.name + "</b><br>Talent: " + G.birth.talents.join('、');
+  el('worldParams').textContent = "Mana: " + ["None", "Faint", "Abundant", "Excessive"][G.world.magic] + " /  Technology: " + techLabel(G.world) + " /  World Status: " + ["Peace", "Cold War", "Great War"][G.world.war] + " /  Deities: " + (G.world.gods ? "Meddlesome" : "Silence") + " /  Calamity: " + G.world.disaster;
+  el('birthInfo').innerHTML = "Race: <b>" + G.birth.race.name + "</b>  /  Gender: " + G.birth.gender + " /  Lineage: <b>" + G.birth.fam.name + "</b><br>Talent: " + G.birth.talents.join(', ');
   el('chronicle').innerHTML = G.chronicle.map(c => '<div><span class="yr">' + c.age + " years old</span> " + c.text + '</div>').join('');
   drawAvatar(); renderStats(); renderClock(); startClock();
 }
@@ -1270,7 +1270,7 @@ function drawCard(l) {
   x.font = '30px sans-serif'; x.fillStyle = '#ce93d8';
   x.fillText("Died at age " + l.age + " — " + l.cause, 450, 305);
   x.font = '28px sans-serif'; x.fillStyle = '#ece9f7';
-  x.fillText(l.race + ' ／ ' + l.fam + "[World Disposition: " + l.temper + ']', 450, 355);
+  x.fillText(l.race + '  /  ' + l.fam + "[World Disposition: " + l.temper + ']', 450, 355);
   x.font = 'bold 40px sans-serif'; x.fillStyle = '#ffd54f';
   x.fillText("Score " + l.score, 450, 425);
   x.textAlign = 'left'; x.font = '25px serif'; x.fillStyle = '#d9d2f5';
@@ -1280,9 +1280,9 @@ function drawCard(l) {
   x.font = '22px sans-serif'; x.fillStyle = '#a79fd0'; x.textAlign = 'center';
   x.fillText("Highlight", 450, 950);
   x.font = '23px sans-serif'; x.fillStyle = '#ece9f7';
-  const hl = (l.chronicle || []).filter(c => c.text.includes("【Important Event】") || c.text.includes("【Choice】")).slice(0, 4);
+  const hl = (l.chronicle || []).filter(c => c.text.includes("[Important Event]") || c.text.includes("[Choice]")).slice(0, 4);
   let hy2 = 995;
-  for (const h of hl) { const t = h.age + " years old " + h.text.replace(/【Important Event】|【Choice】/g, '').slice(0, 34); x.fillText(t, 450, hy2); hy2 += 38; }
+  for (const h of hl) { const t = h.age + " years old " + h.text.replace(/[Important Event]|[Choice]/g, '').slice(0, 34); x.fillText(t, 450, hy2); hy2 += 38; }
   x.font = '20px sans-serif'; x.fillStyle = '#6f68a0';
   x.fillText('deruderu-sketch.github.io/tensei-life', 450, 1120);
   const a = document.createElement('a');
@@ -1351,7 +1351,7 @@ function renderVillage() {
   const tier = n >= 15 ? "🏯 The Reincarnation Capital" : n >= 10 ? "🏘️ Large Town" : n >= 6 ? "🏘️ Town" : n >= 3 ? "🏘️ Village" : "🏕️ Small Settlement";
   const years = SAVE.lives.reduce((a, l) => a + Math.floor(l.age || 0), 0);
   const houses = SAVE.lives.map((l, i) => '<span title="' + (l.title || '') + '">' + (i % 10 === 9 ? '🛕' : '🏠') + '</span>').join(' ');
-  v.innerHTML = '<b>' + tier + '</b>（' + n + "houses)<br>" + houses + "<br><span style=\"color:#a79fd0;font-size:12px\">Total of all lives so far: " + years + "Years / Hover over your house to see titles</span>";
+  v.innerHTML = '<b>' + tier + '</b> (' + n + (n === 1? ' house': ' houses') + ")<br>" + houses + "<br><span style=\"color:#a79fd0;font-size:12px\">Total of all lives so far: " + years + " years / Hover over your house to see titles</span>";
 }
 const _origRenderLives = renderLives;
 renderLives = function () { _origRenderLives(); renderVillage(); };
@@ -1412,7 +1412,7 @@ el('btnFilm').addEventListener('click', () => { if (!lastRecord) return; if (SAV
 function memorialHTML(rec) {
   const esc = s => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;');
   const rows = (rec.chronicle || []).map(c => '<div class="row"><span class="age">' + c.age + " years old</span><span>" + esc(c.text) + '</span></div>').join('');
-  return "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"utf-8\"><title>Memorial | " + esc(rec.name) + '</title><style>body{background:#0b0a1a;color:#e8e4ff;font-family:serif;margin:0;padding:32px 18px;line-height:1.9}.wrap{max-width:680px;margin:0 auto}h1{color:#c9a86a;text-align:center;font-weight:normal}.sub{text-align:center;color:#a79fd0}.epi{text-align:center;font-size:19px;margin:26px 0}.row{display:flex;gap:12px;padding:7px 0;border-bottom:1px solid #262250}.age{color:#c9a86a;min-width:52px;text-align:right}.candle{text-align:center;font-size:26px;margin:20px 0}</style></head><body><div class="wrap"><div class="candle">🕯️</div><h1>' + esc(rec.title || 'A Nameless Life') + '</h1><div class="sub">' + esc(rec.name) + ' ／ ' + esc(rec.world || '') + ' ／ Passed away at age ' + Math.floor(rec.age || 0) + ' ／ Score ' + (rec.score || 0) + '</div><div class="epi">「' + esc(rec.epitaph || '') + '」</div>' + rows + "<div class=\"sub\" style=\"margin-top:28px\">You Can't Choose Your Next Life ― Memorial</div></div></body></html>";
+  return "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"utf-8\"><title>Memorial | " + esc(rec.name) + '</title><style>body{background:#0b0a1a;color:#e8e4ff;font-family:serif;margin:0;padding:32px 18px;line-height:1.9}.wrap{max-width:680px;margin:0 auto}h1{color:#c9a86a;text-align:center;font-weight:normal}.sub{text-align:center;color:#a79fd0}.epi{text-align:center;font-size:19px;margin:26px 0}.row{display:flex;gap:12px;padding:7px 0;border-bottom:1px solid #262250}.age{color:#c9a86a;min-width:52px;text-align:right}.candle{text-align:center;font-size:26px;margin:20px 0}</style></head><body><div class="wrap"><div class="candle">🕯️</div><h1>' + esc(rec.title || 'A Nameless Life') + '</h1><div class="sub">' + esc(rec.name) + '  /  ' + esc(rec.world || '') + '  /  Passed away at age ' + Math.floor(rec.age || 0) + '  /  Score ' + (rec.score || 0) + '</div><div class="epi">「' + esc(rec.epitaph || '') + '」</div>' + rows + "<div class=\"sub\" style=\"margin-top:28px\">You Can't Choose Your Next Life ― Memorial</div></div></body></html>";
 }
 el('btnMemorial').addEventListener('click', () => {
   if (!needPass() || !lastRecord) return;
@@ -1423,7 +1423,7 @@ el('btnMemorial').addEventListener('click', () => {
 el('btnShare').addEventListener('click', () => {
   const l = SAVE.lives[0];
   if (!l) return;
-  const txt = "【You Can't Choose Your Next Life】" + l.title + '(Died at age ' + l.age + ")\\n" + l.race + ' / ' + l.fam + ' ― ' + l.world + "\nScore " + l.score + ". That was your life. What will you be in the next reincarnation? #YouCantChooseYourNextLife";
+  const txt = "[You Can't Choose Your Next Life]" + l.title + '(Died at age ' + l.age + ")\\n" + l.race + ' / ' + l.fam + ' ― ' + l.world + "\nScore " + l.score + ". That was your life. What will you be in the next reincarnation? #YouCantChooseYourNextLife";
   window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(txt), '_blank');
 });
 </script>
