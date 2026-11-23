@@ -146,10 +146,20 @@
 <h2>⚙️ 設定</h2>
   <div class="panel" style="font-size:13px;line-height:2">
     <button class="sub2" id="btnGentle">🌿 怖い場面を除く: OFF</button>
+    <button class="sub2" id="btnClass">🏫 授業用モード: OFF</button>
     <button class="sub2" id="btnAutoMode">🤖 おまかせ（選択を自動）: OFF</button>
     <div style="color:#a79fd0;font-size:12px">キーボード: スペース=一時停止／再開、1=×1、2=×4、3=×16、4=×64</div>
   </div>
-  <h2>❓ 転生先は選べませんについて</h2>
+  <h2>📜 更新履歴</h2>
+  <div class="panel" style="font-size:12.5px;line-height:1.9;text-align:left">
+    <details><summary><b>2026-11-23 v24</b></summary>「この人生の手ざわり」「転生の村」「授業用モード」を追加。返金ポリシー（30日・理由不問）とギフト表記を明記。</details>
+    <details><summary><b>2026-11-23 v23</b></summary>思い出パスの購入リンク（Stripe）を接続。</details>
+    <details><summary><b>2026-11-23 v22</b></summary>思い出パス（フィルム再生・メモリアル書き出し）を実装。</details>
+    <details><summary><b>2026-11-23 v21</b></summary>タイトルを「転生先は選べません」に変更。</details>
+    <details><summary><b>2026-11-23 v20</b></summary>節目の問い（5・15・30・50・70歳）、おまかせモード、同じ日に生まれた者たち、怖い場面を除く設定、キーボード対応、FAQを追加。</details>
+    <details><summary><b>2026-11-23 v19</b></summary>人生カード（画像保存）、人生アルバム、記録の書き出し・読み込みを追加し、GitHub Pagesでテスト公開。</details>
+  </div>
+<h2>❓ 転生先は選べませんについて</h2>
   <div class="panel" style="font-size:13px;line-height:1.9;text-align:left">
     <details><summary><b>転生先は選べませんとは何ですか？</b></summary>異世界にランダムに転生して、一人の一生を最初から最後まで生きる人生シミュレーションです。どの世界に、どの種族の、どんな家柄の子として生まれるかは選べません。その代わり、同じ人生は二度とありません。</details>
     <details><summary><b>生まれる世界や種族はどう決まりますか？</b></summary>世界の魔力・技術・情勢と、種族・家柄・才能を抽選で決めます。確率は転生の発表でそのつど表示します。魔力のない世界に魔族は生まれないなど、世界のルールが出生を縛ります。ごく稀に、ルールを破る「特異点」の出生もあります。</details>
@@ -160,11 +170,11 @@
     <details><summary><b>配信や動画にしてもいいですか？</b></summary>はい、自由にどうぞ。出典に「転生先は選べません」と書いていただけるとうれしいです。</details>
     <details><summary><b>誰がつくっていますか？</b></summary>田邉雄次のもとで、AIアシスタント「のんちゃん」が設計・実装しています。数字や確率はフィクションで、実在の統計ではありません。</details>
   </div>
-<h2>🎫 思い出パス</h2>
-  <div class="panel" style="font-size:13px;line-height:1.9">
+<h2 id="passH2">🎫 思い出パス</h2>
+  <div class="panel" id="passPanel" style="font-size:13px;line-height:1.9">
     <div id="passState"></div>
     <div id="passForm">
-      <div style="color:#a79fd0;font-size:12.5px">終わった人生を「フィルム（自動再生の記録映像）」と「メモリアル（保存用ページ）」にできる買い切りのパスです。本体はいつまでも無料・広告なしで、パスがなくても同じように遊べます。価格は¥480（買い切り）です。購入すると、有効化コードを購入時のメールアドレスへ24時間以内にお送りします。</div>
+      <div style="color:#a79fd0;font-size:12.5px">終わった人生を「フィルム（自動再生の記録映像）」と「メモリアル（保存用ページ）」にできる買い切りのパスです。本体はいつまでも無料・広告なしで、パスがなくても同じように遊べます。価格は¥480（買い切り）です。購入すると、有効化コードを購入時のメールアドレスへ24時間以内にお送りします。<br>購入から30日以内なら、理由を問わず返金します。コードはそのまま人に渡せるので、🎁ギフトにもどうぞ。</div>
       <input id="passCodeInput" type="text" placeholder="購入コード（例: TSN-XXXX-XXXX）" style="width:100%;box-sizing:border-box;margin-top:8px;padding:10px;border-radius:10px;border:1px solid #4a4380;background:#14122b;color:#e8e4ff">
       <a href="https://buy.stripe.com/dRmaEYcnF18LdQ6faZ2Nq00" target="_blank" rel="noopener" style="display:inline-block;margin-top:8px;margin-right:8px;padding:10px 18px;border-radius:999px;background:linear-gradient(180deg,#ffd98a,#c9a86a);color:#241f4d;font-weight:bold;text-decoration:none">🛒 思い出パスを購入（¥480）</a>
       <button class="sub2" id="btnUnlock" style="margin-top:8px">🔓 パスを有効にする</button>
@@ -177,6 +187,8 @@
     <label style="display:block;background:#241d4d;border-radius:13px;padding:10px;font-size:13px;font-weight:bold;text-align:center;cursor:pointer">⬆ 記録を読み込む<input type="file" id="fileImport" accept=".json" style="display:none"></label>
     <div style="margin-top:8px;color:#a79fd0">このゲームは無料で、広告もアカウントもありません。世界・種族・家柄の確率はフィクションです。同じ人生は二度とありません。</div>
   </div>
+<h2>🏘️ 転生の村</h2>
+  <div class="panel"><div id="villageView" style="font-size:14px;line-height:2"></div></div>
 <h2>🧬 コレクション</h2>
 <div class="panel" id="collection" style="font-size:12.5px;line-height:2"></div>
 <h2>📖 転生図鑑（これまでの人生）</h2>
@@ -215,6 +227,7 @@
   <div style="font-size:24px;font-weight:bold;margin-top:6px" id="deathTitle"></div>
   <div style="font-size:17px;color:#ffd54f;margin-top:6px" id="deathCause"></div>
   <div id="deathRank" style="font-size:44px;font-weight:900;margin-top:10px;font-family:serif"></div>
+  <div id="deathTezawari" style="margin-top:10px;font-size:13.5px;color:#ce93d8"></div>
   <div id="deathStats" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;font-size:12px;margin-top:12px"></div>
   <div id="epitaph"></div>
   <button class="center" id="btnShare">𝕏 結果をシェアする</button>
@@ -798,7 +811,7 @@ function presentEvent() {
   G.paused = true; renderClock();
   const age = Math.floor(G.age);
   const pool = EVENTS.map((e, i) => [e, i]).filter(([e, i]) => !G.usedEvents.has(i) && age >= e.min && age <= e.max && (!e.when || e.when(G)));
-  const poolF = SAVE.settings.gentle ? pool.filter(([e]) => { const t = typeof e.text === 'function' ? '' : e.text; const src = (e.when ? e.when.toString() : '') + t; return !/war === 2|疫病|革命|渇き/.test(src); }) : pool;
+  const poolF = (SAVE.settings.gentle || isClassroom()) ? pool.filter(([e]) => { const t = typeof e.text === 'function' ? '' : e.text; const src = (e.when ? e.when.toString() : '') + t; return !/war === 2|疫病|革命|渇き/.test(src); }) : pool;
   const poolUse = poolF.length ? poolF : pool;
   let ev;
   if (poolUse.length && Math.random() < 0.82) { const [e, i] = pick(poolUse); ev = e; G.usedEvents.add(i); }
@@ -904,9 +917,10 @@ function die() {
     age + '歳、' + cause + 'で死去。世はその人を「' + title + '」と呼んだ。\n' +
     'この世界は実は――' + G.world.temper.name + 'だった。';
   SAVE.toku += tokuGain;
-  SAVE.lives.unshift({ title, age, cause, epitaph: epi, race: G.birth.race.name, fam: G.birth.fam.name, world: G.world.name, temper: G.world.temper.name, score, chronicle: G.chronicle.slice().reverse() });
+  SAVE.lives.unshift({ name: G.name, tezawari: (typeof tezawariOf === 'function' ? tezawariOf(G, s) : ''), title, age, cause, epitaph: epi, race: G.birth.race.name, fam: G.birth.fam.name, world: G.world.name, temper: G.world.temper.name, score, chronicle: G.chronicle.slice().reverse() });
   persist();
   el('deathTitle').textContent = age + '歳没 ― ' + title;
+  el('deathTezawari').textContent = age >= 18 ? '🖐 この人生の手ざわり: ' + tezawariOf(G, s) : '';
   el('deathCause').textContent = '死因: ' + cause + ' ／ 生きた世界: ' + G.world.name;
   const dnames = { health: '健康', int: '知力', charm: '魅力', wealth: '富', fame: '名声', happy: '幸福' };
   el('deathStats').innerHTML = Object.keys(dnames).map(k => '<div style="background:#171233;border:1px solid #3a2f7a;border-radius:8px;padding:7px">' + dnames[k] + '<br><b style="font-size:15px;color:#ffd54f">' + s[k] + '</b></div>').join('');
@@ -1056,6 +1070,41 @@ document.addEventListener('keydown', e => {
   const speeds = { Digit1: 1, Digit2: 4, Digit3: 16, Digit4: 64 };
   if (speeds[e.code] !== undefined) { G.speed = speeds[e.code]; G.paused = false; renderClock(); }
 });
+function tezawariOf(G, s) {
+  const adv = (G.flags.guild ? 2 : 0) + (G.flags.sailor ? 2 : 0) + (G.flags.relic ? 1 : 0) + (G.flags.steal ? 1 : 0);
+  const turb = G.usedEvents.size + (G.flags.warHero ? 3 : 0) + (G.flags.revolutionary ? 3 : 0) + (G.birth.anomaly ? 2 : 0);
+  const axes = [
+    ['波乱', '平穏', turb - 7],
+    ['富', '心', s.wealth - s.happy],
+    ['名声', '愛', s.fame - (G.flags.partner ? 45 : s.charm)],
+    ['冒険', '安住', adv * 12 - 18],
+  ];
+  return axes.map(([a, b, v]) => v >= 0 ? a : b).join('・') + 'に傾いた人生';
+}
+function isClassroom() { try { if (new URLSearchParams(location.search).get('classroom') === '1') return true; } catch (e) {} return !!(SAVE.settings && SAVE.settings.classroom); }
+function renderVillage() {
+  const v = el('villageView'); if (!v) return;
+  const n = SAVE.lives.length;
+  if (!n) { v.innerHTML = 'まだ誰も住んでいません。最初の人生を生きると、ここに家が建ちます。'; return; }
+  const tier = n >= 15 ? '🏯 転生の都' : n >= 10 ? '🏘️ 大きな町' : n >= 6 ? '🏘️ 町' : n >= 3 ? '🏘️ 村' : '🏕️ 小さな集落';
+  const years = SAVE.lives.reduce((a, l) => a + Math.floor(l.age || 0), 0);
+  const houses = SAVE.lives.map((l, i) => '<span title="' + (l.title || '') + '">' + (i % 10 === 9 ? '🛕' : '🏠') + '</span>').join(' ');
+  v.innerHTML = '<b>' + tier + '</b>（' + n + '軒）<br>' + houses + '<br><span style="color:#a79fd0;font-size:12px">これまでの人生の合計: ' + years + '年 ／ 家にカーソルを合わせると称号が見えます</span>';
+}
+const _origRenderLives = renderLives;
+renderLives = function () { _origRenderLives(); renderVillage(); };
+el('btnClass').addEventListener('click', () => { SAVE.settings = SAVE.settings || {}; SAVE.settings.classroom = !SAVE.settings.classroom; saveSave(); syncSettings(); });
+const _origSync = syncSettings;
+syncSettings = function () {
+  _origSync();
+  SAVE.settings = SAVE.settings || {};
+  el('btnClass').textContent = '🏫 授業用モード: ' + (isClassroom() ? 'ON' : 'OFF');
+  const cr = isClassroom();
+  el('passH2').style.display = cr ? 'none' : '';
+  el('passPanel').style.display = cr ? 'none' : '';
+  el('btnShare').style.display = cr ? 'none' : '';
+};
+syncSettings();
 renderLives();
 if (loadRun()) el('btnContinue').classList.remove('hidden');
 el('btnContinue').addEventListener('click', () => { const d = loadRun(); if (d) restoreRun(d); });
