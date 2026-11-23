@@ -166,6 +166,7 @@
   </div>
 <h2>📜 更新履歴</h2>
   <div class="panel" style="font-size:12.5px;line-height:1.9;text-align:left">
+    <details><summary><b>2026-11-23 v28</b></summary>イベントを35本から117本へ、日常の出来事文を32行から92行へ増やした。下書きはGeminiが作り、世界のルールに合うよう選別・調整して組み込んだ。</details>
     <details><summary><b>2026-11-23 v27</b></summary>「徳で家柄を引き直す」を廃止した。生まれる家は、徳でもお金でも変えられない。それがこのゲームの約束だから。</details>
     <details><summary><b>2026-11-23 v26</b></summary>「ご意見・ご感想」の窓口を追加。フィルムは購入前に、いま終えた人生の見本をそのまま見られるようにした。</details>
     <details><summary><b>2026-11-23 v25</b></summary>「📖 できるまでの話」を追加。生まれた一日の物語『選べなかった転生』と、つくり方『のんちゃんの作業室』を公開。</details>
@@ -432,6 +433,254 @@ const EVENTS = [
       { label: '健康を願う', run: S => { eff(S, { health: 22 }); S.lifeSpan += 12; return '体が軽い。神は笑っていた。'; } },
       { label: '断る', run: S => { eff(S, { happy: 6 }); S.flags.defiedGod = true; return '神は愉快そうに消えた。'; } },
     ] },
+  { min: 5, max: 9, text: '野原で綺麗な石を拾った。これをどうする？', choices: [
+    { label: '宝箱に隠す', run: S => { eff(S, { happy: 5 }); return '自分だけの秘密の宝物になった。'; } },
+    { label: '友達にあげる', run: S => { eff(S, { charm: 6 }); return '友達との絆が少し深まった。'; } } ] },
+  { min: 6, max: 10, text: '友達と秘密基地を作ることになった。何を担当する？', choices: [
+    { label: '設計図を書く', run: S => { eff(S, { int: 7 }); return '頑丈で機能的な基地が完成した。'; } },
+    { label: '材料を集める', run: S => { eff(S, { health: 5 }); return '重い木材を運び、体が鍛えられた。'; } },
+    { label: 'みんなを励ます', run: S => { eff(S, { charm: 6 }); return 'チームの士気が上がり仲良くなった。'; } } ] },
+  { min: 7, max: 12, text: '年上の子にかけっこを挑まれた。どう戦う？', choices: [
+    { label: '全力で走る', run: S => { eff(S, { health: 8 }); return '息が切れたが、最後まで走り抜いた。'; } },
+    { label: '近道を探す', run: S => { eff(S, { int: 6 }); return '知恵を使って接戦に持ち込んだ。'; } } ] },
+  { min: 5, max: 8, text: '母さんの料理の手伝いを頼まれた。何をしよう？', choices: [
+    { label: '味見をする', run: S => { eff(S, { happy: 7 }); return '美味しい料理を食べて元気が出た。'; } },
+    { label: '野菜を刻む', run: S => { eff(S, { int: 4 }); return '包丁の使い方が少し上達した。'; } } ] },
+  { min: 8, max: 12, text: '古い納屋で文字だらけの古い本を見つけた。', choices: [
+    { label: '必死に解読する', run: S => { eff(S, { int: 10 }); return '昔の歴史について知識を得た。'; } },
+    { label: '絵だけ眺める', run: S => { eff(S, { happy: 5 }); return '想像力が膨らみ、楽しい時間を過ごした。'; } } ] },
+  { min: 9, max: 12, text: '近所の広場でお祭りが開かれる。どう過ごす？', choices: [
+    { label: '屋台を手伝う', run: S => { eff(S, { wealth: 5 }); return '働いた報酬に小銭をもらった。'; } },
+    { label: '踊りの輪に入る', run: S => { eff(S, { charm: 7 }); return '周囲から注目され、人気者になった。'; } } ] },
+  { min: 10, max: 12, text: '森の奥で、見たこともない奇妙な果実を見つけた。', choices: [
+    { label: '食べてみる', run: S => { eff(S, { health: -5, int: 8 }); return 'お腹を壊したが、貴重な発見をした。'; } },
+    { label: '持ち帰って調べる', run: S => { eff(S, { int: 6 }); return '図書館でその正体を突き止めた。'; } } ] },
+  { min: 11, max: 12, text: '旅の芸人が村に来た。何を教わる？', choices: [
+    { label: '楽器の演奏', run: S => { eff(S, { charm: 8 }); return '奏でる音色で村人を感動させた。'; } },
+    { label: '軽業のコツ', run: S => { eff(S, { health: 7 }); return '身のこなしが軽やかになった。'; } } ] },
+  { min: 13, max: 15, text: '師匠の厳しい稽古が続いている。どう向き合う？', choices: [
+    { label: '必死に食らいつく', run: S => { eff(S, { health: 9 }); return '基礎体力が大幅に向上した。'; } },
+    { label: '技を観察して盗む', run: S => { eff(S, { int: 7 }); return '効率的な体の動かし方を理解した。'; } } ] },
+  { min: 14, max: 16, text: '気になる異性に話しかけるチャンスが来た。', choices: [
+    { label: '素直に褒める', run: S => { eff(S, { charm: 10 }); return '相手が照れ、良い雰囲気になった。'; } },
+    { label: '冗談で笑わせる', run: S => { eff(S, { happy: 6 }); return '二人の距離が少し縮まった気がした。'; } } ] },
+  { min: 13, max: 17, text: '街道で車輪が外れて困っている荷車を見つけた。', choices: [
+    { label: '修理を手伝う', run: S => { eff(S, { fame: 5, wealth: 3 }); return '感謝の言葉とお礼の品をもらった。'; } },
+    { label: '警護をしてあげる', run: S => { eff(S, { fame: 7 }); return '無事に送り届け、信頼を得た。'; } } ] },
+  { min: 15, max: 17, text: '将来の進路に悩んでいる。どちらを選ぶ？', choices: [
+    { label: '都会へ修行に出る', run: S => { eff(S, { int: 8 }); return '広い世界で新しい刺激を受けた。'; } },
+    { label: '地元で家業を継ぐ', run: S => { eff(S, { wealth: 6, happy: 4 }); return '家族に喜ばれ、生活が安定した。'; } } ] },
+  { min: 14, max: 17, text: '近隣の町で開かれる武術大会に出場することになった。', choices: [
+    { label: '優勝を狙う', run: S => { eff(S, { fame: 10 }); return '決勝まで残り、名前が知れ渡った。'; } },
+    { label: '交流を優先する', run: S => { eff(S, { charm: 8 }); return '他の参加者と友情を育んだ。'; } } ] },
+  { min: 16, max: 17, text: '貯めたお小遣いの使い道を考えている。', choices: [
+    { label: '良い道具を買う', run: S => { eff(S, { health: 5 }); return '手入れの届いた道具で効率が増した。'; } },
+    { label: '友人と遊ぶ', run: S => { eff(S, { happy: 9 }); return 'かけがえのない思い出ができた。'; } } ] },
+  { min: 13, max: 16, text: '親友が悪い噂を流されて落ち込んでいる。', choices: [
+    { label: '一緒に犯人を捜す', run: S => { eff(S, { int: 6 }); return '誤解を解き、友情がより強固になった。'; } },
+    { label: '黙って寄り添う', run: S => { eff(S, { charm: 7 }); return '親友の心の支えになった。'; } } ] },
+  { min: 15, max: 17, text: '夜の森で、不思議な光が舞っているのを見た。', choices: [
+    { label: '追いかける', run: S => { eff(S, { health: 6 }); return '森の深くまで走り、体力がついた。'; } },
+    { label: '祈りを捧げる', run: S => { eff(S, { happy: 8 }); return '幻想的な光景に心が洗われた。'; } } ] },
+  { min: 18, max: 21, text: '職人として独立するための試験が行われる。', choices: [
+    { label: '完璧な作品を作る', run: S => { eff(S, { int: 9 }); return '卓越した技術が認められた。'; } },
+    { label: '独創性で勝負する', run: S => { eff(S, { fame: 8 }); return '今までにない発想が注目を集めた。'; } } ] },
+  { min: 19, max: 22, text: '恋人と将来について真剣に話し合うことに。', choices: [
+    { label: '結婚を申し込む', run: S => { eff(S, { happy: 10 }); return '二人の新しい人生が始まった。'; } },
+    { label: '夢を追いかけたい', run: S => { eff(S, { fame: 7, happy: -3 }); return '互いの道を尊重し、別れを選んだ。'; } } ] },
+  { min: 20, max: 24, text: '古い遺跡で道が二手に分かれている。', choices: [
+    { label: '明るい道を進む', run: S => { eff(S, { health: 6 }); return '罠を回避し、安全に探索を終えた。'; } },
+    { label: '険しい道を進む', run: S => { eff(S, { wealth: 10 }); return '苦労の末に古い金貨の袋を見つけた。'; } } ] },
+  { min: 18, max: 23, text: '職場で自分のミスにより損害を出してしまった。', choices: [
+    { label: '正直に謝罪する', run: S => { eff(S, { charm: 8 }); return '誠実さが評価され、信頼を取り戻した。'; } },
+    { label: '必死に挽回する', run: S => { eff(S, { int: 7 }); return '寝る間を惜しんで働き、解決した。'; } } ] },
+  { min: 21, max: 24, text: '酒場で客同士の激しい喧嘩が始まった。', choices: [
+    { label: '腕力で止める', run: S => { eff(S, { health: 7 }); return '騒ぎを収め、用心棒として一目置かれた。'; } },
+    { label: '言葉で説得する', run: S => { eff(S, { int: 8 }); return '論理的な話し合いで場を鎮めた。'; } } ] },
+  { min: 19, max: 24, text: '遠くの町まで、商品を届ける旅に出た。', choices: [
+    { label: '護衛を雇わず進む', run: S => { eff(S, { health: 9 }); return '自分の力で困難を乗り越え成長した。'; } },
+    { label: '商人仲間と行く', run: S => { eff(S, { wealth: 7 }); return '情報交換ができ、有利に商売できた。'; } } ] },
+  { min: 22, max: 24, text: '自分の専門分野で、後輩を指導することになった。', choices: [
+    { label: '厳しく教え込む', run: S => { eff(S, { fame: 7 }); return '後輩が成長し、自分の評判も上がった。'; } },
+    { label: '優しく見守る', run: S => { eff(S, { charm: 9 }); return '後輩に慕われ、良い職場環境になった。'; } } ] },
+  { min: 25, max: 27, text: '貯まった資金を何に投資するか考えている。', choices: [
+    { label: '自分の店を持つ', run: S => { eff(S, { wealth: 10 }); return '念願の店を構え、収入が安定した。'; } },
+    { label: '高価な教養を得る', run: S => { eff(S, { int: 10 }); return '知識が深まり、上流階級と繋がった。'; } } ] },
+  { min: 26, max: 29, text: '故郷の親が体調を崩したという報せが届く。', choices: [
+    { label: 'すぐに帰郷する', run: S => { eff(S, { happy: 9, wealth: -5 }); return '家族との時間を最優先に過ごした。'; } },
+    { label: '薬と金を送る', run: S => { eff(S, { wealth: -7, fame: 6 }); return '親孝行な息子・娘だと評判になった。'; } } ] },
+  { min: 25, max: 28, text: '地方貴族の晩餐会に招待された。どう振る舞う？', choices: [
+    { label: '礼儀正しくする', run: S => { eff(S, { charm: 9 }); return '洗練された作法で注目を浴びた。'; } },
+    { label: '堂々と意見を言う', run: S => { eff(S, { int: 8 }); return '鋭い洞察力が貴族の目に留まった。'; } } ] },
+  { min: 27, max: 29, text: '弟子入りを志願する若者が門を叩いた。', choices: [
+    { label: '喜んで受け入れる', run: S => { eff(S, { charm: 10 }); return '若い才能を育てる喜びに目覚めた。'; } },
+    { label: '厳しい試練を課す', run: S => { eff(S, { fame: 7 }); return '一門の規律が守られ、格が上がった。'; } } ] },
+  { min: 26, max: 29, text: '未踏の地の地図を作る調査団に誘われた。', choices: [
+    { label: '隊長として率いる', run: S => { eff(S, { fame: 10 }); return '指導力を発揮し、偉業を成し遂げた。'; } },
+    { label: '記録係として参加', run: S => { eff(S, { int: 9 }); return '膨大なデータをまとめ、書物にした。'; } } ] },
+  { min: 28, max: 29, text: '念願だった自分自身の家を建てる。', choices: [
+    { label: '広い庭を作る', run: S => { eff(S, { happy: 10 }); return '自然に囲まれた穏やかな生活を得た。'; } },
+    { label: '頑丈な書斎を作る', run: S => { eff(S, { int: 7 }); return '研究に没頭できる最高の環境が整った。'; } } ] },
+  { min: 25, max: 29, text: '長年のライバルから、最後の立ち合いを申し込まれた。', choices: [
+    { label: '全力で受けて立つ', run: S => { eff(S, { health: 7, fame: 7 }); return '激闘の末、互いの実力を認め合った。'; } },
+    { label: '握手で和解する', run: S => { eff(S, { charm: 10 }); return '争いを終え、無二の親友となった。'; } } ] },
+  { min: 30, max: 44, text: '職人として独立する機会が訪れた。自分の店を持つべきか？', choices: [
+    { label: '店を構える', run: S => { eff(S, { wealth: 8, int: 5 }); return '経営者として忙しくも充実した日々。'; } },
+    { label: '雇われを続ける', run: S => { eff(S, { wealth: -3, happy: 5 }); return '責任は軽いが、自由な時間が増えた。'; } } ] },
+  { min: 30, max: 44, text: '子供の才能を伸ばすため、高額な学問所に通わせるか悩む。', choices: [
+    { label: '無理して通わせる', run: S => { eff(S, { wealth: -10, fame: 5 }); return '子供は優秀な成績を収め誇らしい。'; } },
+    { label: '家業を継がせる', run: S => { eff(S, { wealth: 5, happy: -3 }); return '現実的だが、子供は少し寂しそうだ。'; } } ] },
+  { min: 30, max: 44, text: '領主から町役人の役職を打診された。受けるべきだろうか？', choices: [
+    { label: '役職を引き受ける', run: S => { eff(S, { fame: 8, int: 3 }); return '公務に追われるが、発言力が増した。'; } },
+    { label: '自由に生きる', run: S => { eff(S, { charm: 5, happy: 8 }); return '責任を負わず、趣味の時間を謳歌した。'; } } ] },
+  { min: 30, max: 44, text: '古い地図を手に入れた。未知の土地へ商売の旅に出るか？', choices: [
+    { label: '交易の旅に出る', run: S => { eff(S, { wealth: 10, int: 5 }); return '異国の品を売りさばき、巨万の富を得た。'; } },
+    { label: '地図を売却する', run: S => { eff(S, { wealth: 5, happy: 3 }); return '冒険は諦めたが、手堅い金を得た。'; } } ] },
+  { min: 30, max: 44, text: '近隣の町との闘技大会に出るよう周囲から期待されている。', choices: [
+    { label: '大会に出場する', run: S => { eff(S, { health: -5, fame: 10 }); return '激闘の末、英雄として称えられた。'; } },
+    { label: '辞退して観戦する', run: S => { eff(S, { happy: 5, int: 3 }); return '安全に楽しみ、戦術の知識を得た。'; } } ] },
+  { min: 30, max: 44, text: '家を改築することになった。どのような家に住みたい？', choices: [
+    { label: '広大な屋敷にする', run: S => { eff(S, { wealth: -10, fame: 8 }); return '町の人々が羨む豪華な家が完成した。'; } },
+    { label: '仕事場を充実させる', run: S => { eff(S, { int: 5, wealth: 5 }); return '作業効率が上がり、収入が安定した。'; } } ] },
+  { min: 30, max: 44, text: '疎遠だった兄弟が事業の失敗で借金の相談にやってきた。', choices: [
+    { label: '全額肩代わりする', run: S => { eff(S, { wealth: -10, happy: 8 }); return '兄弟の絆を取り戻し、感謝された。'; } },
+    { label: '冷たく断る', run: S => { eff(S, { wealth: 5, charm: -8 }); return '親族との縁は切れたが、生活を守った。'; } } ] },
+  { min: 30, max: 44, text: '旅の途中で捨てられた幼子を見つけた。どう対処する？', choices: [
+    { label: '養子として育てる', run: S => { eff(S, { happy: 10, wealth: -8 }); return '新しい家族が増え、家が賑やかになった。'; } },
+    { label: '施設へ預ける', run: S => { eff(S, { int: 5, charm: -3 }); return '現実的な判断を下し、自分の生活を維持。'; } } ] },
+  { min: 45, max: 59, text: '弟子が独り立ちしたいと言い出した。どう送り出すか。', choices: [
+    { label: '秘伝の技を教える', run: S => { eff(S, { int: -5, fame: 8 }); return '優秀な後継者が育ち、評判が高まった。'; } },
+    { label: '独立を支援する', run: S => { eff(S, { wealth: -8, charm: 10 }); return '慕われる師匠として、人脈が広がった。'; } } ] },
+  { min: 45, max: 59, text: '身体の節々が痛み始めた。日々の習慣をどう変える？', choices: [
+    { label: '厳しい鍛錬を積む', run: S => { eff(S, { health: 8, happy: -5 }); return '強靭な肉体を維持したが、少し疲弊。'; } },
+    { label: '薬草学を学ぶ', run: S => { eff(S, { int: 8, health: 3 }); return '身体の仕組みを知り、健やかに過ごす。'; } } ] },
+  { min: 45, max: 59, text: '老いた親が介助を必要としている。仕事をどう調整する？', choices: [
+    { label: '仕事をセーブする', run: S => { eff(S, { wealth: -8, happy: 10 }); return '親との最期の日々を大切に過ごした。'; } },
+    { label: '使用人を雇う', run: S => { eff(S, { wealth: -10, int: 5 }); return '効率を重視し、仕事と両立させた。'; } } ] },
+  { min: 45, max: 59, text: '長年の功績が認められ、叙勲の儀式に招待された。', choices: [
+    { label: '盛大に参加する', run: S => { eff(S, { fame: 10, wealth: -5 }); return '社交界で注目を浴び、地位を確立した。'; } },
+    { label: '辞退して静かに過ごす', run: S => { eff(S, { happy: 8, charm: 3 }); return '謙虚な姿勢が、かえって好感を得た。'; } } ] },
+  { min: 45, max: 59, text: '子供が伴侶を連れてきた。だが相手の素性が少し怪しい。', choices: [
+    { label: '厳しく問い詰める', run: S => { eff(S, { int: 5, happy: -8 }); return '家族に溝ができたが、危険は回避した。'; } },
+    { label: '温かく歓迎する', run: S => { eff(S, { charm: 8, happy: 5 }); return '信頼関係が築かれ、円満な家庭に。'; } } ] },
+  { min: 45, max: 59, text: '若い冒険者から助言を求められた。経験をどう伝える？', choices: [
+    { label: '厳しく現実を教える', run: S => { eff(S, { int: 5, fame: 3 }); return '若者は引き締まり、事故を未然に防いだ。'; } },
+    { label: '夢を応援する', run: S => { eff(S, { charm: 10, happy: 5 }); return '若者の憧れの的となり、希望を与えた。'; } } ] },
+  { min: 45, max: 59, text: '未開の地の開拓団へのリーダー参加を募っている。', choices: [
+    { label: '団長を引き受ける', run: S => { eff(S, { fame: 10, health: -8 }); return '過酷だが、新天地の父として名を残す。'; } },
+    { label: '資金援助に留める', run: S => { eff(S, { wealth: -8, int: 8 }); return '知恵袋として、町から感謝された。'; } } ] },
+  { min: 60, max: 74, text: '引退の時期が近づいた。後継者を誰に指名する？', choices: [
+    { label: '実子に継がせる', run: S => { eff(S, { wealth: 8, happy: 5 }); return '家業は代々守られることになった。'; } },
+    { label: '最も優秀な弟子に継がせる', run: S => { eff(S, { fame: 10, int: 5 }); return '技術は守られ、業界の発展に寄与した。'; } },
+    { label: '店を畳む', run: S => { eff(S, { happy: 8, wealth: -5 }); return '長い重責から解放され、安らぎを得た。'; } } ] },
+  { min: 60, max: 74, text: '若い頃のライバルと再会した。酒を酌み交わすべきか？', choices: [
+    { label: '昔話に花を咲かせる', run: S => { eff(S, { happy: 10, charm: 5 }); return '過去のわだかまりが消え、最高の友に。'; } },
+    { label: '意地を張り合う', run: S => { eff(S, { int: 5, happy: -5 }); return 'まだまだ負けられないと、気力が湧く。'; } } ] },
+  { min: 60, max: 74, text: '静かな村への移住を検討している。住み慣れた街を離れるか？', choices: [
+    { label: '田舎へ移住する', run: S => { eff(S, { health: 8, wealth: -5 }); return '澄んだ空気の中で、寿命が延びた。'; } },
+    { label: '街に留まる', run: S => { eff(S, { wealth: 5, int: 5 }); return '文化的な生活を続け、最新情報に浸る。'; } } ] },
+  { min: 60, max: 74, text: '長年の夢だった大規模な果樹園作りを始めるか？', choices: [
+    { label: '全財産を投じる', run: S => { eff(S, { wealth: -10, happy: 10 }); return '晩年の夢が叶い、楽園を築いた。'; } },
+    { label: '小規模に始める', run: S => { eff(S, { health: 5, wealth: 3 }); return '適度な運動になり、生活に張りが。'; } } ] },
+  { min: 60, max: 74, text: '孫が兵士になりたいと言い出した。危険な道だがどうする？', choices: [
+    { label: '自ら稽古をつける', run: S => { eff(S, { health: 5, charm: 8 }); return '祖父の威厳を示し、孫に技を伝授。'; } },
+    { label: '反対して学問を勧める', run: S => { eff(S, { int: 10, happy: -5 }); return '孫との衝突はあったが、安全を確保。'; } } ] },
+  { min: 60, max: 74, text: '町の長老会への加入を要請された。調整役を担うか？', choices: [
+    { label: '要請を受ける', run: S => { eff(S, { fame: 10, happy: -5 }); return '争いの仲裁に奔走し、町を支えた。'; } },
+    { label: '悠々自適に暮らす', run: S => { eff(S, { happy: 10, charm: 3 }); return '面倒事を避け、自由な時間を愛した。'; } } ] },
+  { min: 60, max: 74, text: '視力が落ちてきた。これまで読めなかった本をどうする？', choices: [
+    { label: '眼鏡を特注する', run: S => { eff(S, { wealth: -8, int: 10 }); return '新たな世界が広がり、知識欲が満ちる。'; } },
+    { label: '語り部を雇う', run: S => { eff(S, { charm: 8, happy: 5 }); return '物語を聞く贅沢な時間を楽しんだ。'; } } ] },
+  { min: 75, max: 95, text: '自分の人生を記した自叙伝を書こうと思い立った。', choices: [
+    { label: '詳細に執筆する', run: S => { eff(S, { int: 10, fame: 5 }); return '自分の生きた証を後世に残した。'; } },
+    { label: '思い出を家族に語る', run: S => { eff(S, { happy: 10, charm: 5 }); return '家族の絆が深まり、愛に包まれた。'; } } ] },
+  { min: 75, max: 95, text: '自分の持ち物が増えすぎた。家宝などをどう扱う？', choices: [
+    { label: '博物館へ寄贈する', run: S => { eff(S, { fame: 10, wealth: -5 }); return '多くの人の目に触れ、名は永遠に。'; } },
+    { label: '親族で分け合う', run: S => { eff(S, { happy: 8, charm: 5 }); return '子孫たちが家宝を誇りとして守った。'; } } ] },
+  { min: 75, max: 95, text: '若者たちが祭りの運営で揉めている。仲裁に入るか？', choices: [
+    { label: '知恵を貸す', run: S => { eff(S, { int: 8, fame: 5 }); return '老練な判断で、祭りを大成功させた。'; } },
+    { label: '黙って見守る', run: S => { eff(S, { happy: 8, charm: 3 }); return '若者の成長を信じ、静かに微笑んだ。'; } } ] },
+  { min: 75, max: 95, text: '昔住んでいた故郷の村を最後にもう一度訪れたい。', choices: [
+    { label: '無理をしてでも行く', run: S => { eff(S, { health: -8, happy: 10 }); return '懐かしい景色に心が洗われた。'; } },
+    { label: '手紙を出すに留める', run: S => { eff(S, { int: 5, happy: 5 }); return '遠い地から、故郷の平穏を祈った。'; } } ] },
+  { min: 75, max: 95, text: '体力が衰え、一人で歩くのが辛くなった。', choices: [
+    { label: '杖を自作する', run: S => { eff(S, { int: 5, health: 5 }); return '工夫を楽しみ、自立した生活を送る。'; } },
+    { label: '家族の肩を借りる', run: S => { eff(S, { happy: 10, charm: 5 }); return '家族の優しさを肌で感じる日々。'; } } ] },
+  { min: 75, max: 95, text: '庭の手入れを日課にしている。今日は何に注力する？', choices: [
+    { label: '大樹を植える', run: S => { eff(S, { happy: 8, health: 5 }); return '未来へ繋がる希望を植えた。'; } },
+    { label: '枯れ葉を拾う', run: S => { eff(S, { int: 5, happy: 5 }); return '整理整頓された庭に、心が整った。'; } } ] },
+  { min: 75, max: 95, text: '遺産をどう分配するか。遺言書を書くことにした。', choices: [
+    { label: '公平に分ける', run: S => { eff(S, { happy: 10, charm: 5 }); return '争いもなく、家族は円満に暮らした。'; } },
+    { label: '慈善活動へ寄付する', run: S => { eff(S, { fame: 10, wealth: -10 }); return '多くの困窮者を救い、聖人と称えられた。'; } } ] },
+  { min: 75, max: 95, text: '晴れた午後、丘の上から町を眺める。何を思う？', choices: [
+    { label: '過去の栄光を偲ぶ', run: S => { eff(S, { fame: 5, happy: 8 }); return '誇らしい人生だったと深く頷いた。'; } },
+    { label: 'これからの若者を祈る', run: S => { eff(S, { charm: 8, happy: 10 }); return '満足感の中で、穏やかな時を過ごした。'; } } ] },
+  { min: 15, max: 60, when: S => S.birth.race.name === '人間', text: '王都の広場で怪しげな商人が未知のからくり道具を売っている。', choices: [
+    { label: '値切って買う', run: S => { eff(S, { wealth: -5, int: 8 }); return '掘り出し物のからくり道具だった。'; } },
+    { label: '無視する', run: S => { eff(S, { happy: 3 }); return '無駄遣いせずに済んだ。'; } } ] },
+  { min: 10, max: 30, when: S => S.birth.race.name === '人間', text: '冒険者ギルドで、新米向けの簡単な依頼を見つけた。', choices: [
+    { label: '薬草採取', run: S => { eff(S, { health: 5, wealth: 5 }); return '地道に働き報酬を得た。'; } },
+    { label: '魔物討伐', run: S => { eff(S, { fame: 7, health: -5 }); return '怪我をしたが武功を立てた。'; } } ] },
+  { min: 100, max: 300, when: S => S.birth.race.name === 'エルフ', text: '森の古樹が枯れ始めている。森の恵みが弱まっているようだ。', choices: [
+    { label: '歌を捧げる', run: S => { eff(S, { charm: 8, happy: 5 }); return '木々が息を吹き返し感謝された。'; } },
+    { label: '魔力を注ぐ', run: S => { eff(S, { int: 10, health: -5 }); return '古樹を救うが激しく消耗した。'; } } ] },
+  { min: 50, max: 150, when: S => S.birth.race.name === 'エルフ', text: '弓術の修行中、風の精霊が矢を惑わせようとしてくる。', choices: [
+    { label: '風を読み射抜く', run: S => { eff(S, { int: 7, fame: 5 }); return '見事な命中精度に称賛を浴びる。'; } },
+    { label: '風と一体になる', run: S => { eff(S, { health: 6, charm: 6 }); return '優雅な身のこなしを身につけた。'; } } ] },
+  { min: 30, max: 80, when: S => S.birth.race.name === 'ドワーフ', text: '鉱山で伝説の金属「ミスリル」の原石を発見した。', choices: [
+    { label: '最高級の剣を打つ', run: S => { eff(S, { fame: 10, wealth: 5 }); return '鍛冶師として名を馳せた。'; } },
+    { label: 'そのまま売却する', run: S => { eff(S, { wealth: 10, happy: -3 }); return '大金を得たが職人の誇りが痛む。'; } } ] },
+  { min: 20, max: 100, when: S => S.birth.race.name === 'ドワーフ', text: '酒場で他種族と飲み比べをすることになった。', choices: [
+    { label: '一気に飲み干す', run: S => { eff(S, { health: -5, fame: 8 }); return '豪快な飲みっぷりで喝采を得た。'; } },
+    { label: '熟成度を語る', run: S => { eff(S, { int: 7, charm: 5 }); return '酒の知識で周囲を感服させた。'; } } ] },
+  { min: 5, max: 20, when: S => S.birth.race.name === '獣人', text: '嗅覚が鋭くなり、遠くから漂う珍しい獲物の匂いを察知した。', choices: [
+    { label: '全速力で追う', run: S => { eff(S, { health: 10, wealth: 3 }); return '見事な狩りで獲物を仕留めた。'; } },
+    { label: '罠を仕掛ける', run: S => { eff(S, { int: 8, happy: 4 }); return '効率的に捕らえ、晩餐を楽しんだ。'; } } ] },
+  { min: 15, max: 40, when: S => S.birth.race.name === '獣人', text: '満月の夜、本能が昂ぶり野生の血が騒ぎだす。', choices: [
+    { label: '月夜に咆哮する', run: S => { eff(S, { fame: 6, happy: 6 }); return '誇り高き姿が仲間に認められた。'; } },
+    { label: '瞑想して抑える', run: S => { eff(S, { int: 9, charm: 4 }); return '強靭な精神力と冷静さを得た。'; } } ] },
+  { min: 20, max: 200, when: S => S.birth.race.name === '魔族', text: '禁忌の魔導書を手に入れた。強大な闇の力が秘められている。', choices: [
+    { label: '力を解明する', run: S => { eff(S, { int: 10, fame: 5 }); return '深淵の魔術を修得し恐れられた。'; } },
+    { label: '力を吸収する', run: S => { eff(S, { health: 8, charm: -5 }); return '身体能力は増したが禍々しくなる。'; } } ] },
+  { min: 100, max: 500, when: S => S.birth.race.name === '魔族', text: '領地の魔物たちが暴動を起こそうとしている。', choices: [
+    { label: '力で屈服させる', run: S => { eff(S, { fame: 8, health: -4 }); return '恐怖による支配で静まり返った。'; } },
+    { label: '契約を提示する', run: S => { eff(S, { int: 7, wealth: 6 }); return '合理的な統治で秩序を保った。'; } } ] },
+  { min: 10, max: 50, when: S => S.birth.race.name === '天使の末裔', text: '背中の翼が成長し、より高く飛べるようになった。', choices: [
+    { label: '空の果てを目指す', run: S => { eff(S, { health: 7, happy: 8 }); return '未知の絶景を見て心が洗われた。'; } },
+    { label: '人々を救う', run: S => { eff(S, { fame: 10, charm: 5 }); return '空飛ぶ救済者として崇められた。'; } } ] },
+  { min: 15, max: 60, when: S => S.birth.race.name === '天使の末裔', text: '古代神殿で先祖の声が聞こえた。試練が与えられる。', choices: [
+    { label: '浄化の光を放つ', run: S => { eff(S, { int: 8, health: -3 }); return '邪悪な気を払い聖域を守った。'; } },
+    { label: '祈りを捧げる', run: S => { eff(S, { charm: 9, happy: 6 }); return '神聖な加護を得て輝きを増した。'; } } ] },
+  { min: 50, max: 400, when: S => S.birth.race.name === '吸血鬼', text: '強い血の渇きに襲われたが、今夜は美しい貴族の宴がある。', choices: [
+    { label: '密かに血を啜る', run: S => { eff(S, { health: 10, fame: -6 }); return '活力を得たが噂が広まってしまう。'; } },
+    { label: '気高く振る舞う', run: S => { eff(S, { charm: 10, int: 5 }); return '渇きに耐え、社交界の華となる。'; } } ] },
+  { min: 100, max: 800, when: S => S.birth.race.name === '吸血鬼', text: '長い眠りから目覚めると、城の財宝が盗まれていた。', choices: [
+    { label: '犯人を追いつめる', run: S => { eff(S, { fame: 7, wealth: 5 }); return '威厳を示し、財宝を取り戻した。'; } },
+    { label: '新たな魔術を編む', run: S => { eff(S, { int: 10, health: -4 }); return '喪失を糧に新たな術を開発した。'; } } ] },
+  { min: 1, max: 100, when: S => S.birth.race.name === '妖精', text: '花畑で迷い込んだ旅人をからかって遊ぶことにした。', choices: [
+    { label: '幻影で見惑わす', run: S => { eff(S, { int: 7, happy: 8 }); return '旅人の反応を見て大笑いした。'; } },
+    { label: '道案内をしてやる', run: S => { eff(S, { charm: 6, fame: 4 }); return '感謝され、良い噂が広まった。'; } } ] },
+  { min: 10, max: 150, when: S => S.birth.race.name === '妖精', text: '希少な「虹のしずく」を花びらの上で見つけた。', choices: [
+    { label: '自分で飲み干す', run: S => { eff(S, { health: 10, charm: 5 }); return '体が宝石のように輝きだした。'; } },
+    { label: '友だちに分ける', run: S => { eff(S, { happy: 10, fame: 5 }); return '絆が深まり、幸せに包まれた。'; } } ] },
+  { min: 20, max: 100, when: S => S.birth.race.name === '竜人', text: '体を覆う鱗が硬くなり、古龍の威厳が出てきた。', choices: [
+    { label: '武闘大会に出る', run: S => { eff(S, { fame: 10, wealth: 5 }); return '圧倒的な防御力で優勝した。'; } },
+    { label: '溶岩地帯で修行', run: S => { eff(S, { health: 9, int: 4 }); return '過酷な環境に耐え、心身を鍛えた。'; } } ] },
+  { min: 50, max: 300, when: S => S.birth.race.name === '竜人', text: '財宝を溜め込む習性が強まり、光るものを欲している。', choices: [
+    { label: '迷宮を探索する', run: S => { eff(S, { wealth: 10, health: -5 }); return '数多の罠を越え、金銀を得た。'; } },
+    { label: '宝飾品を自作する', run: S => { eff(S, { int: 8, charm: 6 }); return '竜の眼識で至高の逸品を作った。'; } } ] },
+  { min: 3, max: 15, when: S => S.birth.race.name === 'ゴブリン', text: '村の近くで豪華な馬車が泥濘にはまっている。', choices: [
+    { label: '一斉に襲いかかる', run: S => { eff(S, { wealth: 10, fame: -7 }); return '略奪に成功し、村が潤った。'; } },
+    { label: '手伝って恩を売る', run: S => { eff(S, { charm: 8, int: 5 }); return '意外な親切心に金貨を貰った。'; } } ] },
+  { min: 5, max: 20, when: S => S.birth.race.name === 'ゴブリン', text: '廃坑で見つけたガラクタを組み合わせて何か作れそうだ。', choices: [
+    { label: '兵器を作る', run: S => { eff(S, { fame: 7, int: 6 }); return '奇想天外な武器で周囲を驚かせた。'; } },
+    { label: '罠を作る', run: S => { eff(S, { health: 5, wealth: 6 }); return '狩りの効率が劇的に上がった。'; } } ] },
+  { min: 1, max: 50, when: S => S.birth.race.name === 'スライム', text: '薬草が群生している池を見つけた。体が薬草を欲している。', choices: [
+    { label: '丸ごと飲み込む', run: S => { eff(S, { health: 10, int: 3 }); return '成分を吸収し、緑色に変色した。'; } },
+    { label: '溶剤として加工する', run: S => { eff(S, { int: 9, wealth: 5 }); return '特製のポーションを生成した。'; } } ] },
+  { min: 5, max: 100, when: S => S.birth.race.name === 'スライム', text: '強い衝撃を受け、体が二つに分裂してしまった。', choices: [
+    { label: '別々に作業する', run: S => { eff(S, { int: 8, happy: 6 }); return '二身一体の動きで作業が捗った。'; } },
+    { label: 'すぐに融合する', run: S => { eff(S, { health: 7, charm: 6 }); return 'より大きく、艶やかな体に戻った。'; } } ] },
 ];
 EVENTS.push(
   { min: 12, max: 50, when: S => S.birth.anomaly && S.birth.anomaly.kind === 'soleMage', text: S => `魔法を使うところを、${S.npc}に目撃されてしまった。この世界で魔法は「存在しないもの」だ。`,
@@ -715,19 +964,19 @@ const AMBIENT = {
   '幼少期': [
     '近所の子と秘密基地を作った', '初めてのおつかいをやり遂げた', '高い熱を出して三日寝込んだ',
     '拾った子犬と仲良くなった', 'お祭りの太鼓の音に夢中になった', '転んで膝をすりむいたが、泣かなかった',
-    '親に連れられて初めて街へ出た', '字を覚えて、看板が読めるようになった'],
+    '親に連れられて初めて街へ出た', '字を覚えて、看板が読めるようになった', '陽だまりで昼寝をしていたら、大きな犬に顔を舐められた。', '裏山の小川で、透き通った青い石を拾って宝物にした。', 'お祭りの夜、父の背中越しに見上げた星空が綺麗だった。', '冬の朝、窓に張り付いた氷の模様を指でなぞって遊んだ。', '母に教わりながら、初めて自分の名前を紙に書いた。', '近所の子と秘密基地を作り、夕暮れまで泥だらけで遊んだ。', '市場で買った甘い菓子を、一口ずつ大切に食べた。', '木登りに失敗して服を破き、こっぴどく叱られた。', '野原に咲く名もなき花を摘み、冠を作って鏡を見た。', '旅の商人が語る異国の話に、胸を高鳴らせて耳を傾けた。', '雨上がりの大きな水たまりを、勢いよく飛び越えた。', '大好きな絵本の続きが気になり、夜更かしを覚えた。', '迷子の仔猫を家に連れ帰り、一緒に眠るようになった。', '夏の強い日差しの中、冷たい井戸水で顔を洗った。', '収穫祭の踊りの輪に混ざり、夢中でステップを踏んだ。'],
   '青年期': [
     '夜明けまで語り合う友ができた', '初めての失恋をした', '腕試しの大会でそこそこ勝てた',
     '旅の商人から遠い国の話を聞いた', '稽古に明け暮れた季節だった', '小さな恋が芽生えた',
-    '酒場で喧嘩を仲裁して一目置かれた', '手紙を書いた。返事はまだ来ない'],
+    '酒場で喧嘩を仲裁して一目置かれた', '手紙を書いた。返事はまだ来ない', '見習いとして働き始め、手のひらに硬い豆ができた。', '初めての給金で、家族にささやかな贈り物を買った。', '隣町まで遠出し、見たこともない珍しい果物を食べた。', '気まぐれな雨に降られ、軒下で異性と肩を並べて雨宿りした。', '剣の稽古に明け暮れ、夕焼けに向かって素振りを繰り返した。', '深夜の書庫で、古びた地図を広げて冒険を夢見た。', '友人と将来を語り合いながら、焚き火を囲んで朝を迎えた。', '道端に落ちていた壊れた道具を、独学で修理してみた。', '憧れの人の視線が気になり、何度も髪型を整えた。', '初めて馬に乗り、風を切る速さに言葉を失った。', '都会の賑わいに圧倒されつつも、新しい靴で街を歩いた。', '恩師から古い万年筆を譲り受け、背筋が伸びる思いがした。', '祭りの喧騒から離れ、湖畔で一人、静かに笛を吹いた。', '仕事で大きな失敗をしたが、仲間の励ましに救われた。', '旅立ちを決意し、慣れ親しんだ故郷の景色を胸に刻んだ。'],
   '壮年期': [
     '仕事が軌道に乗り、忙しい日々が続く', '懐かしい友と再会し、酒を酌み交わした', '小さな家を建てた（気分だけ）',
     '部下や弟子が育ってきた', '体の疲れが抜けにくくなってきた', '故郷の祭りに顔を出した',
-    '思いがけない臨時収入があった', '静かな幸福を噛みしめる日々'],
+    '思いがけない臨時収入があった', '静かな幸福を噛みしめる日々', '小さな店を構え、看板を掲げた日の喜びは忘れられない。', '愛する人と手を取り合い、新しい生活を静かに始めた。', '夜泣きする我が子を抱き、夜が明けるまであやし続けた。', '畑を耕し、実った野菜を近所の人に配って回った。', '長年の修業が実を結び、職人として認められるようになった。', '家を修理し、雨漏りを直した後の食事は格別に美味かった。', '数年ぶりに再会した旧友と、酒を酌み交わして昔を懐かしんだ。', '仕事帰りに見上げる三日月が、心を穏やかにしてくれた。', '自分の知識を若者に教え、成長する姿に目を細めた。', '庭に植えた小さな苗木が、いつの間にか屋根の高さを越えた。', '重い荷物を運ぶ毎日だが、家族の笑顔が何よりの薬だった。', '冬に備えて薪を割り、積み上がった山を見て満足した。', '町の評議会に呼ばれ、地域の将来について意見を述べた。', '嵐の夜、家族全員で寄り添い、無事に過ぎ去るのを待った。', '久しぶりの休日に、夫婦で静かな森を散策した。'],
   '老年期': [
     '庭いじりが日課になった', '孫のような若者たちに昔話を聞かせた', '古い友の訃報が届いた',
     '穏やかな秋の日々', '若い頃の夢を思い出して笑った', '体は重いが、心は軽い',
-    '最後の旅に出たい気持ちが芽生えた', '静寂の中で本を読んだ'],
+    '最後の旅に出たい気持ちが芽生えた', '静寂の中で本を読んだ', '隠居を決め、愛用の道具を一番弟子に託した。', '縁側に座り、茶を飲みながら行き交う人々を眺めた。', '孫の小さな手を握り、昔語りを聞かせて過ごした。', '朝の散歩中、道端に咲く季節の花に心が和んだ。', '長年連れ添った伴侶と、言葉はなくとも通じ合う。', '記憶の中にある景色を、震える手でスケッチに残した。', '暖かい陽気に誘われ、昼寝が長くなることが増えた。', '若者が困っているのを見かけ、さりげなく助言を授けた。', '古ぼけた日記を読み返し、激動の日々に想いを馳せた。', '耳が少し遠くなったが、鳥のさえずりはよく聞こえる。', '春の訪れを告げる風を感じ、深い吐息をついた。', '疎遠だった知人から手紙が届き、一晩かけて返事を書いた。', '自分の人生を振り返り、すべてが良い思い出だと感じた。', '夜空を見上げ、次はあの中のどの星に行くかを考えた。', '静かな雪の夜、暖炉の火を見つめながら目を閉じた。'],
 };
 const ORPHAN_CHILD = [
   '路地の段ボールで雨をしのいだ', '市場の隅で残り物のパンを分けてもらった', '野良犬と寝床を分け合った',
