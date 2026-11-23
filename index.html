@@ -113,6 +113,7 @@
     <div class="birth" id="birthInfo"></div>
     <div style="text-align:center;margin-top:8px">
       <canvas id="avatarCv" width="16" height="16" style="width:112px;height:112px;image-rendering:pixelated;background:linear-gradient(#1b1440,#0d0a24);border:1px solid #3a2f7a;border-radius:10px"></canvas>
+      <div id="peersView" style="font-size:11.5px;color:#a79fd0;margin-top:6px;line-height:1.7"></div>
       <div id="avatarCap" style="font-size:11px;color:#a79fd0;margin-top:4px"></div>
     </div>
   </div>
@@ -142,6 +143,23 @@
   <div id="chronicle" style="max-height:320px;overflow-y:auto;background:#100d24;border:1px solid #2c2560;border-radius:10px;padding:10px"></div>
 </div>
 
+<h2>⚙️ 設定</h2>
+  <div class="panel" style="font-size:13px;line-height:2">
+    <button class="sub2" id="btnGentle">🌿 怖い場面を除く: OFF</button>
+    <button class="sub2" id="btnAutoMode">🤖 おまかせ（選択を自動）: OFF</button>
+    <div style="color:#a79fd0;font-size:12px">キーボード: スペース=一時停止／再開、1=×1、2=×4、3=×16、4=×64</div>
+  </div>
+  <h2>❓ 転生ライフについて</h2>
+  <div class="panel" style="font-size:13px;line-height:1.9;text-align:left">
+    <details><summary><b>転生ライフとは何ですか？</b></summary>異世界にランダムに転生して、一人の一生を最初から最後まで生きる人生シミュレーションです。どの世界に、どの種族の、どんな家柄の子として生まれるかは選べません。その代わり、同じ人生は二度とありません。</details>
+    <details><summary><b>生まれる世界や種族はどう決まりますか？</b></summary>世界の魔力・技術・情勢と、種族・家柄・才能を抽選で決めます。確率は転生の発表でそのつど表示します。魔力のない世界に魔族は生まれないなど、世界のルールが出生を縛ります。ごく稀に、ルールを破る「特異点」の出生もあります。</details>
+    <details><summary><b>人生はどう進みますか？</b></summary>時間は自動で流れ、速度を変えられます。大事な出来事では時間が止まり、選択を迫られます。選択はステータスだけでなく、その後の出来事や称号、死に方にまで影響します。5歳・15歳・30歳・50歳・70歳には節目の問いも来ます。眺めるだけにしたいときは「おまかせ」をどうぞ。</details>
+    <details><summary><b>一つの人生にどれくらいかかりますか？</b></summary>寿命しだいです。人間なら×1で数分、×64なら数十秒。エルフや吸血鬼の何百年という人生もあります。閉じても、同じブラウザで続きから生きられます。</details>
+    <details><summary><b>無料ですか？</b></summary>最初から最後まで無料です。登録も広告もなく、課金で人生が変わることもありません。</details>
+    <details><summary><b>記録はどこに残りますか？</b></summary>この端末のブラウザにだけ保存され、サーバーには送りません。「記録の管理」から書き出して、別の端末へ移すこともできます。</details>
+    <details><summary><b>配信や動画にしてもいいですか？</b></summary>はい、自由にどうぞ。出典に「転生ライフ」と書いていただけるとうれしいです。</details>
+    <details><summary><b>誰がつくっていますか？</b></summary>田邉雄次のもとで、AIアシスタント「のんちゃん」が設計・実装しています。数字や確率はフィクションで、実在の統計ではありません。</details>
+  </div>
 <h2>💾 記録の管理</h2>
   <div class="panel" style="font-size:12.5px;line-height:1.9">
     記録はこの端末のブラウザにだけ保存されます（サーバーには送りません）。端末を変えるときは書き出して移せます。<br>
@@ -614,6 +632,7 @@ function showReveal() {
 // ---------- game state ----------
 let SAVE = { toku: 0, lives: [] };
 try { const s = localStorage.getItem('tensei-life'); if (s) SAVE = JSON.parse(s); } catch (e) {}
+SAVE.settings = SAVE.settings || { gentle: false, auto: false };
 function persist() { try { localStorage.setItem('tensei-life', JSON.stringify(SAVE)); } catch (e) {} }
 let G = null;
 
@@ -624,7 +643,7 @@ function startLife() {
   const birth = genBirth(world, SAVE.toku);
   G = { world, birth, age: 0, stats: birth.stats, lifeSpan: birth.lifeSpan, flags: {},
         place: genPlace(), org: genName() + pick(['学院', '商会', '騎士団', 'ギルド']),
-        npc: genName(), npc2: genName(), usedEvents: new Set(), chronicle: [] };
+        npc: genName(), npc2: genName(), usedEvents: new Set(), chronicle: [], milestonesDone: new Set(), peers: [0, 1, 2].map(() => { const pr = pick(RACES.filter(r => raceAllowed(r, world))); return { name: genName(), race: pr.name, lifeSpan: RI(pr.life[0], pr.life[1]), dead: false }; }) };
   el('startPanel').classList.add('hidden');
   el('gamePanel').classList.remove('hidden');
   el('death').style.display = 'none';
@@ -670,6 +689,11 @@ const ORPHAN_CHILD = [
   '捨てられていた道具を拾って直した', '誰にも気づかれず、誕生日が過ぎた'];
 function yearPassage() {
   saveRun();
+  if (G.peers) for (const p of G.peers) {
+    if (p.dead) continue;
+    if (G.age > p.lifeSpan) { p.dead = true; log(Math.floor(G.age), '同じ日に生まれた' + p.name + '（' + p.race + '）が ' + Math.floor(p.lifeSpan) + '歳で亡くなった。'); }
+    else if (Math.random() < 0.10) log(Math.floor(G.age), pick(['同じ日に生まれた' + p.name + 'は元気に暮らしているらしい', p.name + 'の活躍が噂に聞こえてきた', p.name + 'とは一度も会わないまま、時だけが過ぎていく']));
+  }
   const age = Math.floor(G.age);
   const phase = phaseOf(age, G.lifeSpan);
   let pool = AMBIENT[phase];
@@ -708,6 +732,8 @@ function tickInner() {
   // aging pressure after 70% of lifespan
   if (G.age > G.lifeSpan * 0.7 && Math.random() < 0.1) G.stats.health = clamp(G.stats.health - 1);
   renderClock();
+  const msAge = [5, 15, 30, 50, 70].find(a => G.age >= a && !(G.milestonesDone || new Set()).has(a) && a < G.lifeSpan);
+  if (msAge !== undefined) { G.milestonesDone.add(msAge); G.paused = true; renderClock(); log(msAge, '【節目】' + msAge + '歳の問い'); showBigEvent(MILESTONES[msAge], MILESTONES[msAge].text, msAge); return; }
   if (G.age >= G.nextEventAge) { presentEvent(); return; }
   // death check (evaluated as time passes)
   const over = G.age >= G.lifeSpan;
@@ -721,6 +747,8 @@ function renderClock() {
   el('seasonView').textContent = SEASONS[Math.floor((G.age % 1) * 4) % 4];
   el('yearBar').style.width = ((G.age % 1) * 100).toFixed(1) + '%';
   el('dayView').textContent = '人生 ' + Math.floor(G.age * 365).toLocaleString() + ' 日目';
+  const pv = el('peersView');
+  if (pv && G.peers) pv.innerHTML = '👥 同じ日に生まれた者たち: ' + G.peers.map(p => p.dead ? '<s>' + p.name + '（' + p.race + '）</s>' : p.name + '（' + p.race + '）').join('、');
   const stuck = G.paused && !G.dead && !G.eventOpen && !G.revealOpen;
   el('btnRescue').classList.toggle('hidden', !stuck);
   const ph = phaseOf(Math.floor(G.age), G.lifeSpan);
@@ -731,12 +759,37 @@ function renderClock() {
   });
   renderStats();
 }
+const MILESTONES = {
+  5: { text: '5歳になった。物心がつき、世界が広がり始める。これからどんな人になりたい？', choices: [
+    { label: '元気いっぱいに育つ', run: S => { eff(S, { health: 6, happy: 4 }); return '体も心も、すくすくと。'; } },
+    { label: '本と知識に夢中になる', run: S => { eff(S, { int: 7 }); return '小さな賢者の芽が出た。'; } },
+    { label: '友だちをたくさんつくる', run: S => { eff(S, { charm: 6, happy: 3 }); return '笑い声の中心にいる子どもだった。'; } } ] },
+  15: { text: '15歳。大人の入り口に立った。自分の人生を、自分で選び始める歳だ。', choices: [
+    { label: '夢を追うと決める', run: S => { eff(S, { happy: 5, fame: 3 }); return '瞳に火が灯った。'; } },
+    { label: '現実を見据える', run: S => { eff(S, { int: 5, wealth: 3 }); return '地に足のついた一歩だ。'; } },
+    { label: '流れに身を任せる', run: S => { eff(S, { happy: 6 }); return 'なるようになる。それも人生だ。'; } } ] },
+  30: { text: '30歳になった。人生の前半戦を振り返って、今の自分をどう思う？', choices: [
+    { label: 'まだまだこれからだ', run: S => { eff(S, { health: 4, happy: 5 }); return '意気軒昂。脂が乗ってきた。'; } },
+    { label: '方向転換も悪くない', run: S => { eff(S, { int: 4, charm: 3 }); return '変わる勇気も力のうち。'; } },
+    { label: '今の幸せを守りたい', run: S => { eff(S, { happy: 7 }); return '守るべきものがある人生は強い。'; } } ] },
+  50: { text: '50歳。人生の折り返しを過ぎた。残りの時間を、何に使いたい？', choices: [
+    { label: '成し遂げたいことがある', run: S => { eff(S, { fame: 5, int: 3 }); return '円熟の力を見せるときだ。'; } },
+    { label: '穏やかに生きたい', run: S => { eff(S, { happy: 8, health: 3 }); return '静けさの価値がわかる歳になった。'; } },
+    { label: '若い者を育てたい', run: S => { eff(S, { charm: 5, fame: 3 }); return '受け継ぐ者がいる幸せ。'; } } ] },
+  70: { text: '70歳を迎えた。長い道のりだった。自分の人生に、今どんな言葉をかけたい？', choices: [
+    { label: 'よくやってきた', run: S => { eff(S, { happy: 9 }); return '自分を誇れる老後は、何よりの宝だ。'; } },
+    { label: 'まだ終わらんよ', run: S => { eff(S, { health: 5, fame: 4 }); return '老いてますます盛ん。周囲が驚いている。'; } },
+    { label: 'ありがとう、と', run: S => { eff(S, { happy: 10 }); return '感謝の言葉が自然と出た。いい人生だ。'; } } ] },
+};
+
 function presentEvent() {
   G.paused = true; renderClock();
   const age = Math.floor(G.age);
   const pool = EVENTS.map((e, i) => [e, i]).filter(([e, i]) => !G.usedEvents.has(i) && age >= e.min && age <= e.max && (!e.when || e.when(G)));
+  const poolF = SAVE.settings.gentle ? pool.filter(([e]) => { const t = typeof e.text === 'function' ? '' : e.text; const src = (e.when ? e.when.toString() : '') + t; return !/war === 2|疫病|革命|渇き/.test(src); }) : pool;
+  const poolUse = poolF.length ? poolF : pool;
   let ev;
-  if (pool.length && Math.random() < 0.82) { const [e, i] = pick(pool); ev = e; G.usedEvents.add(i); }
+  if (poolUse.length && Math.random() < 0.82) { const [e, i] = pick(poolUse); ev = e; G.usedEvents.add(i); }
   else ev = pick(FILLERS);
   const text = typeof ev.text === 'function' ? ev.text(G) : ev.text;
   showBigEvent(ev, text, age);
@@ -763,6 +816,16 @@ function showBigEvent(ev, text, age) {
     box.appendChild(b);
   });
   el('bigEvent').style.display = 'block'; G.eventOpen = true;
+  if (SAVE.settings.auto && !G.dead) {
+    clearTimeout(G._autoT);
+    G._autoT = setTimeout(() => {
+      const btns = el('bigEventChoices').children;
+      if (btns.length && el('bigEvent').style.display === 'block') {
+        btns[Math.floor(Math.random() * btns.length)].click();
+        setTimeout(() => { if (el('bigEvent').style.display === 'block' && !el('btnBigClose').classList.contains('hidden')) el('btnBigClose').click(); }, 1600);
+      }
+    }, 2600);
+  }
 }
 el('btnBigClose').addEventListener('click', () => {
   el('bigEvent').style.display = 'none';
@@ -878,7 +941,7 @@ const RUN_KEY = 'tensei-life-run-v1';
 function saveRun() {
   if (!G || G.dead || G.revealOpen) return;
   try {
-    const data = { ...G, usedEvents: [...G.usedEvents], eventOpen: false, revealOpen: false, paused: true,
+    const data = { ...G, usedEvents: [...G.usedEvents], milestonesDone: [...(G.milestonesDone || [])], eventOpen: false, revealOpen: false, paused: true,
       birthRaw: { ...G.birth, race: undefined, fam: undefined }, birthRace: G.birth.race.name, birthFam: G.birth.fam.name };
     delete data.birth;
     localStorage.setItem(RUN_KEY, JSON.stringify(data));
@@ -891,7 +954,7 @@ function loadRun() {
 function restoreRun(d) {
   const race = RACES.find(r => r.name === d.birthRace) || RACES[0];
   const fam = FAMILIES.find(f => f.name === d.birthFam) || FAMILIES[0];
-  G = { ...d, birth: { ...d.birthRaw, race, fam }, usedEvents: new Set(d.usedEvents || []), paused: true, dead: false, eventOpen: false, revealOpen: false };
+  G = { ...d, birth: { ...d.birthRaw, race, fam }, usedEvents: new Set(d.usedEvents || []), milestonesDone: new Set(d.milestonesDone || []), paused: true, dead: false, eventOpen: false, revealOpen: false };
   el('startPanel').classList.add('hidden');
   el('gamePanel').classList.remove('hidden');
   el('worldName').textContent = G.world.name;
@@ -967,6 +1030,20 @@ el('fileImport').addEventListener('change', ev => {
   });
 });
 
+function syncSettings() {
+  SAVE.settings = SAVE.settings || { gentle: false, auto: false };
+  el('btnGentle').textContent = '🌿 怖い場面を除く: ' + (SAVE.settings.gentle ? 'ON' : 'OFF');
+  el('btnAutoMode').textContent = '🤖 おまかせ（選択を自動）: ' + (SAVE.settings.auto ? 'ON' : 'OFF');
+}
+el('btnGentle').addEventListener('click', () => { SAVE.settings.gentle = !SAVE.settings.gentle; saveSave(); syncSettings(); });
+el('btnAutoMode').addEventListener('click', () => { SAVE.settings.auto = !SAVE.settings.auto; saveSave(); syncSettings(); });
+syncSettings();
+document.addEventListener('keydown', e => {
+  if (!G || G.dead || el('gamePanel').classList.contains('hidden')) return;
+  if (e.code === 'Space') { e.preventDefault(); if (!G.eventOpen && !G.revealOpen) { G.paused = !G.paused; renderClock(); } }
+  const speeds = { Digit1: 1, Digit2: 4, Digit3: 16, Digit4: 64 };
+  if (speeds[e.code] !== undefined) { G.speed = speeds[e.code]; G.paused = false; renderClock(); }
+});
 renderLives();
 if (loadRun()) el('btnContinue').classList.remove('hidden');
 el('btnContinue').addEventListener('click', () => { const d = loadRun(); if (d) restoreRun(d); });
