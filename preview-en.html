@@ -1,0 +1,1487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>You Can't Choose Your Next Life (Sample) | No two lives are ever the same</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html { scroll-behavior: smooth; }
+  body {
+    color: #ece9f7; font-family: "Hiragino Sans", "Noto Sans JP", sans-serif; min-height: 100vh;
+    padding: 20px 14px 34px; max-width: 560px; margin: 0 auto; position: relative; overflow-x: hidden;
+    background: linear-gradient(180deg, #0a0718 0%, #060412 100%);
+  }
+  body::before {
+    content: ""; position: fixed; inset: -40%; z-index: -1; pointer-events: none;
+    background:
+      radial-gradient(600px 300px at 20% 15%, rgba(126,57,194,.28), transparent 65%),
+      radial-gradient(700px 340px at 85% 30%, rgba(25,118,210,.20), transparent 65%),
+      radial-gradient(500px 260px at 55% 85%, rgba(183,28,28,.14), transparent 65%),
+      radial-gradient(1.5px 1.5px at 12% 22%, #ffffffcc, transparent),
+      radial-gradient(1px 1px at 82% 12%, #ffffff99, transparent),
+      radial-gradient(1.5px 1.5px at 64% 38%, #ffffffb3, transparent),
+      radial-gradient(1px 1px at 28% 64%, #ffffff80, transparent),
+      radial-gradient(1px 1px at 90% 74%, #ffffff99, transparent);
+    animation: nebula 26s ease-in-out infinite alternate;
+  }
+  @keyframes nebula { from { transform: translate3d(-2%, -1%, 0) scale(1); } to { transform: translate3d(2%, 2%, 0) scale(1.06); } }
+  h1 { font-size: 24px; text-align: center; letter-spacing: 6px; font-weight: 900; font-family: "Hiragino Mincho ProN", "Yu Mincho", serif;
+       background: linear-gradient(90deg, #ce93d8, #ffd54f, #fff59d, #ffd54f, #ce93d8); background-size: 200% 100%;
+       -webkit-background-clip: text; background-clip: text; color: transparent;
+       animation: shineText 6s linear infinite; filter: drop-shadow(0 2px 12px rgba(255,213,79,.25)); }
+  @keyframes shineText { from { background-position: 0% 0; } to { background-position: 200% 0; } }
+  .sub { text-align: center; color: #9d94c9; font-size: 12px; margin: 6px 0 16px; line-height: 1.8; letter-spacing: 1px; }
+  .panel {
+    position: relative;
+    background: linear-gradient(165deg, rgba(38,30,78,.92), rgba(16,13,34,.95));
+    border: 1px solid rgba(179,157,217,.35); border-radius: 18px; padding: 15px; margin-bottom: 14px;
+    box-shadow: 0 14px 34px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.08), inset 0 0 24px rgba(126,87,194,.08);
+    backdrop-filter: blur(8px);
+    animation: panelIn .55s cubic-bezier(.22,.9,.28,1) both;
+  }
+  .panel::before, .panel::after { content: "✦"; position: absolute; color: rgba(255,213,79,.55); font-size: 11px; }
+  .panel::before { top: 6px; left: 9px; }
+  .panel::after { bottom: 6px; right: 9px; }
+  @keyframes panelIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+  .world-name { font-size: 17px; font-weight: bold; color: #ffd54f; text-align: center; letter-spacing: 2px; font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; text-shadow: 0 0 14px rgba(255,213,79,.35); }
+  .world-params { font-size: 12px; color: #a79fd0; text-align: center; margin-top: 5px; line-height: 1.8; }
+  .birth { font-size: 14px; line-height: 1.9; text-align: center; }
+  .birth b { color: #ce93d8; }
+  .stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; font-size: 12px; }
+  .stat { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.05); border-radius: 10px; padding: 7px 8px; }
+  .stat .bar { background: #1d1742; border-radius: 5px; height: 7px; margin-top: 5px; overflow: hidden; }
+  .stat .fill { background: linear-gradient(90deg, #7e57c2, #ba68c8, #ffd54f); background-size: 120px 100%; height: 7px; border-radius: 5px; transition: width .6s cubic-bezier(.22,.9,.28,1); box-shadow: 0 0 8px rgba(186,104,200,.5); }
+  .age-line { text-align: center; font-size: 15px; margin-bottom: 8px; }
+  .age-line b { color: #ffd54f; font-size: 23px; font-variant-numeric: tabular-nums; text-shadow: 0 0 16px rgba(255,213,79,.45); font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; }
+  #eventText, #bigEventText { font-size: 16px; line-height: 1.9; min-height: 74px; font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; animation: fadeSwap .45s ease both; }
+  #resultText, #bigEventResult { font-size: 13.5px; color: #a5d6a7; line-height: 1.75; margin-top: 8px; min-height: 20px; animation: fadeSwap .45s ease both; }
+  @keyframes fadeSwap { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  button {
+    position: relative; overflow: hidden;
+    background: linear-gradient(160deg, #7438d8, #4a2a96); color: #fff; border: 1px solid rgba(255,255,255,.18);
+    border-radius: 13px; padding: 13px; font-size: 15px; font-weight: bold; width: 100%; margin-bottom: 9px; text-align: left;
+    cursor: pointer; transition: transform .16s ease, filter .16s ease;
+    box-shadow: 0 8px 20px rgba(30,10,80,.5), inset 0 1px 0 rgba(255,255,255,.15);
+    animation: btnIn .4s cubic-bezier(.22,.9,.28,1) both;
+  }
+  button::after { content: ""; position: absolute; top: 0; left: -80%; width: 50%; height: 100%;
+    background: linear-gradient(100deg, transparent, rgba(255,255,255,.35), transparent); transform: skewX(-20deg); transition: left .5s ease; }
+  button:hover { filter: brightness(1.18); }
+  button:hover::after { left: 130%; }
+  button:active { transform: scale(.975); }
+  @keyframes btnIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  #choices button:nth-child(2), #bigEventChoices button:nth-child(2) { animation-delay: .06s; }
+  #choices button:nth-child(3), #bigEventChoices button:nth-child(3) { animation-delay: .12s; }
+  button.center { text-align: center; background: linear-gradient(160deg, #4257c9, #2c3a8f); }
+  button.gold { background: linear-gradient(160deg, #d9a514, #8d6e00); text-align: center; box-shadow: 0 8px 22px rgba(141,110,0,.45), inset 0 1px 0 rgba(255,255,255,.25); }
+  button.sub2 { background: #241d4d; font-size: 13px; padding: 10px; }
+  button:disabled { opacity: .45; }
+  .spd { box-shadow: 0 4px 10px rgba(0,0,0,.35); animation: none; }
+  .spd::after { display: none; }
+  h2 { font-size: 14px; margin: 18px 0 9px; letter-spacing: 2px; color: #d9d2f5; font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; }
+  #chronicle { font-size: 12px; color: #a79fd0; line-height: 1.85; border-left: 2px solid rgba(126,87,194,.4); padding-left: 12px; margin-left: 4px; }
+  #chronicle .yr { color: #ffd54f; }
+  .life-card { background: linear-gradient(160deg, rgba(32,26,64,.9), rgba(18,15,38,.94)); border: 1px solid rgba(126,100,255,.3); border-radius: 12px; padding: 11px; font-size: 12px; margin-bottom: 9px; line-height: 1.7; animation: panelIn .5s ease both; }
+  .life-card .ttl { color: #ffd54f; font-weight: bold; font-size: 13px; }
+  #death, #birthReveal, #bigEvent { animation: overlayIn .45s ease both; }
+  @keyframes overlayIn { from { opacity: 0; } to { opacity: 1; } }
+  #death .inner, #birthReveal > div, #bigEvent > div { animation: riseIn .6s cubic-bezier(.22,.9,.28,1) both; }
+  @keyframes riseIn { from { opacity: 0; transform: translateY(26px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  #bigEvent > div > div:first-child { animation: alertPulse 1.6s ease-in-out infinite; text-shadow: 0 0 18px rgba(255,82,82,.6); }
+  @keyframes alertPulse { 0%, 100% { opacity: 1; } 50% { opacity: .55; } }
+  #epitaph { font-size: 15px; line-height: 2.05; background: linear-gradient(165deg, #1a1436, #100c26); border: 1px solid rgba(179,157,217,.4); border-radius: 14px; padding: 18px; margin: 14px 0; text-align: left; white-space: pre-line; font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; box-shadow: inset 0 0 30px rgba(126,87,194,.1); }
+  .hidden { display: none; }
+  #avatarCv { transition: filter .5s ease; filter: drop-shadow(0 0 14px rgba(149,117,255,.5)); border-radius: 12px !important; }
+  #revealBody { box-shadow: inset 0 0 30px rgba(126,87,194,.12), 0 10px 26px rgba(0,0,0,.4); }
+</style>
+</head>
+<body>
+<h1>🌀 You Can't Choose Your Next Life</h1>
+<div class="sub">World, birth, tone, and lifespan—all random. No two lives are ever the same.</div>
+
+<div id="startPanel" class="panel" style="text-align:center">
+  <p style="font-size:14px;line-height:1.9">Virtue from Past Life: <b id="tokuView" style="color:#ffd54f">0</b><br>You are born into a new world with a new life.</p>
+  <button class="center hidden" id="btnContinue">▶ Continue Previous Life</button>
+  <button class="gold" id="btnBirth" style="margin-top:10px">✦ Reincarnate</button>
+</div>
+
+<div id="gamePanel" class="hidden">
+  <div class="panel">
+    <div class="world-name" id="worldName"></div>
+    <div class="world-params" id="worldParams"></div>
+    <div class="birth" id="birthInfo"></div>
+    <div style="text-align:center;margin-top:8px">
+      <canvas id="avatarCv" width="16" height="16" style="width:112px;height:112px;image-rendering:pixelated;background:linear-gradient(#1b1440,#0d0a24);border:1px solid #3a2f7a;border-radius:10px"></canvas>
+      <div id="peersView" style="font-size:11.5px;color:#a79fd0;margin-top:6px;line-height:1.7"></div>
+      <div id="avatarCap" style="font-size:11px;color:#a79fd0;margin-top:4px"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="age-line"><b id="ageView">0 years, 0 months old</b> ― <span id="phaseView">Childhood</span> <span id="seasonView">🌸 Spring</span></div>
+    <div style="background:#241d4d;border-radius:6px;height:10px;overflow:hidden;margin:6px 0 4px"><div id="yearBar" style="background:linear-gradient(90deg,#7e57c2,#ffd54f);height:10px;width:0%"></div></div>
+    <div style="text-align:center;font-size:11px;color:#a79fd0" id="dayView">Life: Day 1</div>
+    <div style="display:flex;gap:7px;margin-top:9px">
+      <button class="spd" data-spd="0" style="flex:1;text-align:center;padding:9px;font-size:13px">⏸ Stop</button>
+      <button class="spd" data-spd="1" style="flex:1;text-align:center;padding:9px;font-size:13px">▶ ×1</button>
+      <button class="spd" data-spd="4" style="flex:1;text-align:center;padding:9px;font-size:13px">⏩ ×4</button>
+      <button class="spd" data-spd="16" style="flex:1;text-align:center;padding:9px;font-size:13px">⏭ ×16</button>
+      <button class="spd" data-spd="64" style="flex:1;text-align:center;padding:9px;font-size:13px">⚡ ×64</button>
+    </div>
+    <div class="stats" id="statsView" style="margin-top:10px"></div>
+  </div>
+
+  <button class="gold hidden" id="btnRescue">▶ Resume if time is stopped</button>
+  <div class="panel">
+    <div id="eventText">Time is flowing...</div>
+    <div id="resultText"></div>
+    <div id="choices" style="margin-top:10px"></div>
+  </div>
+
+  <h2>📜 Life Log (Full History)</h2>
+  <div id="chronicle" style="max-height:320px;overflow-y:auto;background:#100d24;border:1px solid #2c2560;border-radius:10px;padding:10px"></div>
+</div>
+
+<h2>⚙️ Settings</h2>
+  <div class="panel" style="font-size:13px;line-height:2">
+    <button class="sub2" id="btnGentle">🌿 Filter Scary Scenes: OFF</button>
+    <button class="sub2" id="btnClass">🏫 Classroom Mode: OFF</button>
+    <button class="sub2" id="btnAutoMode">🤖 Auto-Play (Auto-Select): OFF</button>
+    <div style="color:#a79fd0;font-size:12px">Keyboard: Space = Pause/Resume, 1 = x1, 2 = x4, 3 = x16, 4 = x64</div>
+  </div>
+  <h2>📖 The Making Of</h2>
+  <div class="panel" style="font-size:13px;line-height:1.95;text-align:left">
+    <div style="margin-bottom:6px"><b style="color:#ffd54f">"The Unchosen Reincarnation"</b> ― How "You Can't Choose Your Next Life" was born in a single day (free, all 5 chapters)</div>
+    <details><summary>Chapter 1: A One-Line Idea</summary>On the morning of November 23, 2026, creator Yuji Tanabe said, "How about a browser game like '1 in 8 Billion'?" But the setting isn't Earth—it's an isekai. You can't choose your world, race, or family lineage. All you can choose is how you live that life. The core of the game was decided in that one line.</details>
+    <details><summary>Chapter 2: Two Misunderstandings</summary>Non-chan, the AI assistant, initially mistook the project for a "rarity-pulling gacha" and built two misguided prototypes. The creator patiently explained the true vision: "A game where you're born into a random country, gender, race, and family, navigate life through choices, and ultimately see what you achieve before you die." They switched to a design-first approach, and development took off from there.</details>
+    <details><summary>Chapter 3: Design Promises</summary>We committed to three rules: 1. Countless random elements ensure no life is played twice. 2. The world's temperament (Classic, Cruel, or Comedy) remains hidden until death. 3. Lifespan is tied to race and luck, not fixed. These promises guide every update.</details>
+    <details><summary>Chapter 4: Deciding on a Title</summary>The original name was "Reincarnation Life." The creator asked for more ideas, but "hooky" titles with numbers were rejected as unfitting for an isekai. From 20 candidates, "You Can't Choose Your Next Life" was chosen. The game's rule became its name.</details>
+    <details><summary>Chapter 5: Launch and the Memory Pass</summary>Initially aimed for itch.io but switched to GitHub Pages due to bot-check hurdles. On the same day, we studied the "1 in 8 Billion" sim and implemented Life Cards, albums, milestone questions, and the Memory Pass (¥480 via Stripe). We mirror the mechanics, but the text and code are entirely our own. That is our courtesy and our promise.</details>
+    <div style="margin:14px 0 6px"><b style="color:#ffd54f">"Non-chan's Studio"</b> ― How "You Can't Choose Your Next Life" is made (all 4 chapters)</div>
+    <details><summary>Chapter 1: Dividing the Work</summary>The creator handles direction and decisions; the AI handles research, design, implementation, testing, and publishing. Irreversible actions like payments or contracts require human approval. If figures can't be verified, they are honestly reported as "Unconfirmed."</details>
+    <details><summary>Chapter 2: The Testing Model</summary>The game is built as a single HTML file. Before each release, we simulate 120 lives automatically to check for freezes or contradictions. We also ensure world rules (like mana presence) don't conflict with births or events.</details>
+    <details><summary>Chapter 3: The Fixing Model</summary>The creator’s feedback is short and specific: "Frozen at age 20, month 3" or "Make the title clearer." Instead of making excuses, we show the fix and rebuild. The speed of this cycle determines the game's quality.</details>
+    <details><summary>Chapter 4: The Etiquette of Inspiration</summary>We study and adopt excellent systems. However, we never copy text, code, or data directly. Ideas belong to no one; expression belongs to the creator. Maintaining this line is essential for longevity.</details>
+  </div>
+<h2>📜 Update History</h2>
+  <div class="panel" style="font-size:12.5px;line-height:1.9;text-align:left">
+    <details><summary><b>2026-11-23 v31</b></summary>Added choice payoffs: choices from your younger days (staying to support your town, declining a reward, keeping a secret, apprenticing to a scholar, nursing the sick, defying a god, hiding royal blood) now come back years later. Payoff scenes appear with a gold "A Choice from Long Ago" banner and stay in your chronicle. Also fixed a disciple-flag mismatch.</details>
+    <details><summary><b>2026-11-23 v30</b></summary>Finished freeze prevention. The cause was identified as the system stopping if an error occurred during an event. We added safeguards to choice processing so life never stops, no matter what happens.</details>
+    <details><summary><b>2026-11-23 v29</b></summary>Added a "Legal Notation" page, accessible from the Memory Pass section. Seller info will be disclosed promptly upon request.</details>
+    <details><summary><b>2026-11-23 v28</b></summary>Increased events from 35 to 117 and daily life text from 32 to 92 lines. Gemini drafted the content, which was then filtered and adjusted to fit the world's rules.</details>
+    <details><summary><b>2026-11-23 v27</b></summary>Removed "Reroll Lineage with Virtue." You can't change the family you're born into with virtue or money. That is the core promise of this game.</details>
+    <details><summary><b>2026-11-23 v26</b></summary>Added a "Feedback & Comments" window. You can now preview the "Film" of the life you just finished before purchasing it.</details>
+    <details><summary><b>2026-11-23 v25</b></summary>Added "📖 The Making Of." Released the story "The Unchosen Reincarnation" and the dev log "Non-chan’s Studio."</details>
+    <details><summary><b>2026-11-23 v24</b></summary>Added "Life Feel," "Reincarnation Village," and "Classroom Mode." Clearly defined the refund policy (30 days, no questions asked) and gifting options.</details>
+    <details><summary><b>2026-11-23 v23</b></summary>Connected Memory Pass purchase link (Stripe).</details>
+    <details><summary><b>2026-11-23 v22</b></summary>Implemented Memory Pass (Film Playback & Memorial Export).</details>
+    <details><summary><b>2026-11-23 v21</b></summary>Changed the title to "You Can't Choose Your Next Life."</details>
+    <details><summary><b>2026-11-23 v20</b></summary>Added Milestone Questions (ages 5, 15, 30, 50, 70), Auto-Play mode, "Born on the Same Day," a SFW setting (hide scary scenes), keyboard support, and FAQ.</details>
+    <details><summary><b>2026-11-23 v19</b></summary>Added Life Cards (image save), Life Albums, and data export/import. Launched for testing on GitHub Pages.</details>
+  </div>
+<h2>❓ About "You Can't Choose Your Next Life"</h2>
+  <div class="panel" style="font-size:13px;line-height:1.9;text-align:left">
+    <details><summary><b>What is "You Can't Choose Your Next Life"?</b></summary>An isekai life simulation where you live a random life from start to finish. You can't choose the world, race, or family you're born into. In exchange, no two lives are ever the same.</details>
+    <details><summary><b>How are the world and race determined?</b></summary>World mana, tech, and status are randomly determined. Probabilities are shown with each reincarnation. World rules govern birth—for instance, demons won't be born in a world without mana. Very rarely, "Singularities" occur that break these rules.</details>
+    <details><summary><b>How does life progress?</b></summary>Time flows automatically, and you can change the speed. Time stops for major events, requiring your choice. These choices affect stats, events, titles, and even how you die. Milestone questions appear at ages 5, 15, 30, 50, and 70. Use "Auto-Play" if you just want to watch.</details>
+    <details><summary><b>How long does one life take?</b></summary>It depends on your lifespan. A human life takes a few minutes at x1 speed, or seconds at x64. Some elves or vampires live for centuries. Even if you close the tab, you can resume from the same browser.</details>
+    <details><summary><b>Is it free?</b></summary>Completely free from start to finish. No registration, no ads, and no paid items to change your life.</details>
+    <details><summary><b>Where is my data saved?</b></summary>Data is saved only in this browser and never sent to a server. You can export it via "Data Management" to transfer to another device.</details>
+    <details><summary><b>Can I stream or make videos of this?</b></summary>Yes, feel free! We’d appreciate it if you credit us as "You Can't Choose Your Next Life."</details>
+    <details><summary><b>Who is making this?</b></summary>Designed and implemented by AI assistant "Non-chan" under Yuji Tanabe. Numbers and probabilities are fictional and not based on real-world statistics.</details>
+  </div>
+<h2 id="passH2">🎫 Memory Pass</h2>
+  <div class="panel" id="passPanel" style="font-size:13px;line-height:1.9">
+    <div id="passState"></div>
+    <div id="passForm">
+      <div style="color:#a79fd0;font-size:12.5px">A one-time purchase pass that turns finished lives into "Films" (replays) and "Memorials" (saveable pages). The main game remains free and ad-free, fully playable without the pass. Price is ¥480. An activation code will be emailed within 24 hours of purchase.<br>Refunds are available for any reason within 30 days of purchase. Codes are transferable, so they make great 🎁 gifts!</div>
+      <input id="passCodeInput" type="text" placeholder="Purchase code (e.g. TSN-XXXX-XXXX)" style="width:100%;box-sizing:border-box;margin-top:8px;padding:10px;border-radius:10px;border:1px solid #4a4380;background:#14122b;color:#e8e4ff">
+      <a href="https://buy.stripe.com/dRmaEYcnF18LdQ6faZ2Nq00" target="_blank" rel="noopener" style="display:inline-block;margin-top:8px;margin-right:8px;padding:10px 18px;border-radius:999px;background:linear-gradient(180deg,#ffd98a,#c9a86a);color:#241f4d;font-weight:bold;text-decoration:none">🛒 Buy Memory Pass (¥480)</a>
+      <button class="sub2" id="btnUnlock" style="margin-top:8px">🔓 Activate Pass</button>
+      <div style="margin-top:10px;font-size:12px"><a href="legal.html" target="_blank" rel="noopener" style="color:#a79fd0">Legal Notation</a></div>
+    </div>
+  </div>
+<h2>✉️ Feedback & Comments</h2>
+  <div class="panel" style="font-size:13px;line-height:1.9">
+    <div style="color:#a79fd0;font-size:12.5px">Please send bugs or ideas here. I read them all.</div>
+    <a class="sub2" href="mailto:deruderudouga@gmail.com?subject=%E8%BB%A2%E7%94%9F%E5%85%88%E3%81%AF%E9%81%B8%E3%81%B9%E3%81%BE%E3%81%9B%E3%82%93%E3%81%B8%E3%81%AE%E6%84%8F%E8%A6%8B" style="display:inline-block;text-decoration:none;margin-top:6px">✉️ Send Feedback via Email</a>
+    <a class="sub2" href="https://twitter.com/intent/tweet?text=%E8%BB%A2%E7%94%9F%E5%85%88%E3%81%AF%E9%81%B8%E3%81%B9%E3%81%BE%E3%81%9B%E3%82%93%20%E3%82%92%E9%81%8A%E3%82%93%E3%81%A0%E6%84%9F%E6%83%B3" target="_blank" rel="noopener" style="display:inline-block;text-decoration:none;margin-top:6px">𝕏 Post your thoughts</a>
+  </div>
+<h2>💾 Data Management</h2>
+  <div class="panel" style="font-size:12.5px;line-height:1.9">
+    Records are saved only in this device's browser (never sent to a server). When you switch devices, export and import them.<br>
+    <button class="sub2" id="btnExport">⬇ Export Save Data (JSON)</button>
+    <label style="display:block;background:#241d4d;border-radius:13px;padding:10px;font-size:13px;font-weight:bold;text-align:center;cursor:pointer">⬆ Load Records<input type="file" id="fileImport" accept=".json" style="display:none"></label>
+    <div style="margin-top:8px;color:#a79fd0">This game is free, with no ads or accounts. World, race, and lineage probabilities are fictional. No two lives are ever the same.</div>
+  </div>
+<h2>🏘️ Reincarnation Village</h2>
+  <div class="panel"><div id="villageView" style="font-size:14px;line-height:2"></div></div>
+<h2>🧬 Collection</h2>
+<div class="panel" id="collection" style="font-size:12.5px;line-height:2"></div>
+<h2>📖 Reincarnation Index (Previous Lives)</h2>
+<div id="lives"></div>
+
+<div id="birthReveal" style="position:fixed;inset:0;background:rgba(5,3,16,.95);display:none;z-index:45;overflow-y:auto;padding:24px 16px">
+  <div style="max-width:520px;margin:0 auto">
+    <div style="text-align:center;font-size:30px">✦ Reincarnate ✦</div>
+    <div id="revealStep" style="text-align:center;color:#a79fd0;font-size:12px;margin-top:8px"></div>
+    <div id="revealBody" style="font-size:15px;line-height:2.0;background:#171233;border:1px solid #3a2f7a;border-radius:14px;padding:18px;margin:12px 0;min-height:190px"></div>
+    <button class="gold" id="btnRevealNext">Next ▶</button>
+    <button class="gold hidden" id="btnBegin">Begin this life</button>
+  </div>
+</div>
+<div id="bigEvent" style="position:fixed;inset:0;background:rgba(5,3,16,.93);display:none;z-index:44;overflow-y:auto;padding:24px 16px">
+  <div style="max-width:520px;margin:0 auto">
+    <div id="bigEventTitle" style="text-align:center;font-size:15px;color:#ff8a80;letter-spacing:2px">⚠ Important Event ⚠</div>
+    <div id="bigEventText" style="font-size:16px;line-height:1.95;background:#1d1440;border:1px solid #7b1fa2;border-radius:14px;padding:16px;margin:12px 0"></div>
+    <div id="bigEventResult" style="font-size:14px;color:#a5d6a7;line-height:1.8;margin:8px 0"></div>
+    <div id="bigEventChoices"></div>
+    <button class="gold hidden" id="btnBigClose">Resume Time ▶</button>
+  </div>
+</div>
+<div id="album" style="position:fixed;inset:0;background:rgba(5,3,16,.96);display:none;z-index:46;overflow-y:auto;padding:24px 16px">
+  <div style="max-width:520px;margin:0 auto">
+    <div style="text-align:center;font-size:22px;font-family:serif;color:#ffd54f">📖 Life Album</div>
+    <div id="albumBody" style="font-size:13.5px;line-height:1.95;background:#171233;border:1px solid #3a2f7a;border-radius:14px;padding:16px;margin:14px 0"></div>
+    <button class="center" id="btnPrint">🖨 Print / Save as PDF</button>
+    <button class="gold" id="btnAlbumClose">Close</button>
+  </div>
+</div>
+<div id="death"><div class="inner">
+  <div style="font-size:15px;color:#ff8a80;letter-spacing:3px">― Life Over ―</div>
+  <div style="font-size:52px;margin-top:8px">⚱️</div>
+  <div style="font-size:24px;font-weight:bold;margin-top:6px" id="deathTitle"></div>
+  <div style="font-size:17px;color:#ffd54f;margin-top:6px" id="deathCause"></div>
+  <div id="deathRank" style="font-size:44px;font-weight:900;margin-top:10px;font-family:serif"></div>
+  <div id="deathTezawari" style="margin-top:10px;font-size:13.5px;color:#ce93d8"></div>
+  <div id="deathStats" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;font-size:12px;margin-top:12px"></div>
+  <div id="epitaph"></div>
+  <button class="center" id="btnShare">𝕏 Share your results</button>
+  <button class="center" id="btnCard">🃏 Save Life Card as Image</button>
+    <button class="sub" id="btnFilm">🎬 Play Film (Preview without Pass)</button>
+    <button class="sub" id="btnMemorial">🕯️ Export Memorial (Memory Pass)</button>
+  <button class="center" id="btnAlbum">📖 View Life Album</button>
+  <button class="gold" id="btnAgain">✦ To Next Reincarnation (Virtue +<span id="tokuGain"></span>)</button>
+</div></div>
+
+<script>
+// ---------- utils ----------
+const R = (a, b) => a + Math.random() * (b - a);
+const RI = (a, b) => Math.floor(R(a, b + 1));
+const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+function wpick(pairs) { let t = pairs.reduce((s, p) => s + p[1], 0), r = Math.random() * t; for (const p of pairs) { r -= p[1]; if (r <= 0) return p[0]; } return pairs[0][0]; }
+const clamp = v => Math.max(0, Math.min(100, Math.round(v)));
+const el = id => document.getElementById(id);
+
+// ---------- name generation ----------
+const SYL_A = ["A", "Ka", "Sa", "Ta", "Na", "Ha", "Ma", "Ya", "Ra", "Ru", "Re", "Ro", "E", "O", "Fi", "Shi", "Ti", "Mi", "Gu", "Ze"];
+const SYL_B = ["Ru", "n", "A", "Su", "To", "Ria", "Mir", "Do", "Ga", "Bel", "Na", "Sha", "Kusu", "Male"];
+function genName() { return pick(SYL_A) + pick(SYL_B) + (Math.random() < 0.4 ? pick(SYL_B) : ''); }
+const PLACE_A = ["Fog", "Salt", "The Moon", "Ashes", "Star", "Thorns", "Azure", "Sand", "Snow", "Thunder"];
+const PLACE_B = ["Capital", "Outskirts Village", "The Port", "Forest", "Highlands", "Valley", "Market", "Fortress"];
+function genPlace() { return pick(PLACE_A) + pick(PLACE_B); }
+
+// ---------- world generation ----------
+const TEMPERAMENTS = [
+  { id: 'noble', name: "A classic fantasy world", tragedy: 0.8, comedy: 0.1 },
+  { id: 'gentle', name: "Heartwarming world", tragedy: 0.45, comedy: 0.25 },
+  { id: 'cruel', name: "A cruel world", tragedy: 1.6, comedy: 0.05 },
+  { id: 'comic', name: "A world of comedy", tragedy: 0.7, comedy: 0.6 },
+  { id: 'tragic', name: "A world of tragedy", tragedy: 1.35, comedy: 0.05 },
+  { id: 'chaos', name: "A chaotic world", tragedy: 1.1, comedy: 0.35 },
+];
+function genWorld() {
+  return {
+    name: pick(PLACE_A) + "and" + pick(["Iron", "Song", "Dream", "Shadow", "Nectar"]) + "World " + genName(),
+    magic: wpick([[0, 2], [1, 4], [2, 3], [3, 1]]),          // 魔力濃度
+    tech: wpick([[0, 2], [1, 4], [2, 3], [3, 1]]),           // 技術水準
+    war: wpick([[0, 4], [1, 3], [2, 2]]),                    // 0平和 1冷戦 2大戦
+    gods: wpick([[0, 5], [1, 3]]),                           // 1=神々は干渉的
+    disaster: wpick([["None", 4], ["Plague", 2], ["Resurrection of the Demon King", 2], ["Cataclysm", 1]]),
+    temper: pick(TEMPERAMENTS),
+  };
+}
+
+function techLabel(w) {
+  return w.magic === 0 ? ["Stone Tools", "Medieval", "Steam Engine", "Scientific Civilization"][w.tech]
+                        : ["Stone Tools", "Medieval", "Magitech", "Hyper-magical Civilization"][w.tech];
+}
+// ---------- birth ----------
+const RACES = [
+  { name: "Human", w: 40, life: [58, 92], mod: {} },
+  { name: "Elf", w: 10, life: [180, 420], mod: { int: 12, health: 4 } },
+  { name: "Beastfolk", w: 14, life: [48, 80], mod: { health: 14, charm: -4 } },
+  { name: "Dwarf", w: 12, life: [90, 170], mod: { wealth: 10, health: 6 } },
+  { name: "Demon Race", w: 8, life: [120, 300], mod: { fame: -18, int: 8 } },
+  { name: "Descendant of Angels", w: 2, life: [150, 350], mod: { charm: 16, fame: 10 } },
+  { name: "Vampire", w: 2, life: [300, 900], mod: { charm: 14, health: 6, happy: -4 } },
+  { name: "Fairy", w: 3, life: [150, 400], mod: { charm: 12, happy: 12, health: -4 } },
+  { name: "Dragonkin", w: 2, life: [200, 500], mod: { health: 14, fame: 6, charm: -3 } },
+  { name: "Goblin", w: 5, life: [25, 45], mod: { wealth: 4, charm: -10, health: 4 } },
+  { name: "Slime", w: 1, life: [40, 300], mod: { health: 10, charm: -6, happy: 6 } },
+];
+const FAMILIES = [
+  { name: "Street Urchin", w: 8, mod: { wealth: -20, health: -8, happy: -6 } },
+  { name: "Child of a farmer", w: 26, mod: { health: 6 } },
+  { name: "Artisan's Child", w: 22, mod: { wealth: 6 } },
+  { name: "A merchant’s child", w: 18, mod: { wealth: 16 } },
+  { name: "Child of a knight", w: 10, mod: { fame: 8, health: 8 } },
+  { name: "A child of the royal family", w: 3, mod: { wealth: 34, fame: 18, happy: 4 } },
+];
+const TALENT_A = ["Of Flame", "Immortal", "Swift", "Of the Deep Sea", "Of Steel", "Star-reading", "Sharp-tongued", "Golden", "Forgetful", "Of Slumber"];
+const TALENT_B = ["A head for business", "Sword Mastery", "Magical Talent", "A talent for singing", "Craftsmanship", "Academic talent", "Silver Tongue", "Luck", "Body", "Heart"];
+function raceAllowed(r, w) {
+  if (r.name === "Demon Race" || r.name === "Vampire" || r.name === "Fairy" || r.name === "Dragonkin") return w.magic >= 1;          // 魔力のない世界に魔族はいない
+  if (r.name === "Descendant of Angels") return w.gods === 1;   // 神が沈黙する世界に天使の末裔はいない
+  return true;
+}
+function genBirth(world, toku) {
+  const racePool = RACES.filter(r => raceAllowed(r, world));
+  const race = wpick(racePool.map(r => [r, r.w + toku * 0.02]));
+  const fam = wpick(FAMILIES.map(f => [f, f.w + (f.name.includes("Royalty") || f.name.includes("Knight") ? toku * 0.03 : 0)]));
+  const talentB = world.magic === 0 ? TALENT_B.filter(t => t !== "Magical Talent") : TALENT_B;  // 魔力のない世界に魔才は宿らない
+  const talents = [pick(TALENT_A) + ' ' + pick(talentB), pick(TALENT_A) + ' ' + pick(talentB)];
+  const stats = { health: 55, int: 40, charm: 40, wealth: 30, fame: 20, happy: 55 };
+  for (const src of [race.mod, fam.mod]) for (const k in src) stats[k] = clamp((stats[k] || 40) + src[k]);
+  const B = { race, fam, gender: pick(["Male", "Female"]), talents, stats, lifeSpan: RI(race.life[0], race.life[1]), anomaly: null };
+  // ★ 特異点: ごく稀に, 世界のルールを破る出生が起きる (約1.2%)
+  if (Math.random() < 0.012) {
+    const cands = [];
+    if (world.magic === 0) cands.push('soleMage');
+    if (world.gods === 0) cands.push('godChild');
+    if (fam.name === "Street Urchin") cands.push('hiddenRoyal');
+    cands.push('longLived');
+    const kind = pick(cands);
+    if (kind === 'soleMage') {
+      B.talents[0] = "A singular magical talent";
+      B.anomaly = { kind, name: "Singularity — The only mage in a world without magic", desc: "There is no mana in this world. But one day, light dwells in your hands alone. You were born as the only magic user in the world." };
+    } else if (kind === 'godChild') {
+      const angel = RACES.find(r => r.name === "Descendant of Angels");
+      B.race = angel; B.lifeSpan = RI(angel.life[0], angel.life[1]);
+      B.anomaly = { kind, name: "Singularity — A child of God in a godless world", desc: "In a world of silent gods, a child of angelic blood was born. No one can explain it. Is it a miracle, or just a bug in the world's code?" };
+    } else if (kind === 'hiddenRoyal') {
+      B.anomaly = { kind, name: "Singularity — A street urchin with royal blood", desc: "Born and raised in the alleys, you bear a birthmark on your arm identical to the crest of a fallen royal house. No one yet knows its meaning." };
+    } else {
+      B.lifeSpan = Math.round(B.lifeSpan * 2.6);
+      B.anomaly = { kind, name: "Singularity — An ageless body", desc: "For some reason, your body ages extremely slowly. Even when your peers grow old and die, you remain unchanged." };
+    }
+  }
+  return B;
+}
+
+// ---------- events ----------
+// {min,max: age, when(state)->bool, text(state)->str, choices:[{label, run(state)->resultText}]}
+function eff(S, d) { for (const k in d) S.stats[k] = clamp(S.stats[k] + d[k]); }
+const EVENTS = [
+  { min: 0, max: 12, text: S => `Local kids are splashing around the river in ${S.place}. Care to join them?`,
+    choices: [
+      { label: "Play together", run: S => { eff(S, { happy: 8, health: 3, charm: 3 }); return "We laughed through the mud and became fast friends."; } },
+      { label: "Read a book alone", run: S => { eff(S, { int: 7, happy: -2 }); return "A quiet afternoon. You've learned to read a few words."; } },
+    ] },
+  { min: 0, max: 12, when: S => S.birth.fam.name === "Street Urchin", text: S => `You found an old man collapsed in an alleyway. He’s clutching a small bag of bread.`,
+    choices: [
+      { label: "Help out and give some water", run: S => { S.flags.helpedOld = true; eff(S, { happy: 4 }); return "The elder thanked you and seemed to commit your face to memory."; } },
+      { label: "Run away with the bread", run: S => { eff(S, { health: 4, happy: -4 }); S.flags.stole = true; return "Your stomach is full, but your heart aches just a little."; } },
+    ] },
+  { min: 6, max: 15, text: S => `A traveling scholar is staying in ${S.place}. Should you ask to become their pupil?`,
+    choices: [
+      { label: "Ask to be an apprentice", run: S => Math.random() < 0.35 + S.stats.int / 200 ? (eff(S, { int: 12, happy: 3 }), S.flags.scholar = true, "The scholar nodded. Your days of learning have begun.") : (eff(S, { happy: -5 }), "The scholar shook their head. \"It's too soon.\"") },
+      { label: "See them off", run: S => { eff(S, { happy: 1 }); return "The scholar left. Someday, you want to set out on a journey too."; } },
+    ] },
+  { min: 13, max: 25, text: S => `A true crossroads in life. You've received an offer from ${S.org}. What path will you choose?`,
+    choices: [
+      { label: "The path of scholarship", run: S => { eff(S, { int: 14, wealth: -4 }); S.flags.path = "Academics"; return "You threw yourself into your studies."; } },
+      { label: "The path of the sword and adventure", run: S => { eff(S, { health: 10, fame: 5, wealth: -2 }); S.flags.path = "Adventure"; return "You took up the sword. The world is a vast place."; } },
+      { label: "The path of trade", run: S => { eff(S, { wealth: 12, charm: 4 }); S.flags.path = "Commerce"; return "Ledgers and a smile became your greatest weapons."; } },
+    ] },
+  { min: 16, max: 40, text: S => `You met someone named ${S.npc}. For some reason, you two just click!`,
+    choices: [
+      { label: "Forming a deep bond", run: S => { eff(S, { happy: 10, charm: 4 }); S.flags.partner = S.npc; return S.npc + "became an indispensable person in your life."; } },
+      { label: "Keep your distance.", run: S => { eff(S, { int: 2 }); return "It was a comfortable distance to keep."; } },
+    ] },
+  { min: 18, max: 55, when: S => S.world.war === 2, text: S => `The Great War is intensifying. A draft notice has arrived at your doorstep.`,
+    choices: [
+      { label: "Volunteer", run: S => Math.random() < 0.6 ? (eff(S, { fame: 16, health: -14 }), S.flags.warHero = true, "You made a name for yourself on the battlefield, but the wounds are deep.") : (eff(S, { health: -30, fame: 6 }), "You narrowly escaped death. The battle achieved nothing.") },
+      { label: "Run away.", run: S => { eff(S, { fame: -8, happy: -4, wealth: -6 }); return "Ran away. Survived. Sometimes, it haunts your dreams."; } },
+      { label: "Support from the city", run: S => { eff(S, { fame: 6, happy: 4 }); S.flags.supporter = true; return "I supported those left behind. That, too, was a battle."; } },
+    ] },
+  { min: 20, max: 60, text: S => `An investment opportunity has landed in your lap! Care to fund a new business in ${S.place}?`,
+    choices: [
+      { label: "Bet big", run: S => Math.random() < 0.45 ? (eff(S, { wealth: 26 }), "Jackpot! Your wealth has ballooned.") : (eff(S, { wealth: -22, happy: -6 }), "The deal vanished into thin air. Your wallet is feeling light.") },
+      { label: "Refuse", run: S => { eff(S, { wealth: 2 }); return "You lived a steady, honest life. And that's enough."; } },
+    ] },
+  { min: 25, max: 70, when: S => S.flags.helpedOld, payoff: true, text: S => `That old man you helped years ago? Turns out he's the head of ${S.org}! He's come back to repay the favor.`,
+    choices: [
+      { label: "Accept their kindness", run: S => { eff(S, { wealth: 14, fame: 6, happy: 6 }); return "Kindness comes full circle. It was a heartwarming reunion."; } },
+      { label: "I'll take the thought, but that's all", run: S => { eff(S, { happy: 10, fame: 4 }); S.flags.virtuous = true; return "Parted ways with a smile. It was a truly refreshing day."; } },
+    ] },
+  { min: 30, max: 75, text: S => `A young person named ${S.npc2} has arrived, claiming to be your new apprentice!`,
+    choices: [
+      { label: "Take as an apprentice", run: S => { eff(S, { fame: 8, happy: 6 }); S.flags.disciple = true; S.flags.hasDisciple = true; return "To teach was to learn."; } },
+      { label: "Drive them away.", run: S => { eff(S, { happy: -3 }); return "The door was closed. The youth departed."; } },
+    ] },
+  { min: 40, max: 200, text: S => `You're waking up feeling your age more and more. How will you spend your days now?`,
+    choices: [
+      { label: "Live a quiet life.", run: S => { eff(S, { health: 6, happy: 5 }); return "Peaceful days. Not bad at all."; } },
+      { label: "Take on one final big job", run: S => Math.random() < 0.5 ? (eff(S, { fame: 18, health: -12 }), S.flags.lastWork = true, "You did it! People will pass down your story.") : (eff(S, { health: -18, happy: -5 }), "Your body couldn't keep up. How frustrating.") },
+    ] },
+  { min: 15, max: 90, when: S => S.world.disaster === "Plague", text: S => `A terrible plague has struck ${S.place}.`,
+    choices: [
+      { label: "Nursing the sick", run: S => Math.random() < 0.55 ? (eff(S, { fame: 10, happy: 4 }), S.flags.healer = true, "You were the hope of the people.") : (eff(S, { health: -25 }), "You collapsed as well, hovering between life and death for days.") },
+      { label: "Leave the city", run: S => { eff(S, { health: 2, happy: -6 }); return "Escaped. Faces you left behind flicker in your mind."; } },
+    ] },
+  { min: 10, max: 80, when: S => S.world.gods === 1, text: S => `A deity appeared in your dreams. "I shall grant you one wish... but it comes with a price."`,
+    choices: [
+      { label: "Wish for riches", run: S => { eff(S, { wealth: 24, happy: -8 }); return "You gained wealth. Yet, you feel like you've lost something."; } },
+      { label: "Wish for good health", run: S => { eff(S, { health: 22 }); S.lifeSpan += 12; return "Your body feels light. The gods were smiling."; } },
+      { label: "Refuse", run: S => { eff(S, { happy: 6 }); S.flags.defiedGod = true; return "The god vanished with an amused chuckle."; } },
+    ] },
+  { min: 5, max: 9, text: "Found a pretty stone in the field. What will you do with it?", choices: [
+    { label: "Hide it in a treasure chest", run: S => { eff(S, { happy: 5 }); return "It became your very own secret treasure."; } },
+    { label: "Give it to a friend", run: S => { eff(S, { charm: 6 }); return "Your bond with your friends deepened a little."; } } ] },
+  { min: 6, max: 10, text: "You’re building a secret base with your friends! What’s your role?", choices: [
+    { label: "Draw up some blueprints", run: S => { eff(S, { int: 7 }); return "A sturdy and functional base is complete."; } },
+    { label: "Gathering materials", run: S => { eff(S, { health: 5 }); return "Built up your body by carrying heavy timber."; } },
+    { label: "Encourage everyone", run: S => { eff(S, { charm: 6 }); return "Team morale improved and everyone became friends."; } } ] },
+  { min: 7, max: 12, text: "An older kid challenged you to a race. How will you compete?", choices: [
+    { label: "Run at full speed", run: S => { eff(S, { health: 8 }); return "I was out of breath, but I ran all the way to the end."; } },
+    { label: "Look for a shortcut.", run: S => { eff(S, { int: 6 }); return "I used my wits to turn the tide into a close match."; } } ] },
+  { min: 5, max: 8, text: "Mom asked for help in the kitchen. What's on the menu?", choices: [
+    { label: "Take a taste", run: S => { eff(S, { happy: 7 }); return "Ate a delicious meal and felt refreshed."; } },
+    { label: "Chop vegetables.", run: S => { eff(S, { int: 4 }); return "Your knife skills have improved a little."; } } ] },
+  { min: 8, max: 12, text: "You found an old book filled with text in a dusty barn.", choices: [
+    { label: "Desperately try to decipher", run: S => { eff(S, { int: 10 }); return "Gained knowledge about ancient history."; } },
+    { label: "Just look at the pictures", run: S => { eff(S, { happy: 5 }); return "My imagination soared, and I had a wonderful time."; } } ] },
+  { min: 9, max: 12, text: "A festival is being held in the neighborhood square. How will you spend it?", choices: [
+    { label: "Help out at a food stall", run: S => { eff(S, { wealth: 5 }); return "You received a few coins as payment for your work."; } },
+    { label: "Join the dancing circle.", run: S => { eff(S, { charm: 7 }); return "You drew everyone's attention and became quite popular."; } } ] },
+  { min: 10, max: 12, text: "Deep in the woods, I found a strange fruit I'd never seen before.", choices: [
+    { label: "Try eating it.", run: S => { eff(S, { health: -5, int: 8 }); return "You got an upset stomach, but made a valuable discovery."; } },
+    { label: "Take it home to investigate", run: S => { eff(S, { int: 6 }); return "You uncovered its true identity in the library."; } } ] },
+  { min: 11, max: 12, text: "A traveling performer came to the village. What will you learn from them?", choices: [
+    { label: "Playing a musical instrument", run: S => { eff(S, { charm: 8 }); return "Your melodies moved the villagers' hearts."; } },
+    { label: "The knack for acrobatics.", run: S => { eff(S, { health: 7 }); return "Your movements have become light and nimble."; } } ] },
+  { min: 13, max: 15, text: "Your master's harsh training continues. How will you face it?", choices: [
+    { label: "Desperately try to keep up", run: S => { eff(S, { health: 9 }); return "Your core physical strength has significantly improved."; } },
+    { label: "Observe and steal techniques", run: S => { eff(S, { int: 7 }); return "You learned how to move your body efficiently."; } } ] },
+  { min: 14, max: 16, text: "The perfect chance to talk to my crush has finally arrived!", choices: [
+    { label: "Offer a sincere compliment", run: S => { eff(S, { charm: 10 }); return "They started blushing, and the mood got pretty romantic."; } },
+    { label: "Make them laugh with a joke", run: S => { eff(S, { happy: 6 }); return "It felt like the two of you grew a little closer."; } } ] },
+  { min: 13, max: 17, text: "Found a cart on the road with a wheel that had popped off.", choices: [
+    { label: "Help with repairs", run: S => { eff(S, { fame: 5, wealth: 3 }); return "Received words of gratitude and a small gift."; } },
+    { label: "Offer to act as a bodyguard", run: S => { eff(S, { fame: 7 }); return "I delivered it safely and earned their trust."; } } ] },
+  { min: 15, max: 17, text: "You're worried about your future path. Which will you choose?", choices: [
+    { label: "Head to the city for training.", run: S => { eff(S, { int: 8 }); return "I found new inspiration in the wide world."; } },
+    { label: "Take over the family business back home", run: S => { eff(S, { wealth: 6, happy: 4 }); return "Your family was delighted, and your life became stable."; } } ] },
+  { min: 14, max: 17, text: "You've ended up entering a martial arts tournament in a neighboring town.", choices: [
+    { label: "Aim for the championship", run: S => { eff(S, { fame: 10 }); return "I made it to the finals and my name is now known far and wide."; } },
+    { label: "Prioritize socializing", run: S => { eff(S, { charm: 8 }); return "You developed friendships with the other participants."; } } ] },
+  { min: 16, max: 17, text: "Wondering how to spend your saved-up pocket money.", choices: [
+    { label: "Buy some quality tools", run: S => { eff(S, { health: 5 }); return "Efficiency increased thanks to well-maintained tools."; } },
+    { label: "Hang out with friends", run: S => { eff(S, { happy: 9 }); return "An irreplaceable memory was made."; } } ] },
+  { min: 13, max: 16, text: "Your best friend is down in the dumps because of some nasty rumors.", choices: [
+    { label: "Search for the culprit together", run: S => { eff(S, { int: 6 }); return "Cleared up the misunderstanding, making your friendship stronger than ever."; } },
+    { label: "Stay close in silence.", run: S => { eff(S, { charm: 7 }); return "Became a pillar of emotional support for your best friend."; } } ] },
+  { min: 15, max: 17, text: "You saw mysterious lights dancing in the forest at night.", choices: [
+    { label: "Give chase.", run: S => { eff(S, { health: 6 }); return "Running deep into the forest has really boosted my stamina."; } },
+    { label: "Offer up a prayer", run: S => { eff(S, { happy: 8 }); return "My heart was purified by the fantastical sight."; } } ] },
+  { min: 18, max: 21, text: "The exam to become an independent artisan is about to begin.", choices: [
+    { label: "Create a perfect masterpiece", run: S => { eff(S, { int: 9 }); return "Your outstanding skills were recognized."; } },
+    { label: "Taking a gamble on originality", run: S => { eff(S, { fame: 8 }); return "Your unprecedented ideas garnered much attention."; } } ] },
+  { min: 19, max: 22, text: "You decided to have a serious talk about the future with your lover.", choices: [
+    { label: "Propose marriage", run: S => { eff(S, { happy: 10 }); return "A new life for the two of you has begun."; } },
+    { label: "I want to chase my dreams", run: S => { eff(S, { fame: 7, happy: -3 }); return "You respected each other's paths and chose to part ways."; } } ] },
+  { min: 20, max: 24, text: "The path forks into two at the ancient ruins.", choices: [
+    { label: "Follow the bright path", run: S => { eff(S, { health: 6 }); return "Navigated around the traps and finished the expedition safely."; } },
+    { label: "Take the rugged path.", run: S => { eff(S, { wealth: 10 }); return "Found a bag of old gold coins after a long, hard struggle."; } } ] },
+  { min: 18, max: 23, text: "Caused a major loss at work due to a personal blunder.", choices: [
+    { label: "Offering a sincere apology", run: S => { eff(S, { charm: 8 }); return "Your sincerity was recognized, and you regained their trust."; } },
+    { label: "Desperately try to recover", run: S => { eff(S, { int: 7 }); return "You worked tirelessly, sacrificing sleep to solve the problem."; } } ] },
+  { min: 21, max: 24, text: "A violent brawl broke out between customers in the tavern.", choices: [
+    { label: "Stop them with brute force", run: S => { eff(S, { health: 7 }); return "Settled the commotion and earned respect as a bodyguard."; } },
+    { label: "Persuade them with words", run: S => { eff(S, { int: 8 }); return "Used logic and reason to calm the situation down."; } } ] },
+  { min: 19, max: 24, text: "Set off on a journey to deliver goods to a distant town.", choices: [
+    { label: "Proceed without hiring any guards", run: S => { eff(S, { health: 9 }); return "Overcame hardships through your own strength and grew as a person."; } },
+    { label: "Go with fellow merchants", run: S => { eff(S, { wealth: 7 }); return "Trading information allowed for advantageous business."; } } ] },
+  { min: 22, max: 24, text: "Assigned to mentor your juniors in your field of expertise.", choices: [
+    { label: "Drill it into them", run: S => { eff(S, { fame: 7 }); return "Your junior grew, and your own reputation rose as well."; } },
+    { label: "Watch over them gently", run: S => { eff(S, { charm: 9 }); return "Your juniors admire you, making for a pleasant workplace."; } } ] },
+  { min: 25, max: 27, text: "Thinking about what to invest your hard-earned funds in.", choices: [
+    { label: "Open your own shop", run: S => { eff(S, { wealth: 10 }); return "You opened your long-awaited shop, and your income has stabilized."; } },
+    { label: "Receive a costly education.", run: S => { eff(S, { int: 10 }); return "My growing knowledge has opened doors to high society."; } } ] },
+  { min: 26, max: 29, text: "News arrives that your parents back home have fallen ill.", choices: [
+    { label: "Return home immediately", run: S => { eff(S, { happy: 9, wealth: -5 }); return "You spent your time prioritizing your family above all else."; } },
+    { label: "Send medicine and money", run: S => { eff(S, { wealth: -7, fame: 6 }); return "Gained a reputation for being a wonderfully devoted child."; } } ] },
+  { min: 25, max: 28, text: "You’ve been invited to a local noble's banquet. How will you behave?", choices: [
+    { label: "Stay polite.", run: S => { eff(S, { charm: 9 }); return "My refined etiquette made me the talk of the town."; } },
+    { label: "State your opinion boldly", run: S => { eff(S, { int: 8 }); return "Your sharp insight caught the eye of a noble."; } } ] },
+  { min: 27, max: 29, text: "A youth knocked on the gate, wishing to become your apprentice.", choices: [
+    { label: "Accept it gladly", run: S => { eff(S, { charm: 10 }); return "Awakened to the joy of nurturing young talent."; } },
+    { label: "Impose a harsh trial", run: S => { eff(S, { fame: 7 }); return "The clan's discipline was upheld, and its prestige rose."; } } ] },
+  { min: 26, max: 29, text: "I was invited to join a survey team mapping uncharted lands.", choices: [
+    { label: "Lead as captain.", run: S => { eff(S, { fame: 10 }); return "You demonstrated leadership and achieved a great feat."; } },
+    { label: "Join as the official chronicler", run: S => { eff(S, { int: 9 }); return "Compiled mountains of data into a book."; } } ] },
+  { min: 28, max: 29, text: "Build the house of your dreams.", choices: [
+    { label: "Create a large garden", run: S => { eff(S, { happy: 10 }); return "Achieved a peaceful life surrounded by nature."; } },
+    { label: "Build a sturdy study.", run: S => { eff(S, { int: 7 }); return "I've finally set up the perfect environment for my research."; } } ] },
+  { min: 25, max: 29, text: "Challenged to one final duel by a long-time rival.", choices: [
+    { label: "Take them on with everything you've got", run: S => { eff(S, { health: 7, fame: 7 }); return "After a fierce struggle, we finally earned each other's respect."; } },
+    { label: "Reconcile with a handshake", run: S => { eff(S, { charm: 10 }); return "You ended your dispute and became the best of friends."; } } ] },
+  { min: 30, max: 44, text: "The chance to strike out on your own has arrived. Should you open your own shop?", choices: [
+    { label: "Set up shop", run: S => { eff(S, { wealth: 8, int: 5 }); return "Busy but fulfilling days as a business owner."; } },
+    { label: "Continue as a hired hand.", run: S => { eff(S, { wealth: -3, happy: 5 }); return "Fewer responsibilities, but hey, more free time!"; } } ] },
+  { min: 30, max: 44, text: "You’re torn on whether to send your child to an expensive academy to nurture their talent.", choices: [
+    { label: "Forcing them to attend", run: S => { eff(S, { wealth: -10, fame: 5 }); return "Your child achieved excellent grades, making you very proud."; } },
+    { label: "Have them take over the family business", run: S => { eff(S, { wealth: 5, happy: -3 }); return "It's the practical choice, but the kid looks a little lonely."; } } ] },
+  { min: 30, max: 44, text: "The lord has approached you about a town official position. Should you accept?", choices: [
+    { label: "Accept a position", run: S => { eff(S, { fame: 8, int: 3 }); return "You're buried in official duties, but your political influence has grown."; } },
+    { label: "Live freely", run: S => { eff(S, { charm: 5, happy: 8 }); return "Enjoyed your hobbies without a care in the world."; } } ] },
+  { min: 30, max: 44, text: "You found an old map. Will you set out on a merchant's journey to unknown lands?", choices: [
+    { label: "Set out on a trading journey", run: S => { eff(S, { wealth: 10, int: 5 }); return "I made a killing selling exotic goods from faraway lands."; } },
+    { label: "Sell the map", run: S => { eff(S, { wealth: 5, happy: 3 }); return "You gave up on adventuring, but you earned a steady income."; } } ] },
+  { min: 30, max: 44, text: "Everyone expects you to enter the arena tournament against the neighboring town.", choices: [
+    { label: "Enter a tournament", run: S => { eff(S, { health: -5, fame: 10 }); return "After a fierce battle, I was hailed as a legendary hero."; } },
+    { label: "Decline and watch from the sidelines.", run: S => { eff(S, { happy: 5, int: 3 }); return "You had fun safely and gained knowledge of tactics."; } } ] },
+  { min: 30, max: 44, text: "You’ve decided to renovate your home. What kind of house would you like to live in?", choices: [
+    { label: "Turn it into a vast mansion", run: S => { eff(S, { wealth: -10, fame: 8 }); return "I've finished building a mansion that's the envy of the whole town."; } },
+    { label: "Improve your workspace", run: S => { eff(S, { int: 5, wealth: 5 }); return "Work efficiency increased, and your income stabilized."; } } ] },
+  { min: 30, max: 44, text: "My estranged brother showed up asking for help with his massive business debts.", choices: [
+    { label: "Take on the full debt", run: S => { eff(S, { wealth: -10, happy: 8 }); return "You restored the bond with your sibling and earned their gratitude."; } },
+    { label: "Refuse coldly", run: S => { eff(S, { wealth: 5, charm: -8 }); return "Severed ties with your relatives, but you managed to protect your lifestyle."; } } ] },
+  { min: 30, max: 44, text: "You found an abandoned child during your travels. How will you handle this?", choices: [
+    { label: "Raise as an adopted child.", run: S => { eff(S, { happy: 10, wealth: -8 }); return "A new family member arrived, making the house quite lively."; } },
+    { label: "Leave at a facility", run: S => { eff(S, { int: 5, charm: -3 }); return "I made a practical call and kept my life on track."; } } ] },
+  { min: 45, max: 59, text: "Your apprentice says they want to strike out on their own. How will you see them off?", choices: [
+    { label: "Teach a secret technique", run: S => { eff(S, { int: -5, fame: 8 }); return "You raised an excellent successor, and your reputation grew."; } },
+    { label: "Supporting their independence", run: S => { eff(S, { wealth: -8, charm: 10 }); return "As a beloved master, your network of connections grew."; } } ] },
+  { min: 45, max: 59, text: "Your joints have started to ache. How will you change your daily routine?", choices: [
+    { label: "Undergo rigorous training", run: S => { eff(S, { health: 8, happy: -5 }); return "You maintained a sturdy physique, but you're a bit exhausted."; } },
+    { label: "Study herbology", run: S => { eff(S, { int: 8, health: 3 }); return "Learn the inner workings of the body and live a healthy life."; } } ] },
+  { min: 45, max: 59, text: "Your aging parent needs care. How will you balance your work?", choices: [
+    { label: "Cut back on work", run: S => { eff(S, { wealth: -8, happy: 10 }); return "Cherished the final days spent with your parent."; } },
+    { label: "Hire a servant", run: S => { eff(S, { wealth: -10, int: 5 }); return "You focused on efficiency and balanced it with your work."; } } ] },
+  { min: 45, max: 59, text: "In recognition of your years of service, you've been invited to a knighting ceremony.", choices: [
+    { label: "Making a grand entrance", run: S => { eff(S, { fame: 10, wealth: -5 }); return "Dazzled the social circles and secured a spot among the elite."; } },
+    { label: "Decline and live a quiet life.", run: S => { eff(S, { happy: 8, charm: 3 }); return "Your humble attitude actually made people like you more."; } } ] },
+  { min: 45, max: 59, text: "Your child brought home a partner. However, their background seems a bit suspicious.", choices: [
+    { label: "Interrogate them strictly", run: S => { eff(S, { int: 5, happy: -8 }); return "A rift formed in the family, but danger was avoided."; } },
+    { label: "Giving a warm welcome", run: S => { eff(S, { charm: 8, happy: 5 }); return "A bond of trust was built, leading to a happy home."; } } ] },
+  { min: 45, max: 59, text: "A young adventurer seeks your advice. How will you share your wisdom?", choices: [
+    { label: "Teach them the harsh reality", run: S => { eff(S, { int: 5, fame: 3 }); return "The youth stayed sharp and managed to prevent an accident."; } },
+    { label: "Support their dreams", run: S => { eff(S, { charm: 10, happy: 5 }); return "Became an idol to the youth, giving them something to aspire to."; } } ] },
+  { min: 45, max: 59, text: "Now recruiting leaders for a pioneer group heading into the wilds.", choices: [
+    { label: "Accept the position of leader", run: S => { eff(S, { fame: 10, health: -8 }); return "It's harsh, but you'll leave your name as the founding father of a new land."; } },
+    { label: "Stick to just providing financial support.", run: S => { eff(S, { wealth: -8, int: 8 }); return "The town thanked me for being their local fountain of wisdom."; } } ] },
+  { min: 60, max: 74, text: "Retirement is drawing near. Who will you name as your successor?", choices: [
+    { label: "Pass it on to your biological child", run: S => { eff(S, { wealth: 8, happy: 5 }); return "It was decided that the family business would be protected for generations."; } },
+    { label: "Pass it on to the most talented apprentice", run: S => { eff(S, { fame: 10, int: 5 }); return "The techniques were preserved, contributing to the industry's development."; } },
+    { label: "Close down the shop", run: S => { eff(S, { happy: 8, wealth: -5 }); return "Finally freed from long-standing responsibilities, you've found peace at last."; } } ] },
+  { min: 60, max: 74, text: "Ran into your old rival from back in the day. Should you share a drink?", choices: [
+    { label: "Blooming with old stories", run: S => { eff(S, { happy: 10, charm: 5 }); return "Past grudges vanished, and you became the best of friends."; } },
+    { label: "Clashing over stubbornness", run: S => { eff(S, { int: 5, happy: -5 }); return "You feel your energy rise, refusing to give up yet."; } } ] },
+  { min: 60, max: 74, text: "Considering moving to a quiet village. Will you leave the city you've grown used to?", choices: [
+    { label: "Moving to the countryside", run: S => { eff(S, { health: 8, wealth: -5 }); return "Breathing the mountain air has surely added years to my life."; } },
+    { label: "Stay in the city", run: S => { eff(S, { wealth: 5, int: 5 }); return "Continue a cultured life and stay immersed in the latest news."; } } ] },
+  { min: 60, max: 74, text: "Will you start building the massive orchard you've dreamed of for years?", choices: [
+    { label: "Invest your entire fortune", run: S => { eff(S, { wealth: -10, happy: 10 }); return "A dream from your later years came true, and you built a paradise."; } },
+    { label: "Start small", run: S => { eff(S, { health: 5, wealth: 3 }); return "It was good exercise and added a certain zest to life."; } } ] },
+  { min: 60, max: 74, text: "Your grandchild said they want to be a soldier. It’s a dangerous path; what will you do?", choices: [
+    { label: "Take charge of the training yourself", run: S => { eff(S, { health: 5, charm: 8 }); return "Exerted grandfatherly authority and passed down secret techniques to the grandkids."; } },
+    { label: "Oppose it and suggest academics instead", run: S => { eff(S, { int: 10, happy: -5 }); return "You clashed with your grandchild, but you kept them safe."; } } ] },
+  { min: 60, max: 74, text: "I've been asked to join the council of elders. Should I take on the role of mediator?", choices: [
+    { label: "Accept the request", run: S => { eff(S, { fame: 10, happy: -5 }); return "You worked hard to mediate disputes and supported the town."; } },
+    { label: "Live a life of quiet leisure", run: S => { eff(S, { happy: 10, charm: 3 }); return "Avoided trouble and cherished your free time."; } } ] },
+  { min: 60, max: 74, text: "Your eyesight is failing. What will you do with all those unread books?", choices: [
+    { label: "Ordering custom-made glasses", run: S => { eff(S, { wealth: -8, int: 10 }); return "A new world expanded, and your thirst for knowledge was quenched."; } },
+    { label: "Hire a storyteller", run: S => { eff(S, { charm: 8, happy: 5 }); return "I enjoyed a luxurious moment lost in the art of storytelling."; } } ] },
+  { min: 75, max: 95, text: "Inspired to write an autobiography of your life's journey.", choices: [
+    { label: "Write in great detail", run: S => { eff(S, { int: 10, fame: 5 }); return "Left behind proof of your existence for future generations."; } },
+    { label: "Tell stories of memories to family", run: S => { eff(S, { happy: 10, charm: 5 }); return "Family bonds deepened, and you were wrapped in love."; } } ] },
+  { min: 75, max: 95, text: "You've accumulated too many things. What will you do with the family heirlooms?", choices: [
+    { label: "Donate to a museum", run: S => { eff(S, { fame: 10, wealth: -5 }); return "Seen by many, your name shall live on forever."; } },
+    { label: "Share it with the relatives.", run: S => { eff(S, { happy: 8, charm: 5 }); return "Your descendants protected the family heirloom as a point of pride."; } } ] },
+  { min: 75, max: 95, text: "The youngsters are bickering over the festival plans. Will you step in to mediate?", choices: [
+    { label: "Lending my wisdom", run: S => { eff(S, { int: 8, fame: 5 }); return "Used veteran judgment to make the festival a massive success."; } },
+    { label: "Watch over silently.", run: S => { eff(S, { happy: 8, charm: 3 }); return "Smiled quietly, placing your faith in the growth of the next generation."; } } ] },
+  { min: 75, max: 95, text: "I want to visit the village where I used to live one last time.", choices: [
+    { label: "Pushing myself to go anyway", run: S => { eff(S, { health: -8, happy: 10 }); return "My heart was purified by the nostalgic scenery."; } },
+    { label: "Settle for just sending a letter", run: S => { eff(S, { int: 5, happy: 5 }); return "Prayed for the peace of your hometown from a distant land."; } } ] },
+  { min: 75, max: 95, text: "Your strength has faded, making it hard to even walk alone.", choices: [
+    { label: "Crafting a homemade staff", run: S => { eff(S, { int: 5, health: 5 }); return "Enjoying your own resourcefulness, you live an independent life."; } },
+    { label: "Lean on your family's shoulders", run: S => { eff(S, { happy: 10, charm: 5 }); return "Days where you can truly feel the warmth of your family's kindness."; } } ] },
+  { min: 75, max: 95, text: "Tending the garden is your daily routine. What will you focus on today?", choices: [
+    { label: "Plant a great tree", run: S => { eff(S, { happy: 8, health: 5 }); return "Planted the seeds of hope for the future."; } },
+    { label: "Gathering fallen leaves", run: S => { eff(S, { int: 5, happy: 5 }); return "My mind felt settled in the tidy garden."; } } ] },
+  { min: 75, max: 95, text: "Deciding how to distribute your inheritance. You've chosen to write a will.", choices: [
+    { label: "Divide it fairly", run: S => { eff(S, { happy: 10, charm: 5 }); return "There was no conflict, and the family lived in harmony."; } },
+    { label: "Donate to charity", run: S => { eff(S, { fame: 10, wealth: -10 }); return "You saved many in need and were hailed as a saint."; } } ] },
+  { min: 75, max: 95, text: "A sunny afternoon, looking down at the town from the hill. What are you thinking?", choices: [
+    { label: "Reminisce about past glories.", run: S => { eff(S, { fame: 5, happy: 8 }); return "Gave a deep nod, satisfied that it was a life to be proud of."; } },
+    { label: "Praying for the youth of the future", run: S => { eff(S, { charm: 8, happy: 10 }); return "I spent a peaceful time wrapped in a sense of satisfaction."; } } ] },
+  { min: 15, max: 60, when: S => S.birth.race.name === "Human", text: "A shady merchant is selling mysterious contraptions in the capital's plaza.", choices: [
+    { label: "Haggle for a better price", run: S => { eff(S, { wealth: -5, int: 8 }); return "It was a lucky find—a mechanical gadget!"; } },
+    { label: "Ignoring them", run: S => { eff(S, { happy: 3 }); return "I managed to avoid any pointless spending."; } } ] },
+  { min: 10, max: 30, when: S => S.birth.race.name === "Human", text: "You found a simple quest for beginners at the Adventurers' Guild.", choices: [
+    { label: "Gathering herbs", run: S => { eff(S, { health: 5, wealth: 5 }); return "You worked steadily and earned your reward."; } },
+    { label: "Monster Subjugation", run: S => { eff(S, { fame: 7, health: -5 }); return "You were injured, but you achieved great military merit."; } } ] },
+  { min: 100, max: 300, when: S => S.birth.race.name === "Elf", text: "The ancient forest trees are withering. The woods' blessings seem to be fading.", choices: [
+    { label: "Offering a song", run: S => { eff(S, { charm: 8, happy: 5 }); return "The trees breathed again, and I received their thanks."; } },
+    { label: "Infuse mana.", run: S => { eff(S, { int: 10, health: -5 }); return "You saved the ancient tree but were left utterly exhausted."; } } ] },
+  { min: 50, max: 150, when: S => S.birth.race.name === "Elf", text: "During archery practice, a wind spirit tries to lead your arrows astray.", choices: [
+    { label: "Read the wind and loose an arrow.", run: S => { eff(S, { int: 7, fame: 5 }); return "Showered with praise for your incredible accuracy."; } },
+    { label: "Become one with the wind.", run: S => { eff(S, { health: 6, charm: 6 }); return "You mastered the art of moving with grace."; } } ] },
+  { min: 30, max: 80, when: S => S.birth.race.name === "Dwarf", text: "Discovered raw ore of the legendary metal \"Mithril\" in the mine.", choices: [
+    { label: "Forging the finest of blades", run: S => { eff(S, { fame: 10, wealth: 5 }); return "Made a name for yourself as a master blacksmith."; } },
+    { label: "Sell it as is", run: S => { eff(S, { wealth: 10, happy: -3 }); return "You gained a fortune, but your craftsman's pride is aching."; } } ] },
+  { min: 20, max: 100, when: S => S.birth.race.name === "Dwarf", text: "Ended up in a drinking contest with other races at the tavern.", choices: [
+    { label: "Gulp it all down", run: S => { eff(S, { health: -5, fame: 8 }); return "Earned a round of applause for your hearty drinking."; } },
+    { label: "Talking about the vintage", run: S => { eff(S, { int: 7, charm: 5 }); return "Impressed everyone with your knowledge of spirits and brews."; } } ] },
+  { min: 5, max: 20, when: S => S.birth.race.name === "Beastfolk", text: "Your sense of smell sharpened, allowing you to catch the scent of rare prey from afar.", choices: [
+    { label: "Give chase at full speed", run: S => { eff(S, { health: 10, wealth: 3 }); return "Took down the prey with a masterful hunt."; } },
+    { label: "Set a trap", run: S => { eff(S, { int: 8, happy: 4 }); return "You made an efficient catch and enjoyed a fine dinner."; } } ] },
+  { min: 15, max: 40, when: S => S.birth.race.name === "Beastfolk", text: "On the night of the full moon, my instincts surge and my wild blood begins to boil.", choices: [
+    { label: "Howling at the moonlit night", run: S => { eff(S, { fame: 6, happy: 6 }); return "Your noble presence was recognized by your companions."; } },
+    { label: "Controlling it through meditation", run: S => { eff(S, { int: 9, charm: 4 }); return "You gained a resilient spirit and a calm mind."; } } ] },
+  { min: 20, max: 200, when: S => S.birth.race.name === "Demon Race", text: "Obtained a forbidden grimoire. It hums with a powerful, dark energy.", choices: [
+    { label: "Unravel the power", run: S => { eff(S, { int: 10, fame: 5 }); return "I mastered abyssal magic and became a figure of fear."; } },
+    { label: "Absorb the power", run: S => { eff(S, { health: 8, charm: -5 }); return "Your physical prowess grew, but you're becoming rather ominous."; } } ] },
+  { min: 100, max: 500, when: S => S.birth.race.name === "Demon Race", text: "The monsters in the territory are about to riot.", choices: [
+    { label: "Force them into submission", run: S => { eff(S, { fame: 8, health: -4 }); return "Everything fell silent under a reign of terror."; } },
+    { label: "Propose a contract", run: S => { eff(S, { int: 7, wealth: 6 }); return "Order was maintained through rational governance."; } } ] },
+  { min: 10, max: 50, when: S => S.birth.race.name === "Descendant of Angels", text: "The wings on your back grew, allowing you to soar even higher.", choices: [
+    { label: "Aim for the edge of the sky", run: S => { eff(S, { health: 7, happy: 8 }); return "A view of an unknown, breathtaking vista washed my soul clean."; } },
+    { label: "Save the people", run: S => { eff(S, { fame: 10, charm: 5 }); return "Revered by all as the Savior of the Skies."; } } ] },
+  { min: 15, max: 60, when: S => S.birth.race.name === "Descendant of Angels", text: "You heard the voices of your ancestors in the ancient temple. A trial awaits.", choices: [
+    { label: "Emitting a purifying light", run: S => { eff(S, { int: 8, health: -3 }); return "Banished evil energy and protected the sanctuary."; } },
+    { label: "Offer up a prayer", run: S => { eff(S, { charm: 9, happy: 6 }); return "Glowed with even more radiance after receiving a divine blessing."; } } ] },
+  { min: 50, max: 400, when: S => S.birth.race.name === "Vampire", text: "A powerful bloodlust has overcome you, but tonight is a beautiful noble banquet.", choices: [
+    { label: "Secretly sip blood", run: S => { eff(S, { health: 10, fame: -6 }); return "I've gained new vitality, but the rumors are starting to fly."; } },
+    { label: "Acting with nobility", run: S => { eff(S, { charm: 10, int: 5 }); return "I'll endure the thirst to become the star of high society."; } } ] },
+  { min: 100, max: 800, when: S => S.birth.race.name === "Vampire", text: "Woke up from a long slumber to find the castle's treasure had been stolen.", choices: [
+    { label: "Cornering the culprit", run: S => { eff(S, { fame: 7, wealth: 5 }); return "You showed your authority and reclaimed the treasure."; } },
+    { label: "Weave new magic", run: S => { eff(S, { int: 10, health: -4 }); return "You used your loss as fuel to develop a new technique."; } } ] },
+  { min: 1, max: 100, when: S => S.birth.race.name === "Fairy", text: "Decided to have some fun teasing a traveler who wandered into the flower fields.", choices: [
+    { label: "Bewilder with illusions", run: S => { eff(S, { int: 7, happy: 8 }); return "I had a good laugh watching the traveler's reaction."; } },
+    { label: "Show them the way.", run: S => { eff(S, { charm: 6, fame: 4 }); return "You were thanked, and good rumors about you spread."; } } ] },
+  { min: 10, max: 150, when: S => S.birth.race.name === "Fairy", text: "I found a rare \"Rainbow Drop\" perched on a flower petal.", choices: [
+    { label: "Drink it all yourself", run: S => { eff(S, { health: 10, charm: 5 }); return "Your body began to sparkle like a gemstone."; } },
+    { label: "Share with your friends", run: S => { eff(S, { happy: 10, fame: 5 }); return "Bonds deepened, and a sense of happiness took hold."; } } ] },
+  { min: 20, max: 100, when: S => S.birth.race.name === "Dragonkin", text: "The scales covering your body hardened, giving you the majesty of an Ancient Dragon.", choices: [
+    { label: "Entering a martial arts tournament", run: S => { eff(S, { fame: 10, wealth: 5 }); return "You won the championship with overwhelming defense."; } },
+    { label: "Training in a volcanic wasteland", run: S => { eff(S, { health: 9, int: 4 }); return "Endured a harsh environment and forged your mind and body."; } } ] },
+  { min: 50, max: 300, when: S => S.birth.race.name === "Dragonkin", text: "The urge to hoard treasure has grown; you find yourself craving all things shiny.", choices: [
+    { label: "Explore the labyrinth.", run: S => { eff(S, { wealth: 10, health: -5 }); return "You overcame many traps and obtained gold and silver."; } },
+    { label: "Handcraft your own jewelry", run: S => { eff(S, { int: 8, charm: 6 }); return "Crafted a masterpiece using the keen insight of a dragon."; } } ] },
+  { min: 3, max: 15, when: S => S.birth.race.name === "Goblin", text: "A fancy-looking carriage is stuck in the mud near the village.", choices: [
+    { label: "Attack all at once", run: S => { eff(S, { wealth: 10, fame: -7 }); return "The raid was a success, and the village is now thriving!"; } },
+    { label: "Help out to put them in your debt", run: S => { eff(S, { charm: 8, int: 5 }); return "I received a gold coin from an unexpected act of kindness."; } } ] },
+  { min: 5, max: 20, when: S => S.birth.race.name === "Goblin", text: "It looks like I could make something by combining the junk I found in the abandoned mine.", choices: [
+    { label: "Create a weapon", run: S => { eff(S, { fame: 7, int: 6 }); return "You surprised everyone with a bizarre and fantastical weapon."; } },
+    { label: "Craft a trap", run: S => { eff(S, { health: 5, wealth: 6 }); return "My hunting efficiency has shot through the roof!"; } } ] },
+  { min: 1, max: 50, when: S => S.birth.race.name === "Slime", text: "Found a pond overgrown with medicinal herbs. Your body craves their healing power.", choices: [
+    { label: "Swallow it whole", run: S => { eff(S, { health: 10, int: 3 }); return "Absorbed the ingredients and turned green."; } },
+    { label: "Processing it into a solvent", run: S => { eff(S, { int: 9, wealth: 5 }); return "I brewed a special, one-of-a-kind potion."; } } ] },
+  { min: 5, max: 100, when: S => S.birth.race.name === "Slime", text: "You took a heavy impact, and your body split into two!", choices: [
+    { label: "Work separately", run: S => { eff(S, { int: 8, happy: 6 }); return "Moving as one, the work progressed rapidly."; } },
+    { label: "Merge immediately", run: S => { eff(S, { health: 7, charm: 6 }); return "Returned to a larger, glossier body."; } } ] },
+];
+// Choice payoffs (v31): choices from early and middle life come back years later
+EVENTS.push(
+  { min: 30, max: 95, payoff: true, when: S => !!S.flags.supporter, text: S => `Word had been going around ever since the war ended. The people of ${S.place} are holding a festival of thanks for you — the one who stayed behind and kept the town going.`,
+    choices: [
+      { label: "Join the festival", run: S => { eff(S, { fame: 10, happy: 10 }); return "Their smiles surrounded you. The choice you made that day was the right one."; } },
+      { label: "Watch from afar", run: S => { eff(S, { happy: 7 }); return "You watched the festival lights from a distance. That was enough."; } },
+    ] },
+  { min: 45, max: 130, payoff: true, when: S => !!S.flags.virtuous, text: S => `A young stranger came to visit — the grandchild of the elder whose reward you once declined. "Grandfather spoke of you until the very end."`,
+    choices: [
+      { label: "Accept the keepsake", run: S => { eff(S, { wealth: 8, happy: 8 }); return "You took the keepsake in your hands. Kindness had traveled across a generation."; } },
+      { label: "Tell them your story", run: S => { eff(S, { fame: 8, happy: 6 }); return "The young one bowed again and again before leaving. Your name will be told in that house for years."; } },
+    ] },
+  { min: 30, max: 110, payoff: true, when: S => !!S.flags.secretKept, text: S => `A well-dressed visitor arrived — the very person whose secret you once guarded so fiercely. "I am who I am today because you kept it."`,
+    choices: [
+      { label: "Celebrate the reunion", run: S => { eff(S, { happy: 10, fame: 5 }); return "You shook hands firmly. The secret is still just between the two of you."; } },
+      { label: "Ask a favor in return", run: S => { eff(S, { wealth: 10, happy: 4 }); return "They nodded gladly. The secret you protected had come around to protect you."; } },
+    ] },
+  { min: 60, max: 170, payoff: true, when: S => !!S.flags.stayedLow, text: S => `On a night when you feel your body failing, your thoughts turn to the mark you hid all your life — the sign of royal blood. What will you do with this truth?`,
+    choices: [
+      { label: "Tell only your child", run: S => { eff(S, { happy: 8 }); S.flags.bloodlineTold = true; return "Your child gasped, then nodded quietly. The story of the bloodline passed to the next generation."; } },
+      { label: "Take it to the grave", run: S => { eff(S, { happy: 5 }); return "You will tell no one. That was the promise you made the day you chose to live in the alleys."; } },
+    ] },
+  { min: 30, max: 80, payoff: true, when: S => !!S.flags.scholar, text: S => `News arrived of the death of the scholar you apprenticed under in your youth. As a keepsake, their unfinished research notes have been entrusted to you.`,
+    choices: [
+      { label: "Carry on the research", run: S => Math.random() < 0.4 + S.stats.int / 250 ? (eff(S, { int: 8, fame: 14, happy: 5 }), "The research was completed and published under both your names.") : (eff(S, { int: 6, happy: -3 }), "It never reached completion. But the questions your teacher asked still live in your head.") },
+      { label: "Keep the notes with care", run: S => { eff(S, { happy: 6, int: 3 }); return "The notebook took the place of honor on your shelf. Your days of learning quietly came back to you."; } },
+    ] },
+  { min: 25, max: 95, payoff: true, when: S => !!S.flags.healer, text: S => `A healthy young person came to visit — the patient you nursed through the plague, all grown up. "I am alive because of you."`,
+    choices: [
+      { label: "Celebrate the reunion", run: S => { eff(S, { happy: 11, fame: 4 }); return "Life comes around. You never imagined that night of nursing would return to you like this."; } },
+      { label: "Encourage the path of healing", run: S => { eff(S, { happy: 7, fame: 5 }); S.flags.hasDisciple = true; return "Their eyes lit up. A new story of saving others begins here."; } },
+    ] },
+  { min: 55, max: 170, payoff: true, when: S => !!S.flags.defiedGod, text: S => `The god from back then appeared before you again. "Long time no see. Has it been a good life since?"`,
+    choices: [
+      { label: "Smile and say thanks", run: S => { eff(S, { happy: 10 }); return "The god laughed with satisfaction and melted into the light. You felt acknowledged."; } },
+      { label: "Ask for a wish this time", run: S => Math.random() < 0.5 ? (eff(S, { wealth: 12, fame: 8 }), "The god granted your wish on a whim — though in a slightly mischievous form.") : (eff(S, { happy: -4 }), "\"Humans are greedy after all.\" The god vanished, laughing. It stung a little.") },
+    ] },
+);
+EVENTS.push(
+  { min: 12, max: 50, when: S => S.birth.anomaly && S.birth.anomaly.kind === 'soleMage', text: S => `You were caught using magic by ${S.npc}! In this world, magic is supposed to be nothing more than a myth.`,
+    choices: [
+      { label: "Swear them to secrecy", run: S => Math.random() < 0.6 ? (eff(S, { charm: 3 }), S.flags.secretKept = true, "The secret was kept for now, but rumors are quietly spreading.") : (eff(S, { fame: 12, happy: -6 }), S.flags.exposed = true, "Rumors spread through the city. Some call you a \"Miracle Worker,\" others a \"Monster.\"") },
+      { label: "Throw caution to the wind and show off your power.", run: S => { eff(S, { fame: 18 }); S.flags.exposed = true; return "The people bowed down. The world's only wizard has been born."; } },
+    ] },
+  { min: 20, max: 70, when: S => S.birth.anomaly && S.birth.anomaly.kind === 'hiddenRoyal', text: S => `An old man trembles at the sight of the mark on your arm. "That... that is the crest of the fallen royalty!" Your true lineage is about to be revealed.`,
+    choices: [
+      { label: "Claiming to be a royal descendant", run: S => Math.random() < 0.5 ? (eff(S, { fame: 22, wealth: 14 }), S.flags.restored = true, "Supporters have gathered. The flag of the royal restoration is raised!") : (eff(S, { fame: 8, health: -12 }), "The usurper wants your head. But your spirit remains unbroken.") },
+      { label: "Hiding my mark, I live my life in the shadows of the back alleys.", run: S => { eff(S, { happy: 8 }); S.flags.stayedLow = true; return "You chose substance over fame. A quiet, free life isn't so bad."; } },
+    ] },
+  { min: 15, max: 60, when: S => S.birth.anomaly && S.birth.anomaly.kind === 'godChild', text: S => `Small miracles have started happening around you. Withered flowers bloom and the sick recover. In this godless world, people are beginning to whisper...`,
+    choices: [
+      { label: "Accept the miracle", run: S => { eff(S, { fame: 16, happy: 4 }); S.flags.livingSaint = true; return "People called you a \"Living Saint.\""; } },
+      { label: "Continue to deny the miracle", run: S => { eff(S, { happy: -4, int: 4 }); return "You kept saying it was just a coincidence. Even to yourself."; } },
+    ] },
+);
+EVENTS.push(
+  { min: 10, max: 30, when: S => S.world.magic >= 2, text: S => `An invitation to enroll at ${S.org} (Magic Academy) has arrived!`,
+    choices: [
+      { label: "Enroll in school", run: S => { eff(S, { int: 13, wealth: -5 }); S.flags.mage = true; return "You have stepped onto the path of magic."; } },
+      { label: "Refuse", run: S => { eff(S, { happy: 2 }); return "I'll choose my own path."; } },
+    ] },
+  { min: 8, max: 45, when: S => S.birth.talents.some(t => t.includes("Magical Talent")), text: S => `One night, a magical light flickered in your palm. Your hidden talent is finally awakening!`,
+    choices: [
+      { label: "Devote yourself to training.", run: S => { eff(S, { int: 10, fame: 4 }); S.flags.mage = true; return "Magic dances at your fingertips. A whole new world has opened up."; } },
+      { label: "Keep it hidden to the end.", run: S => { eff(S, { happy: -2 }); return "You tucked your power away. Will the day ever come to use it?"; } },
+    ] },
+);
+EVENTS.push(
+  { min: 12, max: 40, text: S => `The Adventurer’s Guild has opened its doors! Register now to begin a life of danger and riches.`,
+    choices: [
+      { label: "Become an adventurer", run: S => { S.flags.adventurer = true; eff(S, { fame: 6 }); return "Adventurer registration complete! Your first job: slaying monsters in the sewers."; } },
+      { label: "Live a steady life", run: S => { eff(S, { happy: 3 }); return "Tranquility is a talent in its own right."; } },
+    ] },
+  { min: 14, max: 35, when: S => !!S.flags.adventurer, payoff: true, text: S => `A tricky request has arrived at the guild: want to join an expedition to some ancient ruins?`,
+    choices: [
+      { label: "Participate", run: S => Math.random() < 0.55 ? (eff(S, { wealth: 16, fame: 10 }), S.flags.relic = true, "Brought back treasure from the ruins! You've made a name for yourself.") : (eff(S, { health: -18 }), "Caught in a trap and badly hurt. But hey, coming back alive is a win in itself.") },
+      { label: "Pass for now", run: S => { eff(S, { happy: 2 }); return "The investigation team returned safely. You feel a little frustrated."; } },
+    ] },
+  { min: 16, max: 45, text: S => `A shady merchant selling old maps approaches. "It’s a treasure map! And since I like your face, I’ll sell it only to you..."`,
+    choices: [
+      { label: "Buy it and go searching.", run: S => Math.random() < 0.3 ? (eff(S, { wealth: 22 }), "It was the real deal! I struck gold—literally, in an old pot.") : (eff(S, { wealth: -7, happy: -3 }), "The map led to nothing but an empty lot. You’ve been swindled.") },
+      { label: "Pay them no mind", run: S => { eff(S, { int: 2 }); return "That might have been a wise decision."; } },
+    ] },
+  { min: 18, max: 50, when: S => S.world.tech >= 1, text: S => `The port town is looking for sailors. They say an uncharted continent lies far beyond the horizon...`,
+    choices: [
+      { label: "Board a ship", run: S => Math.random() < 0.6 ? (eff(S, { wealth: 12, fame: 8, happy: 6 }), S.flags.sailor = true, "Reached the new continent! The voyage was a success.") : (eff(S, { health: -14 }), "You had a brush with death in a storm. You now know the true terror of the sea.") },
+      { label: "Live on land.", run: S => { eff(S, { health: 2 }); return "Watched the ship sail away."; } },
+    ] },
+  { min: 10, max: 60, when: S => S.birth.race.name === "Beastfolk", text: S => `Your beastman senses have caught the scent of prey deep in the woods. The village hunting contest is just around the corner!`,
+    choices: [
+      { label: "Enter a test of strength", run: S => Math.random() < 0.6 ? (eff(S, { fame: 9, happy: 6 }), "You took down a legendary beast and won! You’re the pride of the village.") : (eff(S, { health: -6 }), "The prey turned the tables! My wounds are shallow, but my pride is stinging.") },
+      { label: "Live a quiet life.", run: S => { eff(S, { happy: 3 }); return "A quiet life isn't so bad."; } },
+    ] },
+  { min: 30, max: 120, when: S => ["Elf", "Fairy", "Dragonkin"].includes(S.birth.race.name), text: S => `Another human friend has grown old and passed away. The curse of your long life weighs heavy on your heart.`,
+    choices: [
+      { label: "Continue to interact with people anyway", run: S => { eff(S, { happy: -4, charm: 6 }); return "Parting is painful. Yet, the memories of every person you've met remain true."; } },
+      { label: "Retreating to live deep in the forest", run: S => { eff(S, { happy: 5, fame: -5 }); S.flags.hermit = true; return "Time flows in silence."; } },
+    ] },
+  { min: 14, max: 80, when: S => S.birth.race.name === "Vampire", text: S => `The thirst is growing stronger. How will you handle this primal urge for human blood?`,
+    choices: [
+      { label: "Scrape by on animal blood", run: S => { eff(S, { health: 4, happy: -3 }); return "I kept my sanity... though the thirst remains."; } },
+      { label: "Get a share from the volunteers", run: S => Math.random() < 0.7 ? (eff(S, { charm: 8 }), "Someone finally understands me. A strange bond has formed.") : (eff(S, { fame: -10, happy: -6 }), "My secret identity got out. Time to pack up and leave town...") },
+    ] },
+  { min: 25, max: 55, text: S => `A youngster has come to beg for an apprenticeship. It might just be the perfect time to pass on your skills.`,
+    choices: [
+      { label: "Take an apprentice", run: S => { S.flags.hasDisciple = true; eff(S, { happy: 5, fame: 4 }); return "My apprentice is a quick study. I have learned the joy of teaching."; } },
+      { label: "Refuse", run: S => { eff(S, { int: 3 }); return "Your journey isn't over just yet."; } },
+    ] },
+  { min: 40, max: 90, when: S => !!S.flags.hasDisciple, payoff: true, text: S => `Your apprentice has returned to tell you they've finally come into their own. Seeing how much they've grown brings a tear to your eye.`,
+    choices: [
+      { label: "Entrust all your techniques", run: S => { eff(S, { fame: 10, happy: 8 }); S.flags.legacy = true; return "Your techniques were passed down to the next generation."; } },
+      { label: "Reject them, saying it's too early", run: S => { eff(S, { fame: 3, happy: -3 }); return "The apprentice bowed and left. Strictness is a form of love, too."; } },
+    ] },
+  { min: 20, max: 60, when: S => S.world.war === 2, text: S => `The refugees of war have risen up! The smoldering embers of revolution are ready to burn down the old tyranny.`,
+    choices: [
+      { label: "Join the revolution.", run: S => Math.random() < 0.5 ? (eff(S, { fame: 20 }), S.flags.revolutionary = true, "The revolution succeeded! You're a hero of the new era.") : (eff(S, { health: -20, fame: 6 }), "The revolution failed. You survived to become a storyteller.") },
+      { label: "Don't get involved.", run: S => { eff(S, { happy: -2 }); return "The era moves forward on its own."; } },
+    ] },
+  { min: 45, max: 110, when: S => S.stats.fame >= 55, text: S => `A traveling bard wants to turn your life story into a grand epic!`,
+    choices: [
+      { label: "Cooperate", run: S => { eff(S, { fame: 12, happy: 6 }); S.flags.epic = true; return "Your story is spreading as a song."; } },
+      { label: "Refuse", run: S => { eff(S, { happy: 2 }); return "You chose a quiet old age over becoming a legend."; } },
+    ] },
+  { min: 55, max: 130, text: S => `The twilight years of your life. Now, the younger generation comes seeking your sage advice.`,
+    choices: [
+      { label: "Sharing my wisdom without holding back", run: S => { eff(S, { fame: 8, happy: 7 }); S.flags.sage = true; return "You became known as a \"Living Encyclopedia.\""; } },
+      { label: "Quietly enjoy your remaining years.", run: S => { eff(S, { happy: 9, health: 3 }); return "Peaceful days are the ultimate luxury."; } },
+    ] },
+);
+EVENTS.push(
+  { min: 22, max: 50, when: S => S.flags.path === "Academics", text: S => `Your years of research are finally paying off! You're just one step away from a major discovery.`,
+    choices: [
+      { label: "Losing myself in research", run: S => Math.random() < 0.6 ? (eff(S, { int: 8, fame: 14 }), S.flags.scholar = true, "A major discovery! The academic community is in an uproar.") : (eff(S, { happy: -4, int: 5 }), "Someone beat you to it, but the knowledge you gained is the real deal.") },
+      { label: "Pass the torch to the next generation", run: S => { eff(S, { happy: 6, charm: 4 }); return "A young researcher made a name for themselves in your stead. You don't mind at all."; } },
+    ] },
+  { min: 22, max: 55, when: S => S.flags.path === "Adventure", text: S => `Your arch-rival has appeared! After countless battles, they’re finally ready to settle the score once and for all.`,
+    choices: [
+      { label: "Standing my ground for a duel", run: S => Math.random() < 0.55 ? (eff(S, { fame: 15, health: -8 }), S.flags.duelist = true, "Victory after a fight to the death! My rival fell with a smile.") : (eff(S, { health: -22 }), "Defeat. But at least you survived. These scars are medals of honor.") },
+      { label: "Offer a reconciliation", run: S => { eff(S, { charm: 8, happy: 5 }); S.flags.rivalFriend = true; return "Your arch-nemesis became your lifelong friend."; } },
+    ] },
+  { min: 22, max: 55, when: S => S.flags.path === "Commerce", text: S => `A once-in-a-lifetime business deal has come your way! Success means doubling your shop's size—but failure means losing everything.`,
+    choices: [
+      { label: "Make your move", run: S => Math.random() < 0.5 ? (eff(S, { wealth: 26, fame: 8 }), S.flags.bigMerchant = true, "Huge success! Your guild grew large enough to drive the nation's economy.") : (eff(S, { wealth: -26, happy: -8 }), "A massive failure. You lost much of your fortune...") },
+      { label: "Politely and firmly decline", run: S => { eff(S, { wealth: 5 }); return "Steady effort is the golden rule of business."; } },
+    ] },
+  { min: 8, max: 40, when: S => !!S.flags.stole, payoff: true, text: S => `Rumor has it that someone's hunting you down for a little "unauthorized borrowing" you did back as a kid.`,
+    choices: [
+      { label: "Make amends", run: S => { eff(S, { wealth: -6, happy: 5 }); S.flags.stole = false; S.flags.redeemed = true; return "Settled the apologies and compensation. That's a weight off your shoulders."; } },
+      { label: "Keep running.", run: S => { eff(S, { happy: -6, fame: -4 }); return "Rumors follow you everywhere. But you haven't been caught yet."; } },
+    ] },
+  { min: 25, max: 60, when: S => !!S.flags.mage, payoff: true, text: S => `Rumors of your magical prowess have spread, and now a young mage has come seeking your guidance.`,
+    choices: [
+      { label: "Teach magic.", run: S => { eff(S, { fame: 8, happy: 5 }); S.flags.mageMaster = true; return "The lineage of magic will be passed down."; } },
+      { label: "Drive them away.", run: S => { eff(S, { int: 3 }); return "Magic is dangerous. It's better to keep it to yourself."; } },
+    ] },
+  { min: 55, max: 140, when: S => !!S.flags.partner, payoff: true, text: S => `Peaceful days spent with ${S.flags.partner}. You’ve walked life's long path hand-in-hand.`,
+    choices: [
+      { label: "Express gratitude", run: S => { eff(S, { happy: 12 }); return "\"Me too,\" you smiled back. That smile is the greatest treasure of all."; } },
+      { label: "Reminisce about memories together", run: S => { eff(S, { happy: 9, health: 2 }); return "You have more memories than words could ever tell. That is your answer."; } },
+    ] },
+);
+// filler events per phase (small choices)
+const FILLERS = [
+  { text: () => pick(["The peaceful seasons cycled on.", "A small piece of luck occurred.", "I had a nostalgic dream.", "Found a new hobby."]), choices: [
+    { label: "Enjoy the passing days", run: S => { eff(S, { happy: 4 }); return "It was a good time."; } },
+    { label: "Hone your skills", run: S => { eff(S, { int: 3, health: 2 }); return "You moved forward just a little bit."; } },
+  ] },
+  { text: () => pick(["You made a little mistake.", "You got caught up in some gossip.", "The rainy season dragged on."]), choices: [
+    { label: "Laugh it off", run: S => { eff(S, { happy: 2, charm: 2 }); return "Just keep laughing and things will work out."; } },
+    { label: "Reflect on your actions", run: S => { eff(S, { int: 3, happy: -2 }); return "I'll do better next time."; } },
+  ] },
+];
+
+// ---------- pixel avatar (procedural, by race/family/phase) ----------
+let AV = { frame: 0, parts: [], season: -1, lastDraw: 0 };
+function drawAvatar() {
+  if (!G) return;
+  const cv = el('avatarCv'); if (!cv) return;
+  const ctx = cv.getContext('2d');
+  const P = (x, y, w, h, c) => { ctx.fillStyle = c; ctx.fillRect(x, y, w, h); };
+  const race = G.birth.race.name, fam = G.birth.fam.name;
+  const age = Math.floor(G.age);
+  const phase = phaseOf(age, G.lifeSpan);
+  const frac = G.age - age;
+  const season = Math.min(3, Math.floor(frac * 4));
+  const moving = !G.paused && !G.dead;
+  const f = AV.frame;
+  const bob = moving ? (f % 2 === 0 ? 0 : 1) : 0;
+  // sky tint by season
+  const sky = ['#2a2148', '#1d2a4a', '#3a2340', '#232338'][season];
+  P(0, 0, 16, 16, sky);
+  P(0, 13, 16, 3, '#171233'); // ground
+  // seasonal particles (petals / sparkles / leaves / snow)
+  if (AV.season !== season) { AV.season = season; AV.parts = Array.from({ length: 7 }, () => ({ x: Math.random() * 16, y: Math.random() * 16 })); }
+  const pcol = ['#f8bbd0', '#fff59d', '#ffab91', '#ffffff'][season];
+  if (moving) for (const p of AV.parts) { p.y += season === 1 ? 0.25 : 0.55; p.x += season === 2 ? 0.3 : 0.08; if (p.y > 15) { p.y = -1; p.x = Math.random() * 16; } if (p.x > 16) p.x = 0; }
+  for (const p of AV.parts) P(Math.floor(p.x), Math.floor(p.y), 1, 1, pcol);
+  const skin = ({ "Human": '#f2c49b', "Elf": '#f7ddba', "Beastfolk": '#d99e63', "Dwarf": '#e0aa72', "Demon Race": '#b08cc7', "Descendant of Angels": '#ffe9c9', "Vampire": '#e8e3da', "Fairy": '#ffe3ec', "Dragonkin": '#c98a5e', "Goblin": '#9ccc65', "Slime": '#64b5f6' })[race] || '#f2c49b';
+  const cloth = { "Street Urchin": '#5d5348', "Child of a farmer": '#7a6a42', "Artisan's Child": '#4f6187', "A merchant’s child": '#7b4a8f', "Child of a knight": '#8f2f35', "A child of the royal family": '#c9a227' }[fam];
+  const hairBase = ({ "Human": '#5a4030', "Elf": '#cfd8a6', "Beastfolk": '#8a5a2b', "Dwarf": '#a0522d', "Demon Race": '#3d2b52', "Descendant of Angels": '#f5eeda', "Vampire": '#212121', "Fairy": '#f48fb1', "Dragonkin": '#b71c1c', "Goblin": '#33691e', "Slime": '#42a5f5' })[race] || '#5a4030';
+  const hair = phase === "Golden Years" ? '#cfcfcf' : hairBase;
+  const child = phase === "Childhood";
+  const hy = (child ? 6 : 3) - bob;
+  if (race === "Descendant of Angels") P(5, hy - 2, 6, 1, '#ffe082');
+  if (race === "Demon Race") { P(4, hy - 1, 2, 2, '#6a1b9a'); P(10, hy - 1, 2, 2, '#6a1b9a'); }
+  if (race === "Beastfolk") { P(4, hy - 1, 2, 2, hair); P(10, hy - 1, 2, 2, hair); }
+  if (race === "Elf") { P(3, hy + 2, 1, 3, skin); P(12, hy + 2, 1, 3, skin); }
+  if (race === "Fairy") { const flap = moving && f % 2 ? 3 : 4; P(2, hy + 3, 2, flap, '#b3e5fc'); P(12, hy + 3, 2, flap, '#b3e5fc'); }
+  if (race === "Dragonkin") { P(4, hy - 1, 2, 2, '#b71c1c'); P(10, hy - 1, 2, 2, '#b71c1c'); }
+  if (race === "Goblin") { P(3, hy + 1, 2, 2, skin); P(11, hy + 1, 2, 2, skin); }
+  if (race === "Slime") {
+    const sq = moving && f % 2 ? 1 : 0;
+    P(5, hy + 4 + sq, 6, 7 - sq, skin); P(6, hy + 7, 1, 1, '#26221f'); P(9, hy + 7, 1, 1, '#26221f');
+    el('avatarCap').textContent = race + ' / ' + fam + ' / ' + phase;
+    return;
+  }
+  // head
+  P(5, hy, 6, 5, skin);
+  P(5, hy, 6, 2, hair);
+  P(4, hy + 1, 1, 3, hair); P(11, hy + 1, 1, 3, hair);
+  P(6, hy + 3, 1, 1, '#26221f'); P(9, hy + 3, 1, 1, '#26221f');
+  if (race === "Dwarf" || phase === "Golden Years") P(6, hy + 4, 4, 1, race === "Dwarf" ? hairBase : '#e8e8e8');
+  // body
+  const by = hy + 5;
+  P(5, by, 6, child ? 3 : 5, cloth);
+  const armSwing = moving ? (f % 2 === 0 ? 0 : 1) : 0;
+  P(4, by + armSwing, 1, 3, skin); P(11, by + (1 - armSwing), 1, 3, skin);
+  if (!child) {
+    if (moving && f % 2 === 0) { P(5, by + 5, 2, 2, '#33304d'); P(9, by + 5, 2, 3, '#33304d'); }
+    else if (moving) { P(5, by + 5, 2, 3, '#33304d'); P(9, by + 5, 2, 2, '#33304d'); }
+    else { P(5, by + 5, 2, 3, '#33304d'); P(9, by + 5, 2, 3, '#33304d'); }
+  }
+  if (phase === "Golden Years") P(12, by + 1, 1, 7, '#8d6e63'); // cane
+  if (fam === "A child of the royal family") P(5, hy - 1, 6, 1, '#ffd54f');
+  el('avatarCap').textContent = race + ' / ' + fam + ' / ' + phase;
+}
+setInterval(() => {
+  if (!G || !el('gamePanel') || el('gamePanel').classList.contains('hidden')) return;
+  const now = Date.now();
+  const interval = G.paused || G.dead ? 500 : Math.max(60, 340 - G.speed * 20);
+  if (now - AV.lastDraw < interval) return;
+  AV.lastDraw = now; AV.frame++;
+  try { drawAvatar(); } catch (e) { /* 描画で本体を止めない */ }
+}, 60);
+
+// ---------- birth reveal ----------
+function pctOf(list, item) { const t = list.reduce((s, x) => s + x.w, 0); return (item.w / t * 100).toFixed(1); }
+let revealSteps = [], revealIdx = 0;
+function renderRevealStep() {
+  const s = revealSteps[revealIdx];
+  el('revealStep').textContent = '― ' + (revealIdx + 1) + ' / ' + revealSteps.length + ' ―';
+  const isRareStep = (revealIdx === 2 && G.birth.race.w <= 3) || s.title.startsWith('★');
+  el('revealBody').innerHTML = '<div style="font-size:17px;color:#ffd54f;font-weight:bold;margin-bottom:8px">' + (isRareStep ? '✨ ' : '') + s.title + (isRareStep ? ' ✨' : '') + '</div>' + s.html;
+  el('revealBody').style.borderColor = isRareStep ? '#ffd54f' : '#3a2f7a';
+  el('revealBody').style.boxShadow = isRareStep ? '0 0 24px rgba(255,213,79,.35)' : '';
+  const famStep = revealSteps.findIndex(s => s.title.includes("Lineage"));
+  el('btnRevealNext').classList.toggle('hidden', revealIdx >= revealSteps.length - 1);
+  el('btnBegin').classList.toggle('hidden', revealIdx < revealSteps.length - 1);
+}
+function showReveal() {
+  const w = G.world, b = G.birth;
+  const father = genName(), mother = genName();
+  const jobByFam = { "Street Urchin": "Never knew your parents' faces", "Child of a farmer": "Father is a farmer, mother is a weaver", "Artisan's Child": "Father is a blacksmith, mother is a tailor", "A merchant’s child": "Father is a peddler, mother is a bookkeeper", "Child of a knight": "Father is a knight, mother is a former maid", "A child of the royal family": "Father is King, mother is Queen" };
+  const lifeHint = b.lifeSpan < 70 ? "The mark of a short life" : b.lifeSpan < 130 ? "Signs of an average lifespan" : b.lifeSpan < 250 ? "Signs of longevity" : "A face destined for eternity";
+  const talentDesc = t => '「' + t + '」― ' + (t.includes("A head for business") ? "You have a sharp nose for where the gold goes." : t.includes("Sword") ? "I feel at peace with a weapon in my hand." : t.includes("Magic") ? "You can see the flow of mana." : t.includes("Luck") ? "Somehow, you slip through the crisis." : t.includes("Body") ? "You have a strong body and are resistant to illness." : "It will bloom at some point in your life.");
+  revealSteps = [
+    { title: "🌍 Your New World", html: '<b>' + w.name + "</b><br>Mana is " + ["Does not exist", "Faint", "Abundant", "To an excessive degree"][w.magic] + ". Technology level: " + techLabel(w) + "." },
+    { title: "⚔️ World Status", html: "The situation is..." + ["Peace", "During the Cold War", "In the midst of the Great War"][w.war] + ". The deities are " + (w.gods ? "Interfere frequently" : "Remaining silent") + ".<br>Omen of Calamity: <b>" + w.disaster + '</b>' },
+    { title: "👶 Race & Gender", html: "You are <b>" + b.race.name + "</b> of <b>" + b.gender + "</b> as a species.<br>(Species draw rate: " + pctOf(RACES.filter(r => raceAllowed(r, w)), b.race) + '%)' },
+    { title: "🏠 Family Lineage & Birthplace", html: "Lineage: <b>" + b.fam.name + "</b> (Draw rate: " + pctOf(FAMILIES, b.fam) + "%).<br>Place of birth: " + G.place + '.' },
+    { title: "👨‍👩‍👧 Parents", html: jobByFam[b.fam.name] + ".<br>Father's name is <b>" + father + "</b>, and your mother's name is <b>" + mother + '</b>.' },
+    { title: "🎁 Your Bestowed Talents", html: talentDesc(b.talents[0]) + '<br>' + talentDesc(b.talents[1]) },
+    { title: "📊 Starting Potential", html: "Health " + b.stats.health + " /  Intellect " + b.stats.int + " /  Charisma " + b.stats.charm + "<br>Wealth " + b.stats.wealth + " /  Fame " + b.stats.fame + " /  Happiness " + b.stats.happy },
+    ...(b.anomaly ? [{ title: '★ ' + b.anomaly.name, html: b.anomaly.desc + "<br><br>* This is a very rare birth that defies the laws of the world." }] : []),
+    { title: "🔮 Whispers of Your Lifespan", html: '<b>' + lifeHint + "</b><br>(However, it may change depending on how you live)<br><br>Now, let's begin this life." },
+  ];
+  revealIdx = 0;
+  renderRevealStep();
+  el('birthReveal').style.display = 'block'; G.revealOpen = true;
+}
+// ---------- game state ----------
+let SAVE = { toku: 0, lives: [] };
+try { const s = localStorage.getItem('tensei-life'); if (s) SAVE = JSON.parse(s); } catch (e) {}
+SAVE.settings = SAVE.settings || { gentle: false, auto: false };
+function persist() { try { localStorage.setItem('tensei-life', JSON.stringify(SAVE)); } catch (e) {} }
+let G = null;
+
+function phaseOf(age, span) { const r = age / span; return age < 13 ? "Childhood" : age < 26 ? "Young Adulthood" : age < 56 ? "Prime of Life" : "Golden Years"; }
+
+function startLife() {
+  const world = genWorld();
+  const birth = genBirth(world, SAVE.toku);
+  G = { world, birth, age: 0, stats: birth.stats, lifeSpan: birth.lifeSpan, flags: {},
+        place: genPlace(), org: genName() + pick(["Academy", "Merchant Guild", "Order of Knights", "Guild"]),
+        npc: genName(), npc2: genName(), usedEvents: new Set(), chronicle: [], milestonesDone: new Set(), peers: [0, 1, 2].map(() => { const pr = pick(RACES.filter(r => raceAllowed(r, world))); return { name: genName(), race: pr.name, lifeSpan: RI(pr.life[0], pr.life[1]), dead: false }; }) };
+  el('startPanel').classList.add('hidden');
+  el('gamePanel').classList.remove('hidden');
+  el('death').style.display = 'none';
+  const w = world;
+  el('worldName').textContent = '✦ ' + w.name + ' ✦';
+  el('worldParams').innerHTML =
+    "Mana: " + ["None", "Faint", "Abundant", "Excessive"][w.magic] + " /  Technology: " + techLabel(w) +
+    " /  World Status: " + ["Peace", "Cold War", "During the Great War"][w.war] + " /  Deities: " + (w.gods ? "Meddlesome" : "Silence") +
+    " /  Omen of Calamity: " + w.disaster + " /  Disposition: ??? (Revealed after death)";
+  el('birthInfo').innerHTML = "Birth: <b>" + birth.race.name + "</b> · <b>" + birth.gender + "</b> · <b>" + birth.fam.name + "</b><br>Talent: <b>" +
+    birth.talents[0] + '</b> / <b>' + birth.talents[1] + '</b>';
+  log(0, "Born as " + (/^[AEIOU]/.test(birth.race.name) ? "an " : "a ") + birth.race.name + " of the " + birth.fam.name + " in " + G.place + ".");
+  G.speed = 1; G.paused = true; G.nextEventAge = R(2, 5);
+  renderStats(); drawAvatar(); showReveal();
+}
+function log(age, text) { G.chronicle.unshift({ age, text }); el('chronicle').innerHTML = G.chronicle.map(c => '<div><span class="yr">' + c.age + " years old</span> " + c.text + '</div>').join(''); }
+function renderStats() {
+  const names = { health: "Health", int: "Intelligence", charm: "Charm", wealth: "Wealth", fame: "Fame", happy: "Happiness" };
+  el('statsView').innerHTML = Object.keys(names).map(k => '<div class="stat">' + names[k] + ' ' + G.stats[k] + '<div class="bar"><div class="fill" style="width:' + G.stats[k] + '%"></div></div></div>').join('');
+}
+// ---------- ambient life: readable happenings as years pass ----------
+const AMBIENT = {
+  "Childhood": [
+    "Built a secret base with the neighborhood kids.", "You completed your very first errand!", "Came down with a high fever and was bedridden for three days.",
+    "I became friends with a puppy I found.", "You were mesmerized by the sound of the festival drums.", "Fell and scraped your knee, but you didn't cry.",
+    "Taken to the city for the first time by your parent", "You learned to read and can finally understand the shop signs.", "While napping in a sunny spot, a big dog licked your face.", "Found a clear blue stone in the stream behind the mountain and kept it as a treasure.", "On the night of the festival, the starry sky seen over your father's shoulder was beautiful.", "On a winter morning, you traced the icy patterns on the window with your finger.", "With Mom's help, I wrote my name on paper for the very first time.", "Built a secret base with the neighborhood kids and played in the mud until dusk.", "I savored every bite of the sweet treat I bought at the market.", "I failed at tree climbing and ripped my clothes, earning me a stern scolding.", "Picked nameless flowers in the field, made a crown, and admired yourself in the mirror.", "My heart raced as I listened to the traveling merchant's tales of foreign lands.", "Leapt over a giant post-rain puddle with pure gusto.", "Eager to know what happened next in your favorite picture book, you learned the art of staying up late.", "Brought a lost kitten home, and now you sleep together.", "Under the blazing summer sun, you washed your face with cold well water.", "You joined the harvest festival dance circle and lost yourself in the rhythm."],
+  "Young Adulthood": [
+    "You made a friend to talk with until dawn.", "You experienced your first heartbreak.", "Did pretty well for yourself in a local tournament",
+    "Heard stories of a far-off land from a traveling merchant", "It was a season spent entirely on training", "A little romance has blossomed.",
+    "Broke up a tavern brawl and earned everyone's respect.", "I wrote a letter. Still no reply.", "Started work as an apprentice and earned some hard-won calluses on your palms.", "You bought a small gift for your family with your first paycheck.", "Traveled to the next town and ate a rare fruit you'd never seen before.", "Caught in a sudden shower, I shared a roof with my crush.", "You spent your days practicing the sword, swinging at the sunset over and over.", "In the dead of night, I spread an old map in the archives and dreamed of adventure.", "You talked about the future with friends around a campfire until dawn.", "Tried fixing a broken tool you found on the roadside all by yourself.", "You were so conscious of your crush's gaze that you fixed your hair a dozen times.", "You rode a horse for the first time and were left breathless by the speed.", "Overwhelmed by the city's hustle and bustle, you walked the streets in your new shoes.", "I felt my posture straighten as I inherited an old fountain pen from my mentor.", "Slipped away from the festival's roar to play the flute alone by the quiet lakeside.", "You made a big mistake at work, but your colleagues' encouragement saved you.", "You resolved to set out, engraving the familiar sights of your hometown into your heart."],
+  "Prime of Life": [
+    "Work is on track, and the busy days continue.", "I reunited with an old friend and shared a few drinks.", "You built a tiny house (spiritually speaking).",
+    "Subordinates and apprentices have finally come into their own.", "It's getting harder to shake off physical exhaustion.", "Popped into a festival in my hometown",
+    "Received an unexpected windfall", "Days spent savoring quiet happiness.", "You'll never forget the joy of opening your own little shop and hanging up the sign.", "You took your loved one's hand and quietly began a new life.", "You held your crying baby and soothed them until the break of day.", "I tilled the fields and shared the harvest with all my neighbors.", "Years of training bore fruit, and you're now recognized as a true artisan.", "After repairing the house and fixing the leaks, your meal tasted better than ever.", "I shared a drink and reminisced about the old days with a friend I hadn't seen in years.", "Looking up at the crescent moon on the way home from work calmed your heart.", "Taught the youth your knowledge and smiled warmly as they flourished.", "The little sapling I planted in the garden has grown taller than the roof before I knew it.", "Carrying heavy loads every day was tough, but your family's smiles were the best medicine.", "You chopped wood for the winter and felt satisfied looking at the mountain of logs.", "I was summoned to the town council to give my two cents on our future.", "On a stormy night, the whole family huddled together and waited for it to pass safely.", "On a rare day off, the couple took a stroll through a quiet forest."],
+  "Golden Years": [
+    "Tending to the garden became a daily routine.", "You told old stories to young people who felt like your own grandchildren.", "News of an old friend's passing arrived.",
+    "Peaceful autumn days", "Laughed while reminiscing about the dreams of your youth", "Your body is heavy, but your heart is light.",
+    "A desire to go on one last journey blossomed.", "Read a book in the silence.", "Decided to retire and entrusted your favorite tools to your top apprentice.", "Sat on the veranda, sipping tea and watching the world go by.", "Holding your grandchild's small hand, you spent your days telling tales of the past.", "A morning walk turned lovely as seasonal roadside blooms warmed my heart.", "You and your long-time partner understand each other without a single word.", "Used a trembling hand to sketch the landscapes etched in your memory.", "Tempted by the warm weather, your naps have started getting longer.", "Saw a young person in trouble and offered a bit of casual wisdom.", "Reading through a worn-out diary, you looked back on your turbulent days.", "Your hearing is fading, but the birdsong still sounds clear as a bell.", "I felt the breeze announcing the arrival of spring and let out a deep sigh.", "I got a letter from an old acquaintance and spent all night writing back.", "Looked back on your life and felt that every moment was a precious memory.", "Looking up at the night sky, you wondered which of those stars you’d visit next.", "On a quiet snowy night, you closed your eyes while staring into the fireplace."],
+};
+const ORPHAN_CHILD = [
+  "Sheltered from the rain with a cardboard box in an alley.", "I was given some leftover bread at the edge of the market.", "Shared your bed with a stray dog.",
+  "I looked up at the stars from under the bridge", "Caught the eye of an alleyway kingpin, who looked after you.", "You somehow survived the freezing night.",
+  "I picked up some discarded tools and fixed them.", "Your birthday passed without anyone even noticing."];
+function yearPassage() {
+  saveRun();
+  if (G.peers) for (const p of G.peers) {
+    if (p.dead) continue;
+    if (G.age > p.lifeSpan) { p.dead = true; log(Math.floor(G.age), p.name + " (" + p.race + "), born on the same day as you, passed away at " + Math.floor(p.lifeSpan) + "."); }
+    else if (Math.random() < 0.10) log(Math.floor(G.age), pick([p.name + ", born on the same day as you, seems to be doing well.", p.name + " — rumors of their success reached your ears.", "You never crossed paths with " + p.name + " again as the years went by."]));
+  }
+  const age = Math.floor(G.age);
+  const phase = phaseOf(age, G.lifeSpan);
+  let pool = AMBIENT[phase];
+  if (G.birth.fam.name === "Street Urchin") {
+    if (phase === "Childhood") pool = ORPHAN_CHILD;
+    else pool = pool.filter(t => !t.includes("Parent") && !t.includes("Hometown"));
+  }
+  let text = pick(pool);
+  // world-flavored insertions
+  if (G.world.war === 2 && Math.random() < 0.3) text = "News of a war arrived from afar." + text;
+  if (G.world.disaster === "Plague" && Math.random() < 0.2) { text = "Whispers of a plague are starting to spread once more." + text; G.stats.health = clamp(G.stats.health - 2); }
+  if (Math.random() < 0.25) { const d = pick([{ happy: 3 }, { health: 2 }, { int: 2 }, { charm: 2 }, { wealth: 3 }, { happy: -2 }, { health: -2 }]); eff(G, d); }
+  log(age, text);
+  if (!G.paused) el('eventText').textContent = age + " years old — " + text;
+}
+// ---------- real-time clock: 1 year = 6 sec at x1 ----------
+let clockTimer = null;
+function startClock() {
+  clearInterval(clockTimer);
+  clockTimer = setInterval(tick, 100);
+}
+function tick() {
+  if (!G || G.paused || G.dead) return;
+  try { tickInner(); } catch (e) {
+    G.eventOpen = false;
+    el('bigEvent').style.display = 'none';
+    G.nextEventAge = G.age + 2;
+    G.paused = false;
+  }
+}
+function tickInner() {
+  const yearsPerSec = G.speed / 6;
+  const before = Math.floor(G.age);
+  G.age += yearsPerSec * 0.1;
+  if (Math.floor(G.age) > before) yearPassage();
+  // aging pressure after 70% of lifespan
+  if (G.age > G.lifeSpan * 0.7 && Math.random() < 0.1) G.stats.health = clamp(G.stats.health - 1);
+  renderClock();
+  const msAge = [5, 15, 30, 50, 70].find(a => G.age >= a && !(G.milestonesDone || new Set()).has(a) && a < G.lifeSpan);
+  if (msAge !== undefined) { G.milestonesDone.add(msAge); G.paused = true; renderClock(); log(msAge, "[Milestone]" + msAge + " — a milestone question"); showBigEvent(MILESTONES[msAge], MILESTONES[msAge].text, msAge); return; }
+  if (G.age >= G.nextEventAge) { presentEvent(); return; }
+  // death check (evaluated as time passes)
+  const over = G.age >= G.lifeSpan;
+  const deathRisk = over ? 0.06 : G.stats.health <= 8 ? 0.03 : G.world.temper.tragedy * 0.0012;
+  if ((over && Math.random() < deathRisk) || G.age >= G.lifeSpan * 1.15 || (G.age > 10 && Math.random() < deathRisk)) { die(); }
+}
+const SEASONS = ["🌸Spring", "🌻Summer", "🍂Autumn", "❄️Winter"];
+function renderClock() {
+  el('ageView').textContent = Math.floor(G.age) + " years, " + Math.floor((G.age % 1) * 12) + " months old";
+  el('phaseView').textContent = phaseOf(Math.floor(G.age), G.lifeSpan);
+  el('seasonView').textContent = SEASONS[Math.floor((G.age % 1) * 4) % 4];
+  el('yearBar').style.width = ((G.age % 1) * 100).toFixed(1) + '%';
+  el('dayView').textContent = "Day " + Math.floor(G.age * 365).toLocaleString() + " of this life";
+  const pv = el('peersView');
+  if (pv && G.peers) pv.innerHTML = "👥 Those Born on the Same Day: " + G.peers.map(p => p.dead ? '<s>' + p.name + ' (' + p.race + ')</s>' : p.name + ' (' + p.race + ')').join(', ');
+  const stuck = G.paused && !G.dead && !G.eventOpen && !G.revealOpen;
+  el('btnRescue').classList.toggle('hidden', !stuck);
+  const ph = phaseOf(Math.floor(G.age), G.lifeSpan);
+  if (G._phase !== ph) { G._phase = ph; drawAvatar(); }
+  document.querySelectorAll('.spd').forEach(b => {
+    const active = Number(b.dataset.spd) === (G.paused ? 0 : G.speed);
+    b.style.background = active ? '#00897b' : '#241d4d';
+  });
+  renderStats();
+}
+const MILESTONES = {
+  5: { text: "Age 5. You're becoming self-aware and the world is opening up. Who do you want to become?", choices: [
+    { label: "Grow up full of energy", run: S => { eff(S, { health: 6, happy: 4 }); return "Growing up healthy, in both body and mind."; } },
+    { label: "Getting lost in books and knowledge", run: S => { eff(S, { int: 7 }); return "The seeds of a little sage have sprouted."; } },
+    { label: "Make lots of friends", run: S => { eff(S, { charm: 6, happy: 3 }); return "The kind of child who was always at the center of laughter."; } } ] },
+  15: { text: "15 years old. Standing at the threshold of adulthood. The age to start choosing your own path.", choices: [
+    { label: "Decide to pursue your dreams", run: S => { eff(S, { happy: 5, fame: 3 }); return "A fire was lit in my eyes."; } },
+    { label: "Facing the cold, hard facts", run: S => { eff(S, { int: 5, wealth: 3 }); return "A grounded first step."; } },
+    { label: "Going with the flow", run: S => { eff(S, { happy: 6 }); return "What will be, will be. That's life too."; } } ] },
+  30: { text: "Turned 30. Looking back at the first half of your journey, what do you think of yourself now?", choices: [
+    { label: "Still a long way to go", run: S => { eff(S, { health: 4, happy: 5 }); return "High spirits! You're really hitting your prime."; } },
+    { label: "A change of direction isn't so bad", run: S => { eff(S, { int: 4, charm: 3 }); return "The courage to change is a strength in itself."; } },
+    { label: "I want to protect this happiness.", run: S => { eff(S, { happy: 7 }); return "A life with something to protect is a strong one."; } } ] },
+  50: { text: "Age 50. Past the midpoint of life. What do you want to spend your remaining time on?", choices: [
+    { label: "There is something I want to achieve", run: S => { eff(S, { fame: 5, int: 3 }); return "It's time to show the power of your golden years."; } },
+    { label: "I just want to live in peace", run: S => { eff(S, { happy: 8, health: 3 }); return "You've reached an age where you appreciate the value of silence."; } },
+    { label: "I want to mentor the youth", run: S => { eff(S, { charm: 5, fame: 3 }); return "The happiness of having someone to carry on your legacy."; } } ] },
+  70: { text: "Reached age 70. It's been a long road. What words would you say to your life right now?", choices: [
+    { label: "You've done well", run: S => { eff(S, { happy: 9 }); return "A retirement you can be proud of is the greatest treasure of all."; } },
+    { label: "It's not over yet!", run: S => { eff(S, { health: 5, fame: 4 }); return "More vigorous than ever despite your age. Everyone is amazed."; } },
+    { label: "Saying \"thank you,\" ", run: S => { eff(S, { happy: 10 }); return "Words of gratitude came naturally. It’s been a good life."; } } ] },
+};
+
+function presentEvent() {
+  G.paused = true; renderClock();
+  const age = Math.floor(G.age);
+  const pool = EVENTS.map((e, i) => [e, i]).filter(([e, i]) => !G.usedEvents.has(i) && age >= e.min && age <= e.max && (!e.when || e.when(G)));
+  const poolF = (SAVE.settings.gentle || isClassroom()) ? pool.filter(([e]) => { const t = typeof e.text === 'function' ? '' : e.text; const src = (e.when ? e.when.toString() : '') + t; return !/war === 2|疫病|革命|渇き/.test(src); }) : pool;
+  const poolUse = poolF.length ? poolF : pool;
+  let ev;
+  if (poolUse.length && Math.random() < 0.82) {
+    const pay = poolUse.filter(([e]) => e.payoff);
+    const [e, i] = (pay.length && Math.random() < 0.55) ? pick(pay) : pick(poolUse);
+    ev = e; G.usedEvents.add(i);
+  }
+  else ev = pick(FILLERS);
+  const text = typeof ev.text === 'function' ? ev.text(G) : ev.text;
+  showBigEvent(ev, text, age);
+}
+function showBigEvent(ev, text, age) {
+  el('bigEventText').textContent = text;
+  const bt = el('bigEventTitle');
+  if (ev.payoff) { bt.textContent = '🔗 A Choice from Long Ago'; bt.style.color = '#ffd54f'; bt.style.textShadow = '0 0 18px rgba(255,213,79,.65)'; }
+  else { bt.textContent = '⚠ Important Event ⚠'; bt.style.color = '#ff8a80'; bt.style.textShadow = ''; }
+  el('bigEventResult').textContent = '';
+  el('btnBigClose').classList.add('hidden');
+  const box = el('bigEventChoices');
+  box.innerHTML = '';
+  ev.choices.forEach(c => {
+    const b = document.createElement('button');
+    b.textContent = c.label;
+    b.addEventListener('click', () => {
+      log(age, (ev.payoff ? "[Payoff]" : "[Important Event]") + text.slice(0, 40) + '…');
+      log(age, "[Choice]\"" + c.label + '"');
+      let res;
+      try { res = c.run(G); } catch (e) { res = "Something happened, but life goes on."; }
+      el('bigEventResult').textContent = res;
+      log(age, res);
+      box.innerHTML = '';
+      el('btnBigClose').classList.remove('hidden');
+      renderStats();
+    });
+    box.appendChild(b);
+  });
+  el('bigEvent').style.display = 'block'; G.eventOpen = true;
+  if (SAVE.settings.auto && !G.dead) {
+    clearTimeout(G._autoT);
+    G._autoT = setTimeout(() => {
+      const btns = el('bigEventChoices').children;
+      if (btns.length && el('bigEvent').style.display === 'block') {
+        btns[Math.floor(Math.random() * btns.length)].click();
+        setTimeout(() => { if (el('bigEvent').style.display === 'block' && !el('btnBigClose').classList.contains('hidden')) el('btnBigClose').click(); }, 1600);
+      }
+    }, 2600);
+  }
+}
+el('btnBigClose').addEventListener('click', () => {
+  el('bigEvent').style.display = 'none';
+  if (G) G.eventOpen = false;
+  if (G.dead) return;
+  G.nextEventAge = G.age + R(2, 6) * Math.max(0.4, G.lifeSpan / 90);
+  G.paused = false; renderClock(); saveRun();
+  if (G.stats.health <= 0) die();
+});
+el('btnRescue').addEventListener('click', () => {
+  if (!G || G.dead) return;
+  G.eventOpen = false; G.revealOpen = false;
+  el('bigEvent').style.display = 'none';
+  el('birthReveal').style.display = 'none';
+  G.nextEventAge = G.age + 2;
+  G.paused = false; renderClock();
+});
+
+document.querySelectorAll('.spd').forEach(b => b.addEventListener('click', () => {
+  if (!G) return;
+  const v = Number(b.dataset.spd);
+  if (v === 0) { G.paused = true; } else { G.speed = v; G.paused = false; }
+  renderClock();
+}));
+function die() {
+  clearRun();
+  if (G.dead) return; G.dead = true; G.paused = true;
+  const s = G.stats, age = Math.floor(G.age);
+  const cause = age >= G.lifeSpan ? "Natural Causes" : s.health <= 10 ? "Illness" : G.world.war === 2 && Math.random() < 0.4 ? "The ravages of war" : "Accident";
+  let title = "A nameless life";
+  if (G.flags.exposed) title = "The world's only wizard";
+  else if (G.flags.restored) title = "The one who restored the royal house";
+  else if (G.flags.livingSaint) title = "A living saint";
+  else
+  if (s.wealth >= 80) title = "A self-made tycoon"; else if (G.flags.warHero) title = "Hero of the war";
+  else if (s.fame >= 75) title = "The darling of the era"; else if (G.flags.scholar || s.int >= 80) title = "Great Sage";
+  else if (G.flags.path === "Adventure" && s.fame >= 45) title = "Legendary Adventurer"; else if (G.flags.bigMerchant) title = "A master merchant who moved nations."; else if (G.flags.mageMaster) title = "Founder of a magical lineage."; else if (G.flags.duelist) title = "The swordsman who surpassed his rival."; else if (G.flags.healer) title = "The people's hope";
+  else if (s.happy >= 80) title = "The happiest person of all"; else if (G.flags.defiedGod) title = "One who defied the gods";
+  else if (age < 13) title = "A soul destined for an early end"; else if (s.happy >= 55) title = "A peaceful life";
+  const score = Math.round(age + (s.wealth + s.fame + s.int + s.happy) / 2);
+  const rank = score >= 300 ? 'S' : score >= 240 ? 'A' : score >= 180 ? 'B' : score >= 120 ? 'C' : 'D';
+  const rankEl = el('deathRank');
+  rankEl.textContent = "Evaluation " + rank;
+  rankEl.style.color = rank === 'S' ? '#ffd54f' : rank === 'A' ? '#ce93d8' : rank === 'B' ? '#81d4fa' : '#a79fd0';
+  rankEl.style.textShadow = rank === 'S' ? '0 0 22px rgba(255,213,79,.7)' : 'none';
+  const tokuGain = Math.max(1, Math.round(score / 40));
+  const epi =
+    G.world.name + '.\n' + "Born as " + (/^[AEIOU]/.test(G.birth.race.name) ? "an " : "a ") + G.birth.race.name + " of the " + G.birth.fam.name + " in " + G.place + ", and raised there.\n" +
+    "Talent is \"" + G.birth.talents[0] + "\" and \"" + G.birth.talents[1] + '".\n' +
+    (G.flags.partner ? "Met " + G.flags.partner + ", and " : '') + (G.flags.path ? "Walked the path of " + G.flags.path + ", and " : '') +
+    (G.flags.warHero ? "Made a name on the battlefield, and..." : '') + (G.flags.sailor ? "Saw the new continent, and..." : '') + (G.flags.revolutionary ? "Accomplished a revolution, and..." : '') + (G.flags.relic ? "Seized the treasure of the ruins, and..." : '') + (G.flags.rivalFriend ? "Becoming friends with your rival," : '') + (G.flags.partner ? '' : '') + (G.flags.lastWork ? "Accomplished a great feat in later years, and..." : '') + '\n' +
+    "At " + age + " years old, died of " + cause + ". The world called them \"" + title + ".\" \n" +
+    "This world is actually—" + G.world.temper.name + ".";
+  SAVE.toku += tokuGain;
+  SAVE.lives.unshift({ name: G.name, tezawari: (typeof tezawariOf === 'function' ? tezawariOf(G, s) : ''), title, age, cause, epitaph: epi, race: G.birth.race.name, fam: G.birth.fam.name, world: G.world.name, temper: G.world.temper.name, score, chronicle: G.chronicle.slice().reverse() });
+  persist();
+  el('deathTitle').textContent = title + " — died at age " + age;
+  el('deathTezawari').textContent = age >= 18 ? "🖐 The Vibe of This Life: " + tezawariOf(G, s) : '';
+  el('deathCause').textContent = "Cause of death: " + cause + " /  World Lived In: " + G.world.name;
+  const dnames = { health: "Health", int: "Intelligence", charm: "Charm", wealth: "Wealth", fame: "Fame", happy: "Happiness" };
+  el('deathStats').innerHTML = Object.keys(dnames).map(k => '<div style="background:#171233;border:1px solid #3a2f7a;border-radius:8px;padding:7px">' + dnames[k] + '<br><b style="font-size:15px;color:#ffd54f">' + s[k] + '</b></div>').join('');
+  el('epitaph').textContent = epi;
+  el('tokuGain').textContent = tokuGain;
+  el('death').style.display = 'block';
+  renderLives();
+}
+function renderCollection() {
+  const box = el('collection');
+  if (!box) return;
+  const gotRaces = new Set(SAVE.lives.map(l => l.race));
+  const gotFams = new Set(SAVE.lives.map(l => l.fam));
+  const gotTitles = new Set(SAVE.lives.map(l => l.title));
+  const best = SAVE.lives.reduce((m, l) => Math.max(m, l.score || 0), 0);
+  const pct = Math.round(gotRaces.size / RACES.length * 100);
+  box.innerHTML = "🧬 Race Encyclopedia <b style=\"color:#ffd54f\">" + gotRaces.size + ' / ' + RACES.length + '</b> (' + pct + '%)' +
+    RACES.map(r => '<span style="display:inline-block;margin:2px 3px;padding:2px 8px;border-radius:99px;font-size:11px;' +
+      (gotRaces.has(r.name) ? 'background:#4a2a96;color:#fff' : 'background:#241d4d;color:#6f68a0') + '">' + (gotRaces.has(r.name) ? r.name : '???') + '</span>').join('') +
+    "<br>🏠 Lineage <b style=\"color:#ffd54f\">" + gotFams.size + ' / ' + FAMILIES.length + "</b> 🏆 Title <b style=\"color:#ffd54f\">" + gotTitles.size + "</b> species ⭐ High Score <b style=\"color:#ffd54f\">" + best + '</b>';
+}
+function renderLives() {
+  renderCollection();
+  el('tokuView').textContent = SAVE.toku;
+  el('lives').innerHTML = SAVE.lives.length ? SAVE.lives.slice(0, 10).map((l, li) =>
+    '<div class="life-card"><span class="ttl">' + l.title + '</span> (Died at age ' + l.age + ' · ' + l.cause + ')<br>' +
+    l.race + ' / ' + l.fam + ' ― ' + l.world + '[' + l.temper + "] Score" + l.score +
+    (l.chronicle ? '<br><button class="sub2" style="width:auto;padding:6px 12px;margin-top:6px" onclick="document.getElementById(\'lg' + li + '\').style.display = document.getElementById(\'lg' + li + '\').style.display === \'none\' ? \'block\' : \'none\'">View Life Log</button> <button class=\"sub2\" style=\"width:auto;padding:6px 12px;margin-top:6px\" data-a=\"' + li + '\" onclick=\"showAlbum(SAVE.lives[+this.dataset.a])\">📖 Album</button>' +
+    '<div id="lg' + li + '" style="display:none;margin-top:7px;color:#a79fd0;line-height:1.8">' + l.chronicle.map(c => '<div><span style="color:#ffd54f">' + c.age + " years old</span> " + c.text + '</div>').join('') + '</div>' : '') + '</div>').join('')
+    : "<div style=\"color:#a79fd0;font-size:12px\">No records yet. Let's live your first life.</div>";
+}
+el('btnBirth').addEventListener('click', startLife);
+el('btnRevealNext').addEventListener('click', () => {
+  if (revealIdx < revealSteps.length - 1) { revealIdx++; renderRevealStep(); }
+});
+el('btnBegin').addEventListener('click', () => {
+  el('birthReveal').style.display = 'none';
+  if (G) G.revealOpen = false;
+  G.paused = false; renderClock(); startClock();
+});
+el('btnAgain').addEventListener('click', () => { el('gamePanel').classList.add('hidden'); el('startPanel').classList.remove('hidden'); el('death').style.display = 'none'; renderLives(); });
+// ---------- run save (continue a life later) ----------
+const RUN_KEY = 'tensei-life-run-v1';
+function saveRun() {
+  if (!G || G.dead || G.revealOpen) return;
+  try {
+    const data = { ...G, usedEvents: [...G.usedEvents], milestonesDone: [...(G.milestonesDone || [])], eventOpen: false, revealOpen: false, paused: true,
+      birthRaw: { ...G.birth, race: undefined, fam: undefined }, birthRace: G.birth.race.name, birthFam: G.birth.fam.name };
+    delete data.birth;
+    localStorage.setItem(RUN_KEY, JSON.stringify(data));
+  } catch (e) { /* ignore */ }
+}
+function clearRun() { try { localStorage.removeItem(RUN_KEY); } catch (e) {} }
+function loadRun() {
+  try { const d = JSON.parse(localStorage.getItem(RUN_KEY)); return d && !d.dead ? d : null; } catch (e) { return null; }
+}
+function restoreRun(d) {
+  const race = RACES.find(r => r.name === d.birthRace) || RACES[0];
+  const fam = FAMILIES.find(f => f.name === d.birthFam) || FAMILIES[0];
+  G = { ...d, birth: { ...d.birthRaw, race, fam }, usedEvents: new Set(d.usedEvents || []), milestonesDone: new Set(d.milestonesDone || []), paused: true, dead: false, eventOpen: false, revealOpen: false };
+  el('startPanel').classList.add('hidden');
+  el('gamePanel').classList.remove('hidden');
+  el('worldName').textContent = G.world.name;
+  el('worldParams').textContent = "Mana: " + ["None", "Faint", "Abundant", "Excessive"][G.world.magic] + " /  Technology: " + techLabel(G.world) + " /  World Status: " + ["Peace", "Cold War", "Great War"][G.world.war] + " /  Deities: " + (G.world.gods ? "Meddlesome" : "Silence") + " /  Calamity: " + G.world.disaster;
+  el('birthInfo').innerHTML = "Race: <b>" + G.birth.race.name + "</b>  /  Gender: " + G.birth.gender + " /  Lineage: <b>" + G.birth.fam.name + "</b><br>Talent: " + G.birth.talents.join(', ');
+  el('chronicle').innerHTML = G.chronicle.map(c => '<div><span class="yr">' + c.age + " years old</span> " + c.text + '</div>').join('');
+  drawAvatar(); renderStats(); renderClock(); startClock();
+}
+
+// ---------- life card (PNG) & album & data portability ----------
+function drawCard(l) {
+  const cv = document.createElement('canvas'); cv.width = 900; cv.height = 1180;
+  const x = cv.getContext('2d');
+  const grd = x.createLinearGradient(0, 0, 0, 1180);
+  grd.addColorStop(0, '#1d1440'); grd.addColorStop(1, '#0a0718');
+  x.fillStyle = grd; x.fillRect(0, 0, 900, 1180);
+  x.strokeStyle = '#ffd54f'; x.lineWidth = 6; x.strokeRect(18, 18, 864, 1144);
+  x.strokeStyle = '#7e57c2'; x.lineWidth = 2; x.strokeRect(34, 34, 832, 1112);
+  x.textAlign = 'center'; x.fillStyle = '#ffd54f';
+  x.font = 'bold 44px serif'; x.fillText("You Can't Choose Your Next Life", 450, 110);
+  x.font = '26px sans-serif'; x.fillStyle = '#a79fd0';
+  x.fillText(l.world, 450, 158);
+  x.font = 'bold 54px serif'; x.fillStyle = '#ffffff';
+  x.fillText(l.title, 450, 250);
+  x.font = '30px sans-serif'; x.fillStyle = '#ce93d8';
+  x.fillText("Died at age " + l.age + " — " + l.cause, 450, 305);
+  x.font = '28px sans-serif'; x.fillStyle = '#ece9f7';
+  x.fillText(l.race + '  /  ' + l.fam + "[World Disposition: " + l.temper + ']', 450, 355);
+  x.font = 'bold 40px sans-serif'; x.fillStyle = '#ffd54f';
+  x.fillText("Score " + l.score, 450, 425);
+  x.textAlign = 'left'; x.font = '25px serif'; x.fillStyle = '#d9d2f5';
+  const lines = (l.epitaph || '').split('\n');
+  let ly = 500;
+  for (const ln of lines) { x.fillText(ln, 70, ly); ly += 42; if (ly > 900) break; }
+  x.font = '22px sans-serif'; x.fillStyle = '#a79fd0'; x.textAlign = 'center';
+  x.fillText("Highlight", 450, 950);
+  x.font = '23px sans-serif'; x.fillStyle = '#ece9f7';
+  const hl = (l.chronicle || []).filter(c => c.text.includes("[Important Event]") || c.text.includes("[Payoff]") || c.text.includes("[Choice]")).slice(0, 4);
+  let hy2 = 995;
+  for (const h of hl) { const t = h.age + " years old " + h.text.replace(/\[(Important Event|Payoff|Choice)\]/g, '').slice(0, 34); x.fillText(t, 450, hy2); hy2 += 38; }
+  x.font = '20px sans-serif'; x.fillStyle = '#6f68a0';
+  x.fillText('deruderu-sketch.github.io/tensei-life', 450, 1120);
+  const a = document.createElement('a');
+  a.download = 'tensei-life-card.png'; a.href = cv.toDataURL('image/png'); a.click();
+}
+function showAlbum(l) {
+  const names = { };
+  el('albumBody').innerHTML =
+    '<div style="text-align:center;font-size:19px;color:#ffd54f;font-family:serif">' + l.title + '</div>' +
+    '<div style="text-align:center">' + "Died at age " + l.age + " — " + l.cause + '<br>' + l.race + ' / ' + l.fam + '<br>' + l.world + '[' + l.temper + "]<br>Score " + l.score + '</div>' +
+    '<div style="white-space:pre-line;margin:12px 0">' + (l.epitaph || '') + '</div>' +
+    "<b style=\"color:#ffd54f\">― Chronicle ―</b><br>" +
+    (l.chronicle || []).map(c => '<div><span style="color:#ffd54f">' + c.age + " years old</span> " + c.text + '</div>').join('');
+  el('album').style.display = 'block';
+}
+el('btnCard').addEventListener('click', () => { if (SAVE.lives[0]) drawCard(SAVE.lives[0]); });
+el('btnAlbum').addEventListener('click', () => { if (SAVE.lives[0]) showAlbum(SAVE.lives[0]); });
+el('btnAlbumClose').addEventListener('click', () => { el('album').style.display = 'none'; });
+el('btnPrint').addEventListener('click', () => window.print());
+el('btnExport').addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify(SAVE)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.download = 'tensei-life-save.json'; a.href = URL.createObjectURL(blob); a.click();
+});
+el('fileImport').addEventListener('change', ev => {
+  const f = ev.target.files[0]; if (!f) return;
+  f.text().then(t => {
+    try {
+      const d = JSON.parse(t);
+      if (d && Array.isArray(d.lives) && typeof d.toku === 'number') { SAVE = d; saveSave(); renderLives(); alert("Record loaded."); }
+      else alert("The record file format seems to be different.");
+    } catch (e) { alert("Could not load."); }
+  });
+});
+
+function syncSettings() {
+  SAVE.settings = SAVE.settings || { gentle: false, auto: false };
+  el('btnGentle').textContent = "🌿 Skip the Scary Bits: " + (SAVE.settings.gentle ? 'ON' : 'OFF');
+  el('btnAutoMode').textContent = "🤖 Let Fate Decide (Auto): " + (SAVE.settings.auto ? 'ON' : 'OFF');
+}
+el('btnGentle').addEventListener('click', () => { SAVE.settings.gentle = !SAVE.settings.gentle; saveSave(); syncSettings(); });
+el('btnAutoMode').addEventListener('click', () => { SAVE.settings.auto = !SAVE.settings.auto; saveSave(); syncSettings(); });
+syncSettings();
+document.addEventListener('keydown', e => {
+  if (!G || G.dead || el('gamePanel').classList.contains('hidden')) return;
+  if (e.code === 'Space') { e.preventDefault(); if (!G.eventOpen && !G.revealOpen) { G.paused = !G.paused; renderClock(); } }
+  const speeds = { Digit1: 1, Digit2: 4, Digit3: 16, Digit4: 64 };
+  if (speeds[e.code] !== undefined) { G.speed = speeds[e.code]; G.paused = false; renderClock(); }
+});
+function tezawariOf(G, s) {
+  const adv = (G.flags.guild ? 2 : 0) + (G.flags.sailor ? 2 : 0) + (G.flags.relic ? 1 : 0) + (G.flags.steal ? 1 : 0);
+  const turb = G.usedEvents.size + (G.flags.warHero ? 3 : 0) + (G.flags.revolutionary ? 3 : 0) + (G.birth.anomaly ? 2 : 0);
+  const axes = [
+    ["Tumultuous", "Tranquility", turb - 7],
+    ["Wealth", "Heart", s.wealth - s.happy],
+    ["Fame", "Love", s.fame - (G.flags.partner ? 45 : s.charm)],
+    ["Adventure", "Settling down", adv * 12 - 18],
+  ];
+  return "A life inclined toward " + axes.map(([a, b, v]) => v >= 0 ? a : b).join(" · ");
+}
+function isClassroom() { try { if (new URLSearchParams(location.search).get('classroom') === '1') return true; } catch (e) {} return !!(SAVE.settings && SAVE.settings.classroom); }
+function renderVillage() {
+  const v = el('villageView'); if (!v) return;
+  const n = SAVE.lives.length;
+  if (!n) { v.innerHTML = "No one lives here yet. When you live your first life, a house will be built here."; return; }
+  const tier = n >= 15 ? "🏯 The Reincarnation Capital" : n >= 10 ? "🏘️ Large Town" : n >= 6 ? "🏘️ Town" : n >= 3 ? "🏘️ Village" : "🏕️ Small Settlement";
+  const years = SAVE.lives.reduce((a, l) => a + Math.floor(l.age || 0), 0);
+  const houses = SAVE.lives.map((l, i) => '<span title="' + (l.title || '') + '">' + (i % 10 === 9 ? '🛕' : '🏠') + '</span>').join(' ');
+  v.innerHTML = '<b>' + tier + '</b> (' + n + (n === 1? ' house': ' houses') + ")<br>" + houses + "<br><span style=\"color:#a79fd0;font-size:12px\">Total of all lives so far: " + years + " years / Hover over your house to see titles</span>";
+}
+const _origRenderLives = renderLives;
+renderLives = function () { _origRenderLives(); renderVillage(); };
+el('btnClass').addEventListener('click', () => { SAVE.settings = SAVE.settings || {}; SAVE.settings.classroom = !SAVE.settings.classroom; saveSave(); syncSettings(); });
+const _origSync = syncSettings;
+syncSettings = function () {
+  _origSync();
+  SAVE.settings = SAVE.settings || {};
+  el('btnClass').textContent = "🏫 Classroom Mode: " + (isClassroom() ? 'ON' : 'OFF');
+  const cr = isClassroom();
+  el('passH2').style.display = cr ? 'none' : '';
+  el('passPanel').style.display = cr ? 'none' : '';
+  el('btnShare').style.display = cr ? 'none' : '';
+};
+syncSettings();
+renderLives();
+if (loadRun()) el('btnContinue').classList.remove('hidden');
+el('btnContinue').addEventListener('click', () => { const d = loadRun(); if (d) restoreRun(d); });
+
+const PASS_HASHES = ["d5cf6936be67a2793ccbeef5a3a0a2398993ce55c78160d9a268badb4890a011", "74cc8191e674bbebbeabb1caa022b1231cf5195e8edaad9a893edb4ed643c575", "bee3784b492e777b0ec1d57b434734b196fa3730d0cebb7f12653e4ef2f7080a", "02e92354fb94b2359b4009cd82f954a11ce5be4ce4028862fdbfd476724efdbc", "1e066c328e8d14d35bab3651f503a53647d989ac92e43618645f87b873b2ad74", "85691d49e66d1e81b4341598582f5749c0f71e61294aee6c9e798e91c6e6921b", "389453cd96164b2c650e9e7846e2ed880799b5ddf83de2bdb4ec59b7e23a3fec", "7822d88211cdd197b2000a162da488c4d806c0272a55bcef29ea485fd061274d", "4bd68b184f7647a80bfd1fd75f5cfa937ec21f1f74383c44f09197e4860e16dd", "9b835cec0a30ec6dd4bd3d8e75f6abfd9bfaa4d5a08753badd0a672d99f41546", "fdaf818c2369b8e235260258f12e5f75d55ebf36c1d1433519eac736db5b99f0", "33583f589d5c6f71718aa4f801dd757e1e04039a47fe776f466ee247fe462260", "195926673154f8747412aeabedc6b0a04ded4cbb1dc5b7eb3b260140bc8f44ee", "012adff2ac35498ff6abfa76cea764de6f49af574588afcede9dac8af5c701e6", "377253107eb592530d3dd70ae55593a42f6ff9de49c086801eb0c4bef7872e13", "dd0ab15136d5a7cc3ca6483729520d6f6a3ee5d338d0817fca76ef2bcf775ee0", "101835d304fef1852898d9d74dbdffd6507b670b9320b36505213fd14112cfd3", "7913d1a6a4bbb2f726056dc1a57c4243be1ce45313c04d4c1b1fb8b597212d8f", "83259077f3c4a1b012a6cf450b8f24f9ac8b935de845da235da6ecebcb781625", "370239299a142c6506ca471211c6496fb3d4d99d4a0ed7f757e0de0ad2c55cc9"];
+async function sha256hex(s) { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join(''); }
+function renderPass() {
+  SAVE.settings = SAVE.settings || { gentle: false, auto: false };
+  if (SAVE.pass) { el('passState').innerHTML = "✅ <b>Memory Pass Active</b> ― Film and Memorial are enabled. Thank you."; el('passForm').style.display = 'none'; }
+  else el('passState').innerHTML = "You do not have a pass yet.";
+}
+el('btnUnlock').addEventListener('click', async () => {
+  const code = el('passCodeInput').value.trim().toUpperCase();
+  if (!code) return;
+  const h = await sha256hex(code);
+  if (PASS_HASHES.includes(h)) { SAVE.pass = true; saveSave(); renderPass(); alert("Your Memory Pass is now active!"); }
+  else alert("Code is incorrect");
+});
+renderPass();
+function needPass() { if (SAVE.pass) return true; alert("A Memory Pass is required. You can purchase and activate it via \"🎫 Memory Pass\" on the starting screen"); return false; }
+let filmTimer = null, filmIdx = 0, filmRec = null, filmPlaying = false;
+function openFilm(rec) {
+  filmRec = rec; filmIdx = 0; filmPlaying = true;
+  el('filmOverlay').style.display = 'flex';
+  filmStep();
+}
+function filmStep() {
+  clearTimeout(filmTimer);
+  if (!filmRec) return;
+  const items = [{ age: '', text: '『' + (filmRec.title || "A nameless journey") + '』\n' + filmRec.name + "'s Life" }].concat((filmRec.chronicle || []).map(c => ({ age: c.age + " years old", text: c.text }))).concat([{ age: "Epitaph", text: filmRec.epitaph || '' }]);
+  if (filmIdx >= items.length) { closeFilm(); return; }
+  const it = items[filmIdx];
+  el('filmAge').textContent = it.age;
+  el('filmText').textContent = it.text;
+  el('filmBar').style.width = Math.round(filmIdx / items.length * 100) + '%';
+  el('btnFilmPause').textContent = filmPlaying ? "⏸ Pause" : "▶ Play";
+  if (filmPlaying) { filmIdx++; filmTimer = setTimeout(filmStep, Math.min(3400, 1300 + it.text.length * 55)); }
+}
+function closeFilm() { clearTimeout(filmTimer); el('filmOverlay').style.display = 'none'; filmRec = null; }
+el('btnFilmPause').addEventListener('click', () => { filmPlaying = !filmPlaying; if (filmPlaying) { filmIdx = Math.max(0, filmIdx - 1); filmStep(); } else { clearTimeout(filmTimer); el('btnFilmPause').textContent = "▶ Play"; } });
+el('btnFilmClose').addEventListener('click', closeFilm);
+el('btnFilm').addEventListener('click', () => { if (!lastRecord) return; if (SAVE.pass) openFilm(lastRecord); else if (confirm("This is a sample. You can see the film of the life you just finished before purchasing.\n(Memory Pass allows films and memorials for all past lives)")) openFilm(lastRecord); });
+function memorialHTML(rec) {
+  const esc = s => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  const rows = (rec.chronicle || []).map(c => '<div class="row"><span class="age">' + c.age + " years old</span><span>" + esc(c.text) + '</span></div>').join('');
+  return "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"utf-8\"><title>Memorial | " + esc(rec.name) + '</title><style>body{background:#0b0a1a;color:#e8e4ff;font-family:serif;margin:0;padding:32px 18px;line-height:1.9}.wrap{max-width:680px;margin:0 auto}h1{color:#c9a86a;text-align:center;font-weight:normal}.sub{text-align:center;color:#a79fd0}.epi{text-align:center;font-size:19px;margin:26px 0}.row{display:flex;gap:12px;padding:7px 0;border-bottom:1px solid #262250}.age{color:#c9a86a;min-width:52px;text-align:right}.candle{text-align:center;font-size:26px;margin:20px 0}</style></head><body><div class="wrap"><div class="candle">🕯️</div><h1>' + esc(rec.title || 'A Nameless Life') + '</h1><div class="sub">' + esc(rec.name) + '  /  ' + esc(rec.world || '') + '  /  Passed away at age ' + Math.floor(rec.age || 0) + '  /  Score ' + (rec.score || 0) + '</div><div class="epi">「' + esc(rec.epitaph || '') + '」</div>' + rows + "<div class=\"sub\" style=\"margin-top:28px\">You Can't Choose Your Next Life ― Memorial</div></div></body></html>";
+}
+el('btnMemorial').addEventListener('click', () => {
+  if (!needPass() || !lastRecord) return;
+  const blob = new Blob([memorialHTML(lastRecord)], { type: 'text/html' });
+  const a = document.createElement('a'); a.download = 'memorial.html'; a.href = URL.createObjectURL(blob); a.click();
+});
+
+el('btnShare').addEventListener('click', () => {
+  const l = SAVE.lives[0];
+  if (!l) return;
+  const txt = "[You Can't Choose Your Next Life]" + l.title + '(Died at age ' + l.age + ")\\n" + l.race + ' / ' + l.fam + ' ― ' + l.world + "\nScore " + l.score + ". That was your life. What will you be in the next reincarnation? #YouCantChooseYourNextLife";
+  window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(txt), '_blank');
+});
+</script>
+
+<div id="filmOverlay" style="display:none;position:fixed;inset:0;background:#05040f;z-index:60;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center">
+  <div id="filmAge" style="color:#c9a86a;font-size:14px;letter-spacing:.3em"></div>
+  <div id="filmText" style="font-size:clamp(18px,4.6vw,28px);line-height:2;max-width:640px;min-height:120px;margin-top:14px"></div>
+  <div style="width:min(640px,90%);height:4px;background:#262250;border-radius:2px;margin-top:26px"><div id="filmBar" style="height:100%;width:0%;background:#c9a86a;border-radius:2px;transition:width .3s"></div></div>
+  <div style="margin-top:18px">
+    <button class="sub2" id="btnFilmPause">⏸ Pause</button>
+    <button class="sub2" id="btnFilmClose">✕ Close</button>
+  </div>
+</div>
+</body>
+</html>
