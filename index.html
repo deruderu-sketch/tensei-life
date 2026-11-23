@@ -166,6 +166,7 @@
   </div>
 <h2>📜 更新履歴</h2>
   <div class="panel" style="font-size:12.5px;line-height:1.9;text-align:left">
+    <details><summary><b>2026-11-23 v26</b></summary>「ご意見・ご感想」の窓口を追加。フィルムは購入前に、いま終えた人生の見本をそのまま見られるようにした。</details>
     <details><summary><b>2026-11-23 v25</b></summary>「📖 できるまでの話」を追加。生まれた一日の物語『選べなかった転生』と、つくり方『のんちゃんの作業室』を公開。</details>
     <details><summary><b>2026-11-23 v24</b></summary>「この人生の手ざわり」「転生の村」「授業用モード」を追加。返金ポリシー（30日・理由不問）とギフト表記を明記。</details>
     <details><summary><b>2026-11-23 v23</b></summary>思い出パスの購入リンク（Stripe）を接続。</details>
@@ -194,6 +195,12 @@
       <a href="https://buy.stripe.com/dRmaEYcnF18LdQ6faZ2Nq00" target="_blank" rel="noopener" style="display:inline-block;margin-top:8px;margin-right:8px;padding:10px 18px;border-radius:999px;background:linear-gradient(180deg,#ffd98a,#c9a86a);color:#241f4d;font-weight:bold;text-decoration:none">🛒 思い出パスを購入（¥480）</a>
       <button class="sub2" id="btnUnlock" style="margin-top:8px">🔓 パスを有効にする</button>
     </div>
+  </div>
+<h2>✉️ ご意見・ご感想</h2>
+  <div class="panel" style="font-size:13px;line-height:1.9">
+    <div style="color:#a79fd0;font-size:12.5px">不具合やアイデアは、こちらから送ってください。すべて読みます。</div>
+    <a class="sub2" href="mailto:deruderudouga@gmail.com?subject=%E8%BB%A2%E7%94%9F%E5%85%88%E3%81%AF%E9%81%B8%E3%81%B9%E3%81%BE%E3%81%9B%E3%82%93%E3%81%B8%E3%81%AE%E6%84%8F%E8%A6%8B" style="display:inline-block;text-decoration:none;margin-top:6px">✉️ メールで意見を送る</a>
+    <a class="sub2" href="https://twitter.com/intent/tweet?text=%E8%BB%A2%E7%94%9F%E5%85%88%E3%81%AF%E9%81%B8%E3%81%B9%E3%81%BE%E3%81%9B%E3%82%93%20%E3%82%92%E9%81%8A%E3%82%93%E3%81%A0%E6%84%9F%E6%83%B3" target="_blank" rel="noopener" style="display:inline-block;text-decoration:none;margin-top:6px">𝕏 感想をポストする</a>
   </div>
 <h2>💾 記録の管理</h2>
   <div class="panel" style="font-size:12.5px;line-height:1.9">
@@ -247,7 +254,7 @@
   <div id="epitaph"></div>
   <button class="center" id="btnShare">𝕏 結果をシェアする</button>
   <button class="center" id="btnCard">🃏 人生カードを画像で保存</button>
-    <button class="sub" id="btnFilm">🎬 フィルムを再生（思い出パス）</button>
+    <button class="sub" id="btnFilm">🎬 フィルムを再生（パスなしは見本）</button>
     <button class="sub" id="btnMemorial">🕯️ メモリアルを書き出す（思い出パス）</button>
   <button class="center" id="btnAlbum">📖 人生アルバムを見る</button>
   <button class="gold" id="btnAgain">✦ 次の転生へ（徳 +<span id="tokuGain"></span>）</button>
@@ -1161,7 +1168,7 @@ function filmStep() {
 function closeFilm() { clearTimeout(filmTimer); el('filmOverlay').style.display = 'none'; filmRec = null; }
 el('btnFilmPause').addEventListener('click', () => { filmPlaying = !filmPlaying; if (filmPlaying) { filmIdx = Math.max(0, filmIdx - 1); filmStep(); } else { clearTimeout(filmTimer); el('btnFilmPause').textContent = '▶ 再生'; } });
 el('btnFilmClose').addEventListener('click', closeFilm);
-el('btnFilm').addEventListener('click', () => { if (needPass() && lastRecord) openFilm(lastRecord); });
+el('btnFilm').addEventListener('click', () => { if (!lastRecord) return; if (SAVE.pass) openFilm(lastRecord); else if (confirm('これは見本です。いま終えたばかりの人生のフィルムを、購入前にそのまま見られます。\n（思い出パスでは、過去のすべての人生でフィルムとメモリアルが作れます）')) openFilm(lastRecord); });
 function memorialHTML(rec) {
   const esc = s => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;');
   const rows = (rec.chronicle || []).map(c => '<div class="row"><span class="age">' + c.age + '歳</span><span>' + esc(c.text) + '</span></div>').join('');
