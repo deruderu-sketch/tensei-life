@@ -142,6 +142,13 @@
   <div id="chronicle" style="max-height:320px;overflow-y:auto;background:#100d24;border:1px solid #2c2560;border-radius:10px;padding:10px"></div>
 </div>
 
+<h2>💾 記録の管理</h2>
+  <div class="panel" style="font-size:12.5px;line-height:1.9">
+    記録はこの端末のブラウザにだけ保存されます（サーバーには送りません）。端末を変えるときは書き出して移せます。<br>
+    <button class="sub2" id="btnExport">⬇ 記録を書き出す（JSON）</button>
+    <label style="display:block;background:#241d4d;border-radius:13px;padding:10px;font-size:13px;font-weight:bold;text-align:center;cursor:pointer">⬆ 記録を読み込む<input type="file" id="fileImport" accept=".json" style="display:none"></label>
+    <div style="margin-top:8px;color:#a79fd0">このゲームは無料で、広告もアカウントもありません。世界・種族・家柄の確率はフィクションです。同じ人生は二度とありません。</div>
+  </div>
 <h2>🧬 コレクション</h2>
 <div class="panel" id="collection" style="font-size:12.5px;line-height:2"></div>
 <h2>📖 転生図鑑（これまでの人生）</h2>
@@ -166,6 +173,14 @@
     <button class="gold hidden" id="btnBigClose">時を再び進める ▶</button>
   </div>
 </div>
+<div id="album" style="position:fixed;inset:0;background:rgba(5,3,16,.96);display:none;z-index:46;overflow-y:auto;padding:24px 16px">
+  <div style="max-width:520px;margin:0 auto">
+    <div style="text-align:center;font-size:22px;font-family:serif;color:#ffd54f">📖 人生アルバム</div>
+    <div id="albumBody" style="font-size:13.5px;line-height:1.95;background:#171233;border:1px solid #3a2f7a;border-radius:14px;padding:16px;margin:14px 0"></div>
+    <button class="center" id="btnPrint">🖨 印刷／PDFで保存</button>
+    <button class="gold" id="btnAlbumClose">閉じる</button>
+  </div>
+</div>
 <div id="death"><div class="inner">
   <div style="font-size:15px;color:#ff8a80;letter-spacing:3px">― 人生終了 ―</div>
   <div style="font-size:52px;margin-top:8px">⚱️</div>
@@ -175,6 +190,8 @@
   <div id="deathStats" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;font-size:12px;margin-top:12px"></div>
   <div id="epitaph"></div>
   <button class="center" id="btnShare">𝕏 結果をシェアする</button>
+  <button class="center" id="btnCard">🃏 人生カードを画像で保存</button>
+  <button class="center" id="btnAlbum">📖 人生アルバムを見る</button>
   <button class="gold" id="btnAgain">✦ 次の転生へ（徳 +<span id="tokuGain"></span>）</button>
 </div></div>
 
@@ -812,7 +829,7 @@ function die() {
     age + '歳、' + cause + 'で死去。世はその人を「' + title + '」と呼んだ。\n' +
     'この世界は実は――' + G.world.temper.name + 'だった。';
   SAVE.toku += tokuGain;
-  SAVE.lives.unshift({ title, age, cause, race: G.birth.race.name, fam: G.birth.fam.name, world: G.world.name, temper: G.world.temper.name, score, chronicle: G.chronicle.slice().reverse() });
+  SAVE.lives.unshift({ title, age, cause, epitaph: epi, race: G.birth.race.name, fam: G.birth.fam.name, world: G.world.name, temper: G.world.temper.name, score, chronicle: G.chronicle.slice().reverse() });
   persist();
   el('deathTitle').textContent = age + '歳没 ― ' + title;
   el('deathCause').textContent = '死因: ' + cause + ' ／ 生きた世界: ' + G.world.name;
@@ -842,7 +859,7 @@ function renderLives() {
   el('lives').innerHTML = SAVE.lives.length ? SAVE.lives.slice(0, 10).map((l, li) =>
     '<div class="life-card"><span class="ttl">' + l.title + '</span>（' + l.age + '歳没・' + l.cause + '）<br>' +
     l.race + '／' + l.fam + ' ― ' + l.world + '［' + l.temper + '］ スコア ' + l.score +
-    (l.chronicle ? '<br><button class="sub2" style="width:auto;padding:6px 12px;margin-top:6px" onclick="document.getElementById(\'lg' + li + '\').style.display = document.getElementById(\'lg' + li + '\').style.display === \'none\' ? \'block\' : \'none\'">人生ログを見る</button>' +
+    (l.chronicle ? '<br><button class="sub2" style="width:auto;padding:6px 12px;margin-top:6px" onclick="document.getElementById(\'lg' + li + '\').style.display = document.getElementById(\'lg' + li + '\').style.display === \'none\' ? \'block\' : \'none\'">人生ログを見る</button> <button class=\"sub2\" style=\"width:auto;padding:6px 12px;margin-top:6px\" data-a=\"' + li + '\" onclick=\"showAlbum(SAVE.lives[+this.dataset.a])\">📖 アルバム</button>' +
     '<div id="lg' + li + '" style="display:none;margin-top:7px;color:#a79fd0;line-height:1.8">' + l.chronicle.map(c => '<div><span style="color:#ffd54f">' + c.age + '歳</span> ' + c.text + '</div>').join('') + '</div>' : '') + '</div>').join('')
     : '<div style="color:#a79fd0;font-size:12px">まだ記録はない。最初の人生を生きよう。</div>';
 }
@@ -883,6 +900,72 @@ function restoreRun(d) {
   el('chronicle').innerHTML = G.chronicle.map(c => '<div><span class="yr">' + c.age + '歳</span> ' + c.text + '</div>').join('');
   drawAvatar(); renderStats(); renderClock(); startClock();
 }
+
+// ---------- life card (PNG) & album & data portability ----------
+function drawCard(l) {
+  const cv = document.createElement('canvas'); cv.width = 900; cv.height = 1180;
+  const x = cv.getContext('2d');
+  const grd = x.createLinearGradient(0, 0, 0, 1180);
+  grd.addColorStop(0, '#1d1440'); grd.addColorStop(1, '#0a0718');
+  x.fillStyle = grd; x.fillRect(0, 0, 900, 1180);
+  x.strokeStyle = '#ffd54f'; x.lineWidth = 6; x.strokeRect(18, 18, 864, 1144);
+  x.strokeStyle = '#7e57c2'; x.lineWidth = 2; x.strokeRect(34, 34, 832, 1112);
+  x.textAlign = 'center'; x.fillStyle = '#ffd54f';
+  x.font = 'bold 44px serif'; x.fillText('転 生 ラ イ フ', 450, 110);
+  x.font = '26px sans-serif'; x.fillStyle = '#a79fd0';
+  x.fillText(l.world, 450, 158);
+  x.font = 'bold 54px serif'; x.fillStyle = '#ffffff';
+  x.fillText(l.title, 450, 250);
+  x.font = '30px sans-serif'; x.fillStyle = '#ce93d8';
+  x.fillText(l.age + '歳没 ― ' + l.cause, 450, 305);
+  x.font = '28px sans-serif'; x.fillStyle = '#ece9f7';
+  x.fillText(l.race + ' ／ ' + l.fam + ' ［世界の気質: ' + l.temper + '］', 450, 355);
+  x.font = 'bold 40px sans-serif'; x.fillStyle = '#ffd54f';
+  x.fillText('スコア ' + l.score, 450, 425);
+  x.textAlign = 'left'; x.font = '25px serif'; x.fillStyle = '#d9d2f5';
+  const lines = (l.epitaph || '').split('\n');
+  let ly = 500;
+  for (const ln of lines) { x.fillText(ln, 70, ly); ly += 42; if (ly > 900) break; }
+  x.font = '22px sans-serif'; x.fillStyle = '#a79fd0'; x.textAlign = 'center';
+  x.fillText('ハイライト', 450, 950);
+  x.font = '23px sans-serif'; x.fillStyle = '#ece9f7';
+  const hl = (l.chronicle || []).filter(c => c.text.includes('【重要イベント】') || c.text.includes('【選択】')).slice(0, 4);
+  let hy2 = 995;
+  for (const h of hl) { const t = h.age + '歳 ' + h.text.replace(/【重要イベント】|【選択】/g, '').slice(0, 34); x.fillText(t, 450, hy2); hy2 += 38; }
+  x.font = '20px sans-serif'; x.fillStyle = '#6f68a0';
+  x.fillText('deruderu-sketch.github.io/tensei-life', 450, 1120);
+  const a = document.createElement('a');
+  a.download = 'tensei-life-card.png'; a.href = cv.toDataURL('image/png'); a.click();
+}
+function showAlbum(l) {
+  const names = { };
+  el('albumBody').innerHTML =
+    '<div style="text-align:center;font-size:19px;color:#ffd54f;font-family:serif">' + l.title + '</div>' +
+    '<div style="text-align:center">' + l.age + '歳没 ― ' + l.cause + '<br>' + l.race + '／' + l.fam + '<br>' + l.world + '［' + l.temper + '］<br>スコア ' + l.score + '</div>' +
+    '<div style="white-space:pre-line;margin:12px 0">' + (l.epitaph || '') + '</div>' +
+    '<b style="color:#ffd54f">― 年代記 ―</b><br>' +
+    (l.chronicle || []).map(c => '<div><span style="color:#ffd54f">' + c.age + '歳</span> ' + c.text + '</div>').join('');
+  el('album').style.display = 'block';
+}
+el('btnCard').addEventListener('click', () => { if (SAVE.lives[0]) drawCard(SAVE.lives[0]); });
+el('btnAlbum').addEventListener('click', () => { if (SAVE.lives[0]) showAlbum(SAVE.lives[0]); });
+el('btnAlbumClose').addEventListener('click', () => { el('album').style.display = 'none'; });
+el('btnPrint').addEventListener('click', () => window.print());
+el('btnExport').addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify(SAVE)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.download = 'tensei-life-save.json'; a.href = URL.createObjectURL(blob); a.click();
+});
+el('fileImport').addEventListener('change', ev => {
+  const f = ev.target.files[0]; if (!f) return;
+  f.text().then(t => {
+    try {
+      const d = JSON.parse(t);
+      if (d && Array.isArray(d.lives) && typeof d.toku === 'number') { SAVE = d; saveSave(); renderLives(); alert('記録を読み込みました'); }
+      else alert('記録ファイルの形式が違うみたいです');
+    } catch (e) { alert('読み込めませんでした'); }
+  });
+});
 
 renderLives();
 if (loadRun()) el('btnContinue').classList.remove('hidden');
