@@ -76,6 +76,8 @@
   button.center { text-align: center; background: linear-gradient(160deg, #4257c9, #2c3a8f); }
   button.gold { background: linear-gradient(160deg, #d9a514, #8d6e00); text-align: center; box-shadow: 0 8px 22px rgba(141,110,0,.45), inset 0 1px 0 rgba(255,255,255,.25); }
   button.sub2 { background: #241d4d; font-size: 13px; padding: 10px; }
+  button.sub2.on { background: #4a3a10; border: 1px solid #ffd54f; color: #ffd54f; font-weight: bold; box-shadow: 0 0 10px rgba(255,213,79,.25); }
+  button.sub2.off { opacity: .7; }
   button:disabled { opacity: .45; }
   .spd { box-shadow: 0 4px 10px rgba(0,0,0,.35); animation: none; }
   .spd::after { display: none; }
@@ -167,6 +169,7 @@
   </div>
 <h2>📜 Update History</h2>
   <div class="panel" style="font-size:12.5px;line-height:1.9;text-align:left">
+    <details><summary><b>2026-11-23 v33</b></summary>Settings toggles are now visible at a glance: ON buttons glow gold and read "● ON", OFF reads "○ OFF". Turning Sound on plays the motif immediately so you can hear it works. Also fixed a bug where saving failed with an error in the Settings buttons and Memory Pass activation.</details>
     <details><summary><b>2026-11-23 v32</b></summary>Added sound: a code-generated chiptune BGM (a Fmaj7–Em7–Dm7–Cmaj7 loop) and sound effects for the birth reveal, events, choice payoffs, and death. Can be turned off in Settings.</details>
     <details><summary><b>2026-11-23 v31</b></summary>Added choice payoffs: choices from your younger days (staying to support your town, declining a reward, keeping a secret, apprenticing to a scholar, nursing the sick, defying a god, hiding royal blood) now come back years later. Payoff scenes appear with a gold "A Choice from Long Ago" banner and stay in your chronicle. Also fixed a disciple-flag mismatch.</details>
     <details><summary><b>2026-11-23 v30</b></summary>Finished freeze prevention. The cause was identified as the system stopping if an error occurred during an event. We added safeguards to choice processing so life never stops, no matter what happens.</details>
@@ -363,6 +366,11 @@ function stopBGM() { if (bgmTimer) { clearInterval(bgmTimer); bgmTimer = null; }
 function applySoundSetting() { if (masterGain && AC) masterGain.gain.setTargetAtTime(SAVE.settings.sound === false ? 0 : 0.9, AC.currentTime, 0.03); }
 document.addEventListener('pointerdown', initAudio);
 document.addEventListener('keydown', initAudio);
+function paintToggles() {
+  const map = [['btnGentle', SAVE.settings && SAVE.settings.gentle], ['btnAutoMode', SAVE.settings && SAVE.settings.auto], ['btnSound', !SAVE.settings || SAVE.settings.sound !== false], ['btnClass', (typeof isClassroom === 'function') ? isClassroom() : false]];
+  map.forEach(([id, on]) => { const b = el(id); if (!b) return; b.classList.toggle('on', !!on); b.classList.toggle('off', !on); b.textContent = b.textContent.replace(/(● |○ )?(ON|OFF)/, on ? '● ON' : '○ OFF'); });
+}
+
 
 // ---------- name generation ----------
 const SYL_A = ["A", "Ka", "Sa", "Ta", "Na", "Ha", "Ma", "Ya", "Ra", "Ru", "Re", "Ro", "E", "O", "Fi", "Shi", "Ti", "Mi", "Gu", "Ze"];
@@ -1062,6 +1070,7 @@ let SAVE = { toku: 0, lives: [] };
 try { const s = localStorage.getItem('tensei-life'); if (s) SAVE = JSON.parse(s); } catch (e) {}
 SAVE.settings = SAVE.settings || { gentle: false, auto: false };
 function persist() { try { localStorage.setItem('tensei-life', JSON.stringify(SAVE)); } catch (e) {} }
+function saveSave() { persist(); }
 let G = null;
 
 function phaseOf(age, span) { const r = age / span; return age < 13 ? "Childhood" : age < 26 ? "Young Adulthood" : age < 56 ? "Prime of Life" : "Golden Years"; }
@@ -1466,7 +1475,7 @@ function syncSettings() {
 }
 el('btnGentle').addEventListener('click', () => { SAVE.settings.gentle = !SAVE.settings.gentle; saveSave(); syncSettings(); });
 el('btnAutoMode').addEventListener('click', () => { SAVE.settings.auto = !SAVE.settings.auto; saveSave(); syncSettings(); });
-el('btnSound').addEventListener('click', () => { SAVE.settings.sound = !SAVE.settings.sound; saveSave(); syncSettings(); initAudio(); applySoundSetting(); if (SAVE.settings.sound) sndChoice(); });
+el('btnSound').addEventListener('click', () => { SAVE.settings.sound = !SAVE.settings.sound; saveSave(); syncSettings(); initAudio(); applySoundSetting(); if (SAVE.settings.sound) sndMotif(); });
 syncSettings();
 document.addEventListener('keydown', e => {
   if (!G || G.dead || el('gamePanel').classList.contains('hidden')) return;
@@ -1507,6 +1516,7 @@ syncSettings = function () {
   el('passH2').style.display = cr ? 'none' : '';
   el('passPanel').style.display = cr ? 'none' : '';
   el('btnShare').style.display = cr ? 'none' : '';
+  paintToggles();
 };
 syncSettings();
 renderLives();
