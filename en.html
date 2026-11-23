@@ -953,7 +953,7 @@ function startLife() {
     " /  Omen of Calamity: " + w.disaster + " /  Disposition: ??? (Revealed after death)";
   el('birthInfo').innerHTML = "Birth: <b>" + birth.race.name + "</b> · <b>" + birth.gender + "</b> · <b>" + birth.fam.name + "</b><br>Talent: <b>" +
     birth.talents[0] + '</b> / <b>' + birth.talents[1] + '</b>';
-  log(0, "Born as a " + birth.race.name + " of the " + birth.fam.name + " in " + G.place + ".");
+  log(0, "Born as " + (/^[AEIOU]/.test(birth.race.name) ? "an " : "a ") + birth.race.name + " of the " + birth.fam.name + " in " + G.place + ".");
   G.speed = 1; G.paused = true; G.nextEventAge = R(2, 5);
   renderStats(); drawAvatar(); showReveal();
 }
@@ -1172,7 +1172,7 @@ function die() {
   rankEl.style.textShadow = rank === 'S' ? '0 0 22px rgba(255,213,79,.7)' : 'none';
   const tokuGain = Math.max(1, Math.round(score / 40));
   const epi =
-    G.world.name + '.\n' + "Born as a " + G.birth.race.name + " of the " + G.birth.fam.name + " in " + G.place + ", and raised there.\n" +
+    G.world.name + '.\n' + "Born as " + (/^[AEIOU]/.test(G.birth.race.name) ? "an " : "a ") + G.birth.race.name + " of the " + G.birth.fam.name + " in " + G.place + ", and raised there.\n" +
     "Talent is \"" + G.birth.talents[0] + "\" and \"" + G.birth.talents[1] + '".\n' +
     (G.flags.partner ? "Met " + G.flags.partner + ", and " : '') + (G.flags.path ? "Walked the path of " + G.flags.path + ", and " : '') +
     (G.flags.warHero ? "Made a name on the battlefield, and..." : '') + (G.flags.sailor ? "Saw the new continent, and..." : '') + (G.flags.revolutionary ? "Accomplished a revolution, and..." : '') + (G.flags.relic ? "Seized the treasure of the ruins, and..." : '') + (G.flags.rivalFriend ? "Becoming friends with your rival," : '') + (G.flags.partner ? '' : '') + (G.flags.lastWork ? "Accomplished a great feat in later years, and..." : '') + '\n' +
