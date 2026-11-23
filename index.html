@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>転生ライフ（サンプル）| 同じ人生は二度とない</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html { scroll-behavior: smooth; }
+  body {
+    color: #ece9f7; font-family: "Hiragino Sans", "Noto Sans JP", sans-serif; min-height: 100vh;
+    padding: 20px 14px 34px; max-width: 560px; margin: 0 auto; position: relative; overflow-x: hidden;
+    background: linear-gradient(180deg, #0a0718 0%, #060412 100%);
+  }
+  body::before {
+    content: ""; position: fixed; inset: -40%; z-index: -1; pointer-events: none;
+    background:
+      radial-gradient(600px 300px at 20% 15%, rgba(126,57,194,.28), transparent 65%),
+      radial-gradient(700px 340px at 85% 30%, rgba(25,118,210,.20), transparent 65%),
+      radial-gradient(500px 260px at 55% 85%, rgba(183,28,28,.14), transparent 65%),
+      radial-gradient(1.5px 1.5px at 12% 22%, #ffffffcc, transparent),
+      radial-gradient(1px 1px at 82% 12%, #ffffff99, transparent),
+      radial-gradient(1.5px 1.5px at 64% 38%, #ffffffb3, transparent),
+      radial-gradient(1px 1px at 28% 64%, #ffffff80, transparent),
+      radial-gradient(1px 1px at 90% 74%, #ffffff99, transparent);
+    animation: nebula 26s ease-in-out infinite alternate;
+  }
+  @keyframes nebula { from { transform: translate3d(-2%, -1%, 0) scale(1); } to { transform: translate3d(2%, 2%, 0) scale(1.06); } }
+  h1 { font-size: 24px; text-align: center; letter-spacing: 6px; font-weight: 900; font-family: "Hiragino Mincho ProN", "Yu Mincho", serif;
+       background: linear-gradient(90deg, #ce93d8, #ffd54f, #fff59d, #ffd54f, #ce93d8); background-size: 200% 100%;
+       -webkit-background-clip: text; background-clip: text; color: transparent;
+       animation: shineText 6s linear infinite; filter: drop-shadow(0 2px 12px rgba(255,213,79,.25)); }
+  @keyframes shineText { from { background-position: 0% 0; } to { background-position: 200% 0; } }
+  .sub { text-align: center; color: #9d94c9; font-size: 12px; margin: 6px 0 16px; line-height: 1.8; letter-spacing: 1px; }
+  .panel {
+    position: relative;
+    background: linear-gradient(165deg, rgba(38,30,78,.92), rgba(16,13,34,.95));
+    border: 1px solid rgba(179,157,217,.35); border-radius: 18px; padding: 15px; margin-bottom: 14px;
+    box-shadow: 0 14px 34px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.08), inset 0 0 24px rgba(126,87,194,.08);
+    backdrop-filter: blur(8px);
+    animation: panelIn .55s cubic-bezier(.22,.9,.28,1) both;
+  }
+  .panel::before, .panel::after { content: "✦"; position: absolute; color: rgba(255,213,79,.55); font-size: 11px; }
+  .panel::before { top: 6px; left: 9px; }
+  .panel::after { bottom: 6px; right: 9px; }
+  @keyframes panelIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+  .world-name { font-size: 17px; font-weight: bold; color: #ffd54f; text-align: center; letter-spacing: 2px; font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; text-shadow: 0 0 14px rgba(255,213,79,.35); }
+  .world-params { font-size: 12px; color: #a79fd0; text-align: center; margin-top: 5px; line-height: 1.8; }
+  .birth { font-size: 14px; line-height: 1.9; text-align: center; }
+  .birth b { color: #ce93d8; }
+  .stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; font-size: 12px; }
+  .stat { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.05); border-radius: 10px; padding: 7px 8px; }
+  .stat .bar { background: #1d1742; border-radius: 5px; height: 7px; margin-top: 5px; overflow: hidden; }
+  .stat .fill { background: linear-gradient(90deg, #7e57c2, #ba68c8, #ffd54f); background-size: 120px 100%; height: 7px; border-radius: 5px; transition: width .6s cubic-bezier(.22,.9,.28,1); box-shadow: 0 0 8px rgba(186,104,200,.5); }
+  .age-line { text-align: center; font-size: 15px; margin-bottom: 8px; }
+  .age-line b { color: #ffd54f; font-size: 23px; font-variant-numeric: tabular-nums; text-shadow: 0 0 16px rgba(255,213,79,.45); font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; }
+  #eventText, #bigEventText { font-size: 16px; line-height: 1.9; min-height: 74px; font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; animation: fadeSwap .45s ease both; }
+  #resultText, #bigEventResult { font-size: 13.5px; color: #a5d6a7; line-height: 1.75; margin-top: 8px; min-height: 20px; animation: fadeSwap .45s ease both; }
+  @keyframes fadeSwap { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  button {
+    position: relative; overflow: hidden;
+    background: linear-gradient(160deg, #7438d8, #4a2a96); color: #fff; border: 1px solid rgba(255,255,255,.18);
+    border-radius: 13px; padding: 13px; font-size: 15px; font-weight: bold; width: 100%; margin-bottom: 9px; text-align: left;
+    cursor: pointer; transition: transform .16s ease, filter .16s ease;
+    box-shadow: 0 8px 20px rgba(30,10,80,.5), inset 0 1px 0 rgba(255,255,255,.15);
+    animation: btnIn .4s cubic-bezier(.22,.9,.28,1) both;
+  }
+  button::after { content: ""; position: absolute; top: 0; left: -80%; width: 50%; height: 100%;
+    background: linear-gradient(100deg, transparent, rgba(255,255,255,.35), transparent); transform: skewX(-20deg); transition: left .5s ease; }
+  button:hover { filter: brightness(1.18); }
+  button:hover::after { left: 130%; }
+  button:active { transform: scale(.975); }
+  @keyframes btnIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  #choices button:nth-child(2), #bigEventChoices button:nth-child(2) { animation-delay: .06s; }
+  #choices button:nth-child(3), #bigEventChoices button:nth-child(3) { animation-delay: .12s; }
+  button.center { text-align: center; background: linear-gradient(160deg, #4257c9, #2c3a8f); }
+  button.gold { background: linear-gradient(160deg, #d9a514, #8d6e00); text-align: center; box-shadow: 0 8px 22px rgba(141,110,0,.45), inset 0 1px 0 rgba(255,255,255,.25); }
+  button.sub2 { background: #241d4d; font-size: 13px; padding: 10px; }
+  button:disabled { opacity: .45; }
+  .spd { box-shadow: 0 4px 10px rgba(0,0,0,.35); animation: none; }
+  .spd::after { display: none; }
+  h2 { font-size: 14px; margin: 18px 0 9px; letter-spacing: 2px; color: #d9d2f5; font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; }
+  #chronicle { font-size: 12px; color: #a79fd0; line-height: 1.85; border-left: 2px solid rgba(126,87,194,.4); padding-left: 12px; margin-left: 4px; }
+  #chronicle .yr { color: #ffd54f; }
+  .life-card { background: linear-gradient(160deg, rgba(32,26,64,.9), rgba(18,15,38,.94)); border: 1px solid rgba(126,100,255,.3); border-radius: 12px; padding: 11px; font-size: 12px; margin-bottom: 9px; line-height: 1.7; animation: panelIn .5s ease both; }
+  .life-card .ttl { color: #ffd54f; font-weight: bold; font-size: 13px; }
+  #death, #birthReveal, #bigEvent { animation: overlayIn .45s ease both; }
+  @keyframes overlayIn { from { opacity: 0; } to { opacity: 1; } }
+  #death .inner, #birthReveal > div, #bigEvent > div { animation: riseIn .6s cubic-bezier(.22,.9,.28,1) both; }
+  @keyframes riseIn { from { opacity: 0; transform: translateY(26px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  #bigEvent > div > div:first-child { animation: alertPulse 1.6s ease-in-out infinite; text-shadow: 0 0 18px rgba(255,82,82,.6); }
+  @keyframes alertPulse { 0%, 100% { opacity: 1; } 50% { opacity: .55; } }
+  #epitaph { font-size: 15px; line-height: 2.05; background: linear-gradient(165deg, #1a1436, #100c26); border: 1px solid rgba(179,157,217,.4); border-radius: 14px; padding: 18px; margin: 14px 0; text-align: left; white-space: pre-line; font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; box-shadow: inset 0 0 30px rgba(126,87,194,.1); }
+  .hidden { display: none; }
+  #avatarCv { transition: filter .5s ease; filter: drop-shadow(0 0 14px rgba(149,117,255,.5)); border-radius: 12px !important; }
+  #revealBody { box-shadow: inset 0 0 30px rgba(126,87,194,.12), 0 10px 26px rgba(0,0,0,.4); }
+</style>
+</head>
+<body>
+<h1>🌀 転生ライフ <span style="font-size:12px;color:#a79fd0">サンプル</span></h1>
+<div class="sub">世界も、出生も、トーンも、寿命も、すべてランダム。同じ人生は二度とない。</div>
+
+<div id="startPanel" class="panel" style="text-align:center">
+  <p style="font-size:14px;line-height:1.9">前世の徳: <b id="tokuView" style="color:#ffd54f">0</b><br>新しい世界に、新しい命で生まれます。</p>
+  <button class="center hidden" id="btnContinue">▶ 前回の人生の続きから</button>
+  <button class="gold" id="btnBirth" style="margin-top:10px">✦ 転生する</button>
+</div>
+
+<div id="gamePanel" class="hidden">
+  <div class="panel">
+    <div class="world-name" id="worldName"></div>
+    <div class="world-params" id="worldParams"></div>
+    <div class="birth" id="birthInfo"></div>
+    <div style="text-align:center;margin-top:8px">
+      <canvas id="avatarCv" width="16" height="16" style="width:112px;height:112px;image-rendering:pixelated;background:linear-gradient(#1b1440,#0d0a24);border:1px solid #3a2f7a;border-radius:10px"></canvas>
+      <div id="avatarCap" style="font-size:11px;color:#a79fd0;margin-top:4px"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="age-line"><b id="ageView">0歳0ヶ月</b> ― <span id="phaseView">幼少期</span> <span id="seasonView">🌸春</span></div>
+    <div style="background:#241d4d;border-radius:6px;height:10px;overflow:hidden;margin:6px 0 4px"><div id="yearBar" style="background:linear-gradient(90deg,#7e57c2,#ffd54f);height:10px;width:0%"></div></div>
+    <div style="text-align:center;font-size:11px;color:#a79fd0" id="dayView">人生 1 日目</div>
+    <div style="display:flex;gap:7px;margin-top:9px">
+      <button class="spd" data-spd="0" style="flex:1;text-align:center;padding:9px;font-size:13px">⏸ 停止</button>
+      <button class="spd" data-spd="1" style="flex:1;text-align:center;padding:9px;font-size:13px">▶ ×1</button>
+      <button class="spd" data-spd="4" style="flex:1;text-align:center;padding:9px;font-size:13px">⏩ ×4</button>
+      <button class="spd" data-spd="16" style="flex:1;text-align:center;padding:9px;font-size:13px">⏭ ×16</button>
+      <button class="spd" data-spd="64" style="flex:1;text-align:center;padding:9px;font-size:13px">⚡ ×64</button>
+    </div>
+    <div class="stats" id="statsView" style="margin-top:10px"></div>
+  </div>
+
+  <button class="gold hidden" id="btnRescue">▶ 時間が止まっていたらここで再開</button>
+  <div class="panel">
+    <div id="eventText">時が流れている…</div>
+    <div id="resultText"></div>
+    <div id="choices" style="margin-top:10px"></div>
+  </div>
+
+  <h2>📜 人生ログ（全記録）</h2>
+  <div id="chronicle" style="max-height:320px;overflow-y:auto;background:#100d24;border:1px solid #2c2560;border-radius:10px;padding:10px"></div>
+</div>
+
+<h2>🧬 コレクション</h2>
+<div class="panel" id="collection" style="font-size:12.5px;line-height:2"></div>
+<h2>📖 転生図鑑（これまでの人生）</h2>
+<div id="lives"></div>
+
+<div id="birthReveal" style="position:fixed;inset:0;background:rgba(5,3,16,.95);display:none;z-index:45;overflow-y:auto;padding:24px 16px">
+  <div style="max-width:520px;margin:0 auto">
+    <div style="text-align:center;font-size:30px">✦ 転生 ✦</div>
+    <div id="revealStep" style="text-align:center;color:#a79fd0;font-size:12px;margin-top:8px"></div>
+    <div id="revealBody" style="font-size:15px;line-height:2.0;background:#171233;border:1px solid #3a2f7a;border-radius:14px;padding:18px;margin:12px 0;min-height:190px"></div>
+    <button class="sub2 hidden" id="btnReroll">🎲 徳30を消費して家柄を引き直す</button>
+    <button class="gold" id="btnRevealNext">次へ ▶</button>
+    <button class="gold hidden" id="btnBegin">この人生を始める</button>
+  </div>
+</div>
+<div id="bigEvent" style="position:fixed;inset:0;background:rgba(5,3,16,.93);display:none;z-index:44;overflow-y:auto;padding:24px 16px">
+  <div style="max-width:520px;margin:0 auto">
+    <div style="text-align:center;font-size:15px;color:#ff8a80;letter-spacing:2px">⚠ 重要な出来事 ⚠</div>
+    <div id="bigEventText" style="font-size:16px;line-height:1.95;background:#1d1440;border:1px solid #7b1fa2;border-radius:14px;padding:16px;margin:12px 0"></div>
+    <div id="bigEventResult" style="font-size:14px;color:#a5d6a7;line-height:1.8;margin:8px 0"></div>
+    <div id="bigEventChoices"></div>
+    <button class="gold hidden" id="btnBigClose">時を再び進める ▶</button>
+  </div>
+</div>
+<div id="death"><div class="inner">
+  <div style="font-size:15px;color:#ff8a80;letter-spacing:3px">― 人生終了 ―</div>
+  <div style="font-size:52px;margin-top:8px">⚱️</div>
+  <div style="font-size:24px;font-weight:bold;margin-top:6px" id="deathTitle"></div>
+  <div style="font-size:17px;color:#ffd54f;margin-top:6px" id="deathCause"></div>
+  <div id="deathRank" style="font-size:44px;font-weight:900;margin-top:10px;font-family:serif"></div>
+  <div id="deathStats" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;font-size:12px;margin-top:12px"></div>
+  <div id="epitaph"></div>
+  <button class="center" id="btnShare">𝕏 結果をシェアする</button>
+  <button class="gold" id="btnAgain">✦ 次の転生へ（徳 +<span id="tokuGain"></span>）</button>
+</div></div>
+
+<script>
+// ---------- utils ----------
+const R = (a, b) => a + Math.random() * (b - a);
+const RI = (a, b) => Math.floor(R(a, b + 1));
+const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+function wpick(pairs) { let t = pairs.reduce((s, p) => s + p[1], 0), r = Math.random() * t; for (const p of pairs) { r -= p[1]; if (r <= 0) return p[0]; } return pairs[0][0]; }
+const clamp = v => Math.max(0, Math.min(100, Math.round(v)));
+const el = id => document.getElementById(id);
+
+// ---------- name generation ----------
+const SYL_A = ['ア', 'カ', 'サ', 'タ', 'ナ', 'ハ', 'マ', 'ヤ', 'ラ', 'ル', 'レ', 'ロ', 'エ', 'オ', 'フィ', 'シ', 'ティ', 'ミ', 'グ', 'ゼ'];
+const SYL_B = ['ル', 'ン', 'ア', 'ス', 'ト', 'リア', 'ミール', 'ド', 'ガ', 'ベル', 'ナ', 'シャ', 'クス', 'オス'];
+function genName() { return pick(SYL_A) + pick(SYL_B) + (Math.random() < 0.4 ? pick(SYL_B) : ''); }
+const PLACE_A = ['霧', '塩', '月', '灰', '星', '茨', '蒼', '砂', '雪', '雷'];
+const PLACE_B = ['の都', '辺の村', '港', 'の森', '高原', 'の谷', '市場', '砦'];
+function genPlace() { return pick(PLACE_A) + pick(PLACE_B); }
+
+// ---------- world generation ----------
+const TEMPERAMENTS = [
+  { id: 'noble', name: '王道の世界', tragedy: 0.8, comedy: 0.1 },
+  { id: 'gentle', name: 'ほのぼのした世界', tragedy: 0.45, comedy: 0.25 },
+  { id: 'cruel', name: '残酷な世界', tragedy: 1.6, comedy: 0.05 },
+  { id: 'comic', name: '喜劇の世界', tragedy: 0.7, comedy: 0.6 },
+  { id: 'tragic', name: '悲劇の世界', tragedy: 1.35, comedy: 0.05 },
+  { id: 'chaos', name: '混沌の世界', tragedy: 1.1, comedy: 0.35 },
+];
+function genWorld() {
+  return {
+    name: pick(PLACE_A) + 'と' + pick(['鉄', '歌', '夢', '影', '蜜']) + 'の世界 ' + genName(),
+    magic: wpick([[0, 2], [1, 4], [2, 3], [3, 1]]),          // 魔力濃度
+    tech: wpick([[0, 2], [1, 4], [2, 3], [3, 1]]),           // 技術水準
+    war: wpick([[0, 4], [1, 3], [2, 2]]),                    // 0平和 1冷戦 2大戦
+    gods: wpick([[0, 5], [1, 3]]),                           // 1=神々は干渉的
+    disaster: wpick([['なし', 4], ['疫病', 2], ['魔王復活', 2], ['天変地異', 1]]),
+    temper: pick(TEMPERAMENTS),
+  };
+}
+
+function techLabel(w) {
+  return w.magic === 0 ? ['石器', '中世', '蒸気機関', '科学文明'][w.tech]
+                        : ['石器', '中世', '魔法工学', '超魔法文明'][w.tech];
+}
+// ---------- birth ----------
+const RACES = [
+  { name: '人間', w: 40, life: [58, 92], mod: {} },
+  { name: 'エルフ', w: 10, life: [180, 420], mod: { int: 12, health: 4 } },
+  { name: '獣人', w: 14, life: [48, 80], mod: { health: 14, charm: -4 } },
+  { name: 'ドワーフ', w: 12, life: [90, 170], mod: { wealth: 10, health: 6 } },
+  { name: '魔族', w: 8, life: [120, 300], mod: { fame: -18, int: 8 } },
+  { name: '天使の末裔', w: 2, life: [150, 350], mod: { charm: 16, fame: 10 } },
+  { name: '吸血鬼', w: 2, life: [300, 900], mod: { charm: 14, health: 6, happy: -4 } },
+  { name: '妖精', w: 3, life: [150, 400], mod: { charm: 12, happy: 12, health: -4 } },
+  { name: '竜人', w: 2, life: [200, 500], mod: { health: 14, fame: 6, charm: -3 } },
+  { name: 'ゴブリン', w: 5, life: [25, 45], mod: { wealth: 4, charm: -10, health: 4 } },
+  { name: 'スライム', w: 1, life: [40, 300], mod: { health: 10, charm: -6, happy: 6 } },
+];
+const FAMILIES = [
+  { name: '浮浪児', w: 8, mod: { wealth: -20, health: -8, happy: -6 } },
+  { name: '農民の子', w: 26, mod: { health: 6 } },
+  { name: '職人の子', w: 22, mod: { wealth: 6 } },
+  { name: '商人の子', w: 18, mod: { wealth: 16 } },
+  { name: '騎士の子', w: 10, mod: { fame: 8, health: 8 } },
+  { name: '王族の子', w: 3, mod: { wealth: 34, fame: 18, happy: 4 } },
+];
+const TALENT_A = ['炎の', '不死の', '疾風の', '深海の', '鋼の', '星読みの', '毒舌の', '黄金の', '忘れっぽい', '眠りの'];
+const TALENT_B = ['商才', '剣才', '魔才', '歌才', '工才', '学才', '話才', '運', '体', '心'];
+function raceAllowed(r, w) {
+  if (r.name === '魔族' || r.name === '吸血鬼' || r.name === '妖精' || r.name === '竜人') return w.magic >= 1;          // 魔力のない世界に魔族はいない
+  if (r.name === '天使の末裔') return w.gods === 1;   // 神が沈黙する世界に天使の末裔はいない
+  return true;
+}
+function genBirth(world, toku) {
+  const racePool = RACES.filter(r => raceAllowed(r, world));
+  const race = wpick(racePool.map(r => [r, r.w + toku * 0.02]));
+  const fam = wpick(FAMILIES.map(f => [f, f.w + (f.name.includes('王族') || f.name.includes('騎士') ? toku * 0.03 : 0)]));
+  const talentB = world.magic === 0 ? TALENT_B.filter(t => t !== '魔才') : TALENT_B;  // 魔力のない世界に魔才は宿らない
+  const talents = [pick(TALENT_A) + pick(talentB), pick(TALENT_A) + pick(talentB)];
+  const stats = { health: 55, int: 40, charm: 40, wealth: 30, fame: 20, happy: 55 };
+  for (const src of [race.mod, fam.mod]) for (const k in src) stats[k] = clamp((stats[k] || 40) + src[k]);
+  const B = { race, fam, gender: pick(['男', '女']), talents, stats, lifeSpan: RI(race.life[0], race.life[1]), anomaly: null };
+  // ★ 特異点: ごく稀に、世界のルールを破る出生が起きる（約1.2%）
+  if (Math.random() < 0.012) {
+    const cands = [];
+    if (world.magic === 0) cands.push('soleMage');
+    if (world.gods === 0) cands.push('godChild');
+    if (fam.name === '浮浪児') cands.push('hiddenRoyal');
+    cands.push('longLived');
+    const kind = pick(cands);
+    if (kind === 'soleMage') {
+      B.talents[0] = '唯一の魔才';
+      B.anomaly = { kind, name: '特異点 ― 魔力なき世界の、唯一の魔法使い', desc: 'この世界に魔力はない。だがある日、あなたの手にだけ光が宿る。世界でただ一人、魔法が使える存在として生まれた。' };
+    } else if (kind === 'godChild') {
+      const angel = RACES.find(r => r.name === '天使の末裔');
+      B.race = angel; B.lifeSpan = RI(angel.life[0], angel.life[1]);
+      B.anomaly = { kind, name: '特異点 ― 神なき世界に降りた、神の子', desc: '神々が沈黙する世界に、天使の血を引く子が生まれた。誰も説明できない。奇跡か、世界のバグか。' };
+    } else if (kind === 'hiddenRoyal') {
+      B.anomaly = { kind, name: '特異点 ― 王家の血を引く浮浪児', desc: '路地で育ったあなたの腕には、滅びた王家の紋章と同じ痣がある。その意味を知る者は、まだいない。' };
+    } else {
+      B.lifeSpan = Math.round(B.lifeSpan * 2.6);
+      B.anomaly = { kind, name: '特異点 ― 老いない体', desc: 'あなたの体は、なぜか老いる速度が極端に遅い。同世代が老いて死ぬ頃も、あなたは変わらない。' };
+    }
+  }
+  return B;
+}
+
+// ---------- events ----------
+// {min,max: age, when(state)->bool, text(state)->str, choices:[{label, run(state)->resultText}]}
+function eff(S, d) { for (const k in d) S.stats[k] = clamp(S.stats[k] + d[k]); }
+const EVENTS = [
+  { min: 0, max: 12, text: S => `${S.place}で、近所の子らが川で遊んでいる。混ざる？`,
+    choices: [
+      { label: '一緒に遊ぶ', run: S => { eff(S, { happy: 8, health: 3, charm: 3 }); return '泥だらけで笑った。友達ができた。'; } },
+      { label: '一人で本を読む', run: S => { eff(S, { int: 7, happy: -2 }); return '静かな午後。文字が少し読めるようになった。'; } },
+    ] },
+  { min: 0, max: 12, when: S => S.birth.fam.name === '浮浪児', text: S => `路地で倒れている老人を見つけた。懐にはパンの入った袋がある。`,
+    choices: [
+      { label: '助けて水をやる', run: S => { S.flags.helpedOld = true; eff(S, { happy: 4 }); return '老人は礼を言い、あなたの顔を覚えたようだった。'; } },
+      { label: 'パンを持って逃げる', run: S => { eff(S, { health: 4, happy: -4 }); S.flags.stole = true; return '腹は満たされた。少しだけ胸が痛い。'; } },
+    ] },
+  { min: 6, max: 15, text: S => `旅の学者が${S.place}に滞在している。弟子入りを願い出る？`,
+    choices: [
+      { label: '弟子入りを頼む', run: S => Math.random() < 0.35 + S.stats.int / 200 ? (eff(S, { int: 12, happy: 3 }), S.flags.scholar = true, '学者は頷いた。学びの日々が始まる。') : (eff(S, { happy: -5 }), '学者は首を振った。「まだ早い」') },
+      { label: '見送る', run: S => { eff(S, { happy: 1 }); return '学者は去った。いつか自分も旅に出たい。'; } },
+    ] },
+  { min: 13, max: 25, text: S => `人生の岐路だ。${S.org}から誘いが来ている。何を目指す？`,
+    choices: [
+      { label: '学問の道', run: S => { eff(S, { int: 14, wealth: -4 }); S.flags.path = '学問'; return '勉学に身を投じた。'; } },
+      { label: '剣と冒険の道', run: S => { eff(S, { health: 10, fame: 5, wealth: -2 }); S.flags.path = '冒険'; return '剣を取った。世界は広い。'; } },
+      { label: '商いの道', run: S => { eff(S, { wealth: 12, charm: 4 }); S.flags.path = '商い'; return '帳簿と笑顔が武器になった。'; } },
+    ] },
+  { min: 16, max: 40, text: S => `${S.npc}という人物と出会った。妙に気が合う。`,
+    choices: [
+      { label: '深く付き合う', run: S => { eff(S, { happy: 10, charm: 4 }); S.flags.partner = S.npc; return S.npc + 'は、あなたの人生に欠かせない人になった。'; } },
+      { label: '距離を保つ', run: S => { eff(S, { int: 2 }); return '悪くない距離感だった。'; } },
+    ] },
+  { min: 18, max: 55, when: S => S.world.war === 2, text: S => `大戦が激しくなった。あなたの街にも徴兵の知らせが届く。`,
+    choices: [
+      { label: '志願する', run: S => Math.random() < 0.6 ? (eff(S, { fame: 16, health: -14 }), S.flags.warHero = true, '戦場で名を上げた。だが傷は深い。') : (eff(S, { health: -30, fame: 6 }), '九死に一生を得た。戦いは何も生まなかった。') },
+      { label: '逃げる', run: S => { eff(S, { fame: -8, happy: -4, wealth: -6 }); return '逃げた。生き延びた。時々、夢に見る。'; } },
+      { label: '街で支える', run: S => { eff(S, { fame: 6, happy: 4 }); S.flags.supporter = true; return '残った者たちを支えた。それも戦いだった。'; } },
+    ] },
+  { min: 20, max: 60, text: S => `投資の話が舞い込んだ。${S.place}の新事業に出資する？`,
+    choices: [
+      { label: '大きく張る', run: S => Math.random() < 0.45 ? (eff(S, { wealth: 26 }), '大当たり！ 財が膨らんだ。') : (eff(S, { wealth: -22, happy: -6 }), '話は霧散した。財布が軽い。') },
+      { label: '断る', run: S => { eff(S, { wealth: 2 }); return '堅実に生きた。それでいい。'; } },
+    ] },
+  { min: 25, max: 70, when: S => S.flags.helpedOld, text: S => `若い頃に助けた老人が、実は${S.org}の長だった。恩返しに訪ねてきた。`,
+    choices: [
+      { label: '厚意を受ける', run: S => { eff(S, { wealth: 14, fame: 6, happy: 6 }); return '善意は巡る。温かい再会だった。'; } },
+      { label: '気持ちだけ受け取る', run: S => { eff(S, { happy: 10, fame: 4 }); S.flags.virtuous = true; return '笑って別れた。清々しい日だった。'; } },
+    ] },
+  { min: 30, max: 75, text: S => `弟子を名乗る若者、${S.npc2}が訪ねてきた。`,
+    choices: [
+      { label: '弟子に取る', run: S => { eff(S, { fame: 8, happy: 6 }); S.flags.disciple = true; return '教えることは、学ぶことだった。'; } },
+      { label: '追い返す', run: S => { eff(S, { happy: -3 }); return '扉は閉ざされた。若者は去った。'; } },
+    ] },
+  { min: 40, max: 200, text: S => `体の衰えを感じる朝が増えた。どう過ごす？`,
+    choices: [
+      { label: '静かに暮らす', run: S => { eff(S, { health: 6, happy: 5 }); return '穏やかな日々。それも悪くない。'; } },
+      { label: '最後の大仕事に挑む', run: S => Math.random() < 0.5 ? (eff(S, { fame: 18, health: -12 }), S.flags.lastWork = true, 'やり遂げた！ 人々は語り継ぐだろう。') : (eff(S, { health: -18, happy: -5 }), '体がついてこなかった。無念。') },
+    ] },
+  { min: 15, max: 90, when: S => S.world.disaster === '疫病', text: S => `疫病が${S.place}を襲った。`,
+    choices: [
+      { label: '病人を看る', run: S => Math.random() < 0.55 ? (eff(S, { fame: 10, happy: 4 }), S.flags.healer = true, 'あなたは人々の希望だった。') : (eff(S, { health: -25 }), '自分も倒れた。何日も生死を彷徨った。') },
+      { label: '街を離れる', run: S => { eff(S, { health: 2, happy: -6 }); return '逃げ延びた。置いてきた顔が浮かぶ。'; } },
+    ] },
+  { min: 10, max: 80, when: S => S.world.gods === 1, text: S => `夢に神が現れた。「願いを一つ、叶えてやろう。ただし代償がある」`,
+    choices: [
+      { label: '富を願う', run: S => { eff(S, { wealth: 24, happy: -8 }); return '富は得た。何かを失った気がする。'; } },
+      { label: '健康を願う', run: S => { eff(S, { health: 22 }); S.lifeSpan += 12; return '体が軽い。神は笑っていた。'; } },
+      { label: '断る', run: S => { eff(S, { happy: 6 }); S.flags.defiedGod = true; return '神は愉快そうに消えた。'; } },
+    ] },
+];
+EVENTS.push(
+  { min: 12, max: 50, when: S => S.birth.anomaly && S.birth.anomaly.kind === 'soleMage', text: S => `魔法を使うところを、${S.npc}に目撃されてしまった。この世界で魔法は「存在しないもの」だ。`,
+    choices: [
+      { label: '口止めする', run: S => Math.random() < 0.6 ? (eff(S, { charm: 3 }), S.flags.secretKept = true, '何とか秘密は守られた。だが噂は静かに広がっていく。') : (eff(S, { fame: 12, happy: -6 }), S.flags.exposed = true, '噂は街中に広まった。「奇跡の人」と呼ぶ者、「化け物」と呼ぶ者。') },
+      { label: '開き直って力を見せる', run: S => { eff(S, { fame: 18 }); S.flags.exposed = true; return '人々はひれ伏した。世界唯一の魔法使いの誕生だ。'; } },
+    ] },
+  { min: 20, max: 70, when: S => S.birth.anomaly && S.birth.anomaly.kind === 'hiddenRoyal', text: S => `腕の痣を見た老人が震えた。「それは…滅びた王家の紋章」あなたの出自が明らかになろうとしている。`,
+    choices: [
+      { label: '王家の末裔を名乗る', run: S => Math.random() < 0.5 ? (eff(S, { fame: 22, wealth: 14 }), S.flags.restored = true, '支持者が集まった。王家復興の旗が上がる！') : (eff(S, { fame: 8, health: -12 }), '簒奪者に命を狙われた。だが旗は折れていない。') },
+      { label: '痣を隠し、路地の人間として生きる', run: S => { eff(S, { happy: 8 }); S.flags.stayedLow = true; return '名より実を選んだ。静かで自由な人生も悪くない。'; } },
+    ] },
+  { min: 15, max: 60, when: S => S.birth.anomaly && S.birth.anomaly.kind === 'godChild', text: S => `あなたの周りで小さな奇跡が起き始めた。枯れた花が咲き、病人が回復する。神なき世界の人々はざわついている。`,
+    choices: [
+      { label: '奇跡を受け入れる', run: S => { eff(S, { fame: 16, happy: 4 }); S.flags.livingSaint = true; return '人々はあなたを「生ける聖者」と呼んだ。'; } },
+      { label: '奇跡を否定し続ける', run: S => { eff(S, { happy: -4, int: 4 }); return 'ただの偶然だと言い続けた。自分自身にも。'; } },
+    ] },
+);
+EVENTS.push(
+  { min: 10, max: 30, when: S => S.world.magic >= 2, text: S => `${S.org}（魔法学院）から入学の誘いが届いた。`,
+    choices: [
+      { label: '入学する', run: S => { eff(S, { int: 13, wealth: -5 }); S.flags.mage = true; return '魔法の道に足を踏み入れた。'; } },
+      { label: '断る', run: S => { eff(S, { happy: 2 }); return '自分の道は自分で選ぶ。'; } },
+    ] },
+  { min: 8, max: 45, when: S => S.birth.talents.some(t => t.includes('魔才')), text: S => `ある夜、手のひらに魔力の光が宿った。才能が目覚めつつある。`,
+    choices: [
+      { label: '鍛錬に励む', run: S => { eff(S, { int: 10, fame: 4 }); S.flags.mage = true; return '魔力が指先で踊る。新しい世界が開けた。'; } },
+      { label: '隠し通す', run: S => { eff(S, { happy: -2 }); return '力はしまい込んだ。いつか使う日が来るのか。'; } },
+    ] },
+);
+EVENTS.push(
+  { min: 12, max: 40, text: S => `冒険者ギルドが門戸を開いた。登録すれば危険と報酬の日々が始まる。`,
+    choices: [
+      { label: '冒険者になる', run: S => { S.flags.adventurer = true; eff(S, { fame: 6 }); return '冒険者登録完了。初仕事は地下水道の魔物退治だ。'; } },
+      { label: '堅実に生きる', run: S => { eff(S, { happy: 3 }); return '平穏もまた才能のひとつだ。'; } },
+    ] },
+  { min: 14, max: 35, when: S => !!S.flags.adventurer, text: S => `ギルドに難題が舞い込んだ。古代遺跡の調査隊に参加しないか、と。`,
+    choices: [
+      { label: '参加する', run: S => Math.random() < 0.55 ? (eff(S, { wealth: 16, fame: 10 }), S.flags.relic = true, '遺跡の財宝を持ち帰った！名が売れた。') : (eff(S, { health: -18 }), '罠にかかり重傷。だが生きて帰れただけでも儲けものだ。') },
+      { label: '今回は見送る', run: S => { eff(S, { happy: 2 }); return '調査隊は無事に帰還した。少し悔しい。'; } },
+    ] },
+  { min: 16, max: 45, text: S => `古地図を売る怪しい商人が現れた。「宝の在り処だよ、あんたにだけ教える」`,
+    choices: [
+      { label: '買って探しに行く', run: S => Math.random() < 0.3 ? (eff(S, { wealth: 22 }), '本物だった！古い金貨の詰まった壺を掘り当てた。') : (eff(S, { wealth: -7, happy: -3 }), '地図の先にはただの空き地。騙された。') },
+      { label: '相手にしない', run: S => { eff(S, { int: 2 }); return '賢明な判断だったかもしれない。'; } },
+    ] },
+  { min: 18, max: 50, when: S => S.world.tech >= 1, text: S => `港町で船乗りを募集している。大海の向こうには未知の大陸があるという。`,
+    choices: [
+      { label: '船に乗る', run: S => Math.random() < 0.6 ? (eff(S, { wealth: 12, fame: 8, happy: 6 }), S.flags.sailor = true, '新大陸に到達した！航海は成功だ。') : (eff(S, { health: -14 }), '嵐に遭い九死に一生。海の恐ろしさを知った。') },
+      { label: '陸で生きる', run: S => { eff(S, { health: 2 }); return '船出を見送った。'; } },
+    ] },
+  { min: 10, max: 60, when: S => S.birth.race.name === '獣人', text: S => `獣人の嗅覚が、森の奥の獲物の匂いを捉えた。里の狩りの腕比べが近い。`,
+    choices: [
+      { label: '腕比べに出る', run: S => Math.random() < 0.6 ? (eff(S, { fame: 9, happy: 6 }), '大物を仕留めて優勝！里の誇りになった。') : (eff(S, { health: -6 }), '獲物に返り討ち。傷は浅いが面目が痛い。') },
+      { label: '静かに暮らす', run: S => { eff(S, { happy: 3 }); return '穏やかな日々も悪くない。'; } },
+    ] },
+  { min: 30, max: 120, when: S => ['エルフ', '妖精', '竜人'].includes(S.birth.race.name), text: S => `人間の友がまた一人、老いて逝った。長命種の宿命が胸を締めつける。`,
+    choices: [
+      { label: 'それでも人と関わり続ける', run: S => { eff(S, { happy: -4, charm: 6 }); return '別れは辛い。それでも出会いの数は嘘をつかない。'; } },
+      { label: '森の奥に隠棲する', run: S => { eff(S, { happy: 5, fame: -5 }); S.flags.hermit = true; return '静寂の中で時が流れる。'; } },
+    ] },
+  { min: 14, max: 80, when: S => S.birth.race.name === '吸血鬼', text: S => `渇きが強くなってきた。人の血を求める衝動と、どう向き合うか。`,
+    choices: [
+      { label: '動物の血で耐える', run: S => { eff(S, { health: 4, happy: -3 }); return '理性は保たれた。渇きは収まらないが。'; } },
+      { label: '志願者から分けてもらう', run: S => Math.random() < 0.7 ? (eff(S, { charm: 8 }), '理解者が現れた。奇妙な絆が生まれた。') : (eff(S, { fame: -10, happy: -6 }), '正体が漏れた。街を離れることになった。') },
+    ] },
+  { min: 25, max: 55, text: S => `若い者が弟子入りを志願してきた。自分の技を継ぐ者が欲しい時期だ。`,
+    choices: [
+      { label: '弟子を取る', run: S => { S.flags.hasDisciple = true; eff(S, { happy: 5, fame: 4 }); return '弟子はよく学ぶ。教える喜びを知った。'; } },
+      { label: '断る', run: S => { eff(S, { int: 3 }); return '自分の道はまだ終わっていない。'; } },
+    ] },
+  { min: 40, max: 90, when: S => !!S.flags.hasDisciple, text: S => `弟子が一人前になったと報告に来た。立派に育った姿に目頭が熱くなる。`,
+    choices: [
+      { label: '技のすべてを託す', run: S => { eff(S, { fame: 10, happy: 8 }); S.flags.legacy = true; return 'あなたの技は次の世代へ受け継がれた。'; } },
+      { label: 'まだ早いと突き放す', run: S => { eff(S, { fame: 3, happy: -3 }); return '弟子は頭を下げて去った。厳しさも愛情だ。'; } },
+    ] },
+  { min: 20, max: 60, when: S => S.world.war === 2, text: S => `戦火を逃れた民が蜂起した。圧政を打倒する革命の火種がくすぶっている。`,
+    choices: [
+      { label: '革命に加わる', run: S => Math.random() < 0.5 ? (eff(S, { fame: 20 }), S.flags.revolutionary = true, '革命は成功した！新しい時代の立役者だ。') : (eff(S, { health: -20, fame: 6 }), '革命は潰えた。生き延びて語り部となる。') },
+      { label: '関わらない', run: S => { eff(S, { happy: -2 }); return '時代は勝手に動いていく。'; } },
+    ] },
+  { min: 45, max: 110, when: S => S.stats.fame >= 55, text: S => `吟遊詩人があなたの生涯を叙事詩にしたいと申し出た。`,
+    choices: [
+      { label: '協力する', run: S => { eff(S, { fame: 12, happy: 6 }); S.flags.epic = true; return 'あなたの物語が歌になって広まっていく。'; } },
+      { label: '断る', run: S => { eff(S, { happy: 2 }); return '伝説より静かな老後を選んだ。'; } },
+    ] },
+  { min: 55, max: 130, text: S => `人生の黄昏時。若い世代があなたの助言を求めて訪ねてくるようになった。`,
+    choices: [
+      { label: '知恵を惜しみなく授ける', run: S => { eff(S, { fame: 8, happy: 7 }); S.flags.sage = true; return '「生き字引」と呼ばれるようになった。'; } },
+      { label: '静かに余生を楽しむ', run: S => { eff(S, { happy: 9, health: 3 }); return '穏やかな日々こそ、最後の贅沢だ。'; } },
+    ] },
+);
+EVENTS.push(
+  { min: 22, max: 50, when: S => S.flags.path === '学問', text: S => `長年の研究が実を結びそうだ。あと一歩で新発見というところまで来ている。`,
+    choices: [
+      { label: '研究に没頭する', run: S => Math.random() < 0.6 ? (eff(S, { int: 8, fame: 14 }), S.flags.scholar = true, '大発見だ！学会が騒然となった。') : (eff(S, { happy: -4, int: 5 }), '先を越された。だが得た知識は本物だ。') },
+      { label: '後進に譲る', run: S => { eff(S, { happy: 6, charm: 4 }); return '若い研究者が代わりに名を上げた。悪くない気分だ。'; } },
+    ] },
+  { min: 22, max: 55, when: S => S.flags.path === '冒険', text: S => `宿敵と呼べる存在が現れた。何度も刃を交えた相手が、決着を望んでいる。`,
+    choices: [
+      { label: '決闘を受けて立つ', run: S => Math.random() < 0.55 ? (eff(S, { fame: 15, health: -8 }), S.flags.duelist = true, '死闘の末に勝利！宿敵は笑って倒れた。') : (eff(S, { health: -22 }), '敗北。だが命は拾った。この傷は勲章だ。') },
+      { label: '和解を申し出る', run: S => { eff(S, { charm: 8, happy: 5 }); S.flags.rivalFriend = true; return '宿敵は生涯の友となった。'; } },
+    ] },
+  { min: 22, max: 55, when: S => S.flags.path === '商い', text: S => `一生に一度の大商談の誘いが来た。成功すれば店は倍になるが、失敗すれば全財産が危うい。`,
+    choices: [
+      { label: '勝負に出る', run: S => Math.random() < 0.5 ? (eff(S, { wealth: 26, fame: 8 }), S.flags.bigMerchant = true, '大成功！商会は国の経済を動かす規模になった。') : (eff(S, { wealth: -26, happy: -8 }), '大失敗。財産の多くを失った…。') },
+      { label: '堅実に断る', run: S => { eff(S, { wealth: 5 }); return '地道こそ商いの王道だ。'; } },
+    ] },
+  { min: 8, max: 40, when: S => !!S.flags.stole, text: S => `幼い頃の盗みの件で、お尋ね者が追ってきたという噂が流れてきた。`,
+    choices: [
+      { label: '償いをする', run: S => { eff(S, { wealth: -6, happy: 5 }); S.flags.stole = false; S.flags.redeemed = true; return '謝罪と賠償を済ませた。肩の荷が下りた。'; } },
+      { label: '逃げ続ける', run: S => { eff(S, { happy: -6, fame: -4 }); return '噂はついて回る。だがまだ捕まってはいない。'; } },
+    ] },
+  { min: 25, max: 60, when: S => !!S.flags.mage, text: S => `魔力の扱いに長けたあなたの噂を聞き、若い魔法使いが教えを請いに来た。`,
+    choices: [
+      { label: '魔法を教える', run: S => { eff(S, { fame: 8, happy: 5 }); S.flags.mageMaster = true; return '魔法の系譜が受け継がれていく。'; } },
+      { label: '追い返す', run: S => { eff(S, { int: 3 }); return '魔法は危険だ。一人で抱える方がいい。'; } },
+    ] },
+  { min: 55, max: 140, when: S => !!S.flags.partner, text: S => `${S.flags.partner}と過ごす穏やかな日々。長い人生を共に歩いてきた。`,
+    choices: [
+      { label: '感謝を伝える', run: S => { eff(S, { happy: 12 }); return '「こちらこそ」と笑った。その笑顔が何よりの宝だ。'; } },
+      { label: '思い出を語り合う', run: S => { eff(S, { happy: 9, health: 2 }); return '語り尽くせないほどの思い出がある。それが答えだ。'; } },
+    ] },
+);
+// filler events per phase (small choices)
+const FILLERS = [
+  { text: () => pick(['穏やかな季節が巡った。', 'ささやかな幸運があった。', '懐かしい夢を見た。', '新しい趣味を見つけた。']), choices: [
+    { label: '日々を楽しむ', run: S => { eff(S, { happy: 4 }); return '良い時間だった。'; } },
+    { label: '自分を磨く', run: S => { eff(S, { int: 3, health: 2 }); return '少しだけ前に進んだ。'; } },
+  ] },
+  { text: () => pick(['小さな失敗をした。', '噂話に巻き込まれた。', '雨の季節が長引いた。']), choices: [
+    { label: '笑い飛ばす', run: S => { eff(S, { happy: 2, charm: 2 }); return '笑えば何とかなる。'; } },
+    { label: '反省する', run: S => { eff(S, { int: 3, happy: -2 }); return '次はうまくやる。'; } },
+  ] },
+];
+
+// ---------- pixel avatar (procedural, by race/family/phase) ----------
+let AV = { frame: 0, parts: [], season: -1, lastDraw: 0 };
+function drawAvatar() {
+  if (!G) return;
+  const cv = el('avatarCv'); if (!cv) return;
+  const ctx = cv.getContext('2d');
+  const P = (x, y, w, h, c) => { ctx.fillStyle = c; ctx.fillRect(x, y, w, h); };
+  const race = G.birth.race.name, fam = G.birth.fam.name;
+  const age = Math.floor(G.age);
+  const phase = phaseOf(age, G.lifeSpan);
+  const frac = G.age - age;
+  const season = Math.min(3, Math.floor(frac * 4));
+  const moving = !G.paused && !G.dead;
+  const f = AV.frame;
+  const bob = moving ? (f % 2 === 0 ? 0 : 1) : 0;
+  // sky tint by season
+  const sky = ['#2a2148', '#1d2a4a', '#3a2340', '#232338'][season];
+  P(0, 0, 16, 16, sky);
+  P(0, 13, 16, 3, '#171233'); // ground
+  // seasonal particles (petals / sparkles / leaves / snow)
+  if (AV.season !== season) { AV.season = season; AV.parts = Array.from({ length: 7 }, () => ({ x: Math.random() * 16, y: Math.random() * 16 })); }
+  const pcol = ['#f8bbd0', '#fff59d', '#ffab91', '#ffffff'][season];
+  if (moving) for (const p of AV.parts) { p.y += season === 1 ? 0.25 : 0.55; p.x += season === 2 ? 0.3 : 0.08; if (p.y > 15) { p.y = -1; p.x = Math.random() * 16; } if (p.x > 16) p.x = 0; }
+  for (const p of AV.parts) P(Math.floor(p.x), Math.floor(p.y), 1, 1, pcol);
+  const skin = ({ '人間': '#f2c49b', 'エルフ': '#f7ddba', '獣人': '#d99e63', 'ドワーフ': '#e0aa72', '魔族': '#b08cc7', '天使の末裔': '#ffe9c9', '吸血鬼': '#e8e3da', '妖精': '#ffe3ec', '竜人': '#c98a5e', 'ゴブリン': '#9ccc65', 'スライム': '#64b5f6' })[race] || '#f2c49b';
+  const cloth = { '浮浪児': '#5d5348', '農民の子': '#7a6a42', '職人の子': '#4f6187', '商人の子': '#7b4a8f', '騎士の子': '#8f2f35', '王族の子': '#c9a227' }[fam];
+  const hairBase = ({ '人間': '#5a4030', 'エルフ': '#cfd8a6', '獣人': '#8a5a2b', 'ドワーフ': '#a0522d', '魔族': '#3d2b52', '天使の末裔': '#f5eeda', '吸血鬼': '#212121', '妖精': '#f48fb1', '竜人': '#b71c1c', 'ゴブリン': '#33691e', 'スライム': '#42a5f5' })[race] || '#5a4030';
+  const hair = phase === '老年期' ? '#cfcfcf' : hairBase;
+  const child = phase === '幼少期';
+  const hy = (child ? 6 : 3) - bob;
+  if (race === '天使の末裔') P(5, hy - 2, 6, 1, '#ffe082');
+  if (race === '魔族') { P(4, hy - 1, 2, 2, '#6a1b9a'); P(10, hy - 1, 2, 2, '#6a1b9a'); }
+  if (race === '獣人') { P(4, hy - 1, 2, 2, hair); P(10, hy - 1, 2, 2, hair); }
+  if (race === 'エルフ') { P(3, hy + 2, 1, 3, skin); P(12, hy + 2, 1, 3, skin); }
+  if (race === '妖精') { const flap = moving && f % 2 ? 3 : 4; P(2, hy + 3, 2, flap, '#b3e5fc'); P(12, hy + 3, 2, flap, '#b3e5fc'); }
+  if (race === '竜人') { P(4, hy - 1, 2, 2, '#b71c1c'); P(10, hy - 1, 2, 2, '#b71c1c'); }
+  if (race === 'ゴブリン') { P(3, hy + 1, 2, 2, skin); P(11, hy + 1, 2, 2, skin); }
+  if (race === 'スライム') {
+    const sq = moving && f % 2 ? 1 : 0;
+    P(5, hy + 4 + sq, 6, 7 - sq, skin); P(6, hy + 7, 1, 1, '#26221f'); P(9, hy + 7, 1, 1, '#26221f');
+    el('avatarCap').textContent = race + '／' + fam + '／' + phase;
+    return;
+  }
+  // head
+  P(5, hy, 6, 5, skin);
+  P(5, hy, 6, 2, hair);
+  P(4, hy + 1, 1, 3, hair); P(11, hy + 1, 1, 3, hair);
+  P(6, hy + 3, 1, 1, '#26221f'); P(9, hy + 3, 1, 1, '#26221f');
+  if (race === 'ドワーフ' || phase === '老年期') P(6, hy + 4, 4, 1, race === 'ドワーフ' ? hairBase : '#e8e8e8');
+  // body
+  const by = hy + 5;
+  P(5, by, 6, child ? 3 : 5, cloth);
+  const armSwing = moving ? (f % 2 === 0 ? 0 : 1) : 0;
+  P(4, by + armSwing, 1, 3, skin); P(11, by + (1 - armSwing), 1, 3, skin);
+  if (!child) {
+    if (moving && f % 2 === 0) { P(5, by + 5, 2, 2, '#33304d'); P(9, by + 5, 2, 3, '#33304d'); }
+    else if (moving) { P(5, by + 5, 2, 3, '#33304d'); P(9, by + 5, 2, 2, '#33304d'); }
+    else { P(5, by + 5, 2, 3, '#33304d'); P(9, by + 5, 2, 3, '#33304d'); }
+  }
+  if (phase === '老年期') P(12, by + 1, 1, 7, '#8d6e63'); // cane
+  if (fam === '王族の子') P(5, hy - 1, 6, 1, '#ffd54f');
+  el('avatarCap').textContent = race + '／' + fam + '／' + phase;
+}
+setInterval(() => {
+  if (!G || !el('gamePanel') || el('gamePanel').classList.contains('hidden')) return;
+  const now = Date.now();
+  const interval = G.paused || G.dead ? 500 : Math.max(60, 340 - G.speed * 20);
+  if (now - AV.lastDraw < interval) return;
+  AV.lastDraw = now; AV.frame++;
+  try { drawAvatar(); } catch (e) { /* 描画で本体を止めない */ }
+}, 60);
+
+// ---------- birth reveal ----------
+function pctOf(list, item) { const t = list.reduce((s, x) => s + x.w, 0); return (item.w / t * 100).toFixed(1); }
+let revealSteps = [], revealIdx = 0;
+function renderRevealStep() {
+  const s = revealSteps[revealIdx];
+  el('revealStep').textContent = '― ' + (revealIdx + 1) + ' / ' + revealSteps.length + ' ―';
+  const isRareStep = (revealIdx === 2 && G.birth.race.w <= 3) || s.title.startsWith('★');
+  el('revealBody').innerHTML = '<div style="font-size:17px;color:#ffd54f;font-weight:bold;margin-bottom:8px">' + (isRareStep ? '✨ ' : '') + s.title + (isRareStep ? ' ✨' : '') + '</div>' + s.html;
+  el('revealBody').style.borderColor = isRareStep ? '#ffd54f' : '#3a2f7a';
+  el('revealBody').style.boxShadow = isRareStep ? '0 0 24px rgba(255,213,79,.35)' : '';
+  const famStep = revealSteps.findIndex(s => s.title.includes('家柄'));
+  el('btnReroll').classList.toggle('hidden', !(revealIdx === famStep && SAVE.toku >= 30 && !G.rerolled));
+  el('btnRevealNext').classList.toggle('hidden', revealIdx >= revealSteps.length - 1);
+  el('btnBegin').classList.toggle('hidden', revealIdx < revealSteps.length - 1);
+}
+function showReveal() {
+  const w = G.world, b = G.birth;
+  const father = genName(), mother = genName();
+  const jobByFam = { '浮浪児': '親の顔を知らない', '農民の子': '父は農夫、母は機織り', '職人の子': '父は鍛冶職人、母は仕立屋', '商人の子': '父は行商人、母は帳簿係', '騎士の子': '父は騎士団員、母は元侍女', '王族の子': '父は王、母は王妃' };
+  const lifeHint = b.lifeSpan < 70 ? '短命の相' : b.lifeSpan < 130 ? '並の寿命の相' : b.lifeSpan < 250 ? '長命の相' : '悠久を生きる相';
+  const talentDesc = t => '「' + t + '」― ' + (t.includes('商才') ? '金回りの勘が鋭い。' : t.includes('剣') ? '武器を握ると落ち着く。' : t.includes('魔') ? '魔力の流れが見える。' : t.includes('運') ? 'なぜか危機をすり抜ける。' : t.includes('体') ? '体が丈夫で病に強い。' : '人生のどこかで花開く。');
+  revealSteps = [
+    { title: '🌍 転生先の世界', html: '<b>' + w.name + '</b><br>魔力は' + ['存在しない', '微か', '豊か', '過剰なほど'][w.magic] + '。技術は' + techLabel(w) + 'の水準。' },
+    { title: '⚔️ 世界の情勢', html: '情勢は' + ['平和', '冷戦下', '大戦の真っ只中'][w.war] + '。神々は' + (w.gods ? 'よく干渉してくる' : '沈黙している') + '。<br>災厄の予兆: <b>' + w.disaster + '</b>' },
+    { title: '👶 種族と性別', html: 'あなたは <b>' + b.race.name + '</b> の <b>' + b.gender + '</b> として生まれる。<br>（種族の抽選確率 ' + pctOf(RACES.filter(r => raceAllowed(r, w)), b.race) + '%）' },
+    { title: '🏠 家柄と生まれた場所', html: '家柄は <b>' + b.fam.name + '</b>（抽選確率 ' + pctOf(FAMILIES, b.fam) + '%）。<br>生まれた場所は ' + G.place + '。' },
+    { title: '👨‍👩‍👧 両親', html: jobByFam[b.fam.name] + '。<br>父の名は <b>' + father + '</b>、母の名は <b>' + mother + '</b>。' },
+    { title: '🎁 授かった才能', html: talentDesc(b.talents[0]) + '<br>' + talentDesc(b.talents[1]) },
+    { title: '📊 初期の素質', html: '健康 ' + b.stats.health + ' ／ 知力 ' + b.stats.int + ' ／ 魅力 ' + b.stats.charm + '<br>富 ' + b.stats.wealth + ' ／ 名声 ' + b.stats.fame + ' ／ 幸福 ' + b.stats.happy },
+    ...(b.anomaly ? [{ title: '★ ' + b.anomaly.name, html: b.anomaly.desc + '<br><br>※ これは世界のルールを破る、ごく稀な出生です。' }] : []),
+    { title: '🔮 寿命の気配', html: '<b>' + lifeHint + '</b><br>（ただし、生き様しだいで変わる）<br><br>さあ、この人生を始めよう。' },
+  ];
+  revealIdx = 0;
+  renderRevealStep();
+  el('birthReveal').style.display = 'block'; G.revealOpen = true;
+}
+// ---------- game state ----------
+let SAVE = { toku: 0, lives: [] };
+try { const s = localStorage.getItem('tensei-life'); if (s) SAVE = JSON.parse(s); } catch (e) {}
+function persist() { try { localStorage.setItem('tensei-life', JSON.stringify(SAVE)); } catch (e) {} }
+let G = null;
+
+function phaseOf(age, span) { const r = age / span; return age < 13 ? '幼少期' : age < 26 ? '青年期' : age < 56 ? '壮年期' : '老年期'; }
+
+function startLife() {
+  const world = genWorld();
+  const birth = genBirth(world, SAVE.toku);
+  G = { world, birth, age: 0, stats: birth.stats, lifeSpan: birth.lifeSpan, flags: {},
+        place: genPlace(), org: genName() + pick(['学院', '商会', '騎士団', 'ギルド']),
+        npc: genName(), npc2: genName(), usedEvents: new Set(), chronicle: [] };
+  el('startPanel').classList.add('hidden');
+  el('gamePanel').classList.remove('hidden');
+  el('death').style.display = 'none';
+  const w = world;
+  el('worldName').textContent = '✦ ' + w.name + ' ✦';
+  el('worldParams').innerHTML =
+    '魔力: ' + ['なし', '微か', '豊か', '過剰'][w.magic] + ' ／ 技術: ' + techLabel(w) +
+    ' ／ 情勢: ' + ['平和', '冷戦', '大戦中'][w.war] + ' ／ 神々: ' + (w.gods ? '干渉的' : '沈黙') +
+    ' ／ 災厄の予兆: ' + w.disaster + ' ／ 気質: ？？？（死後に明かされる）';
+  el('birthInfo').innerHTML = '出生: <b>' + birth.race.name + '</b>・<b>' + birth.gender + '</b>・<b>' + birth.fam.name + '</b><br>才能: <b>' +
+    birth.talents[0] + '</b> / <b>' + birth.talents[1] + '</b>';
+  log(0, birth.race.name + 'の' + birth.fam.name + 'として、' + G.place + 'に生まれた。');
+  G.speed = 1; G.paused = true; G.nextEventAge = R(2, 5);
+  renderStats(); drawAvatar(); showReveal();
+}
+function log(age, text) { G.chronicle.unshift({ age, text }); el('chronicle').innerHTML = G.chronicle.map(c => '<div><span class="yr">' + c.age + '歳</span> ' + c.text + '</div>').join(''); }
+function renderStats() {
+  const names = { health: '健康', int: '知力', charm: '魅力', wealth: '富', fame: '名声', happy: '幸福' };
+  el('statsView').innerHTML = Object.keys(names).map(k => '<div class="stat">' + names[k] + ' ' + G.stats[k] + '<div class="bar"><div class="fill" style="width:' + G.stats[k] + '%"></div></div></div>').join('');
+}
+// ---------- ambient life: readable happenings as years pass ----------
+const AMBIENT = {
+  '幼少期': [
+    '近所の子と秘密基地を作った', '初めてのおつかいをやり遂げた', '高い熱を出して三日寝込んだ',
+    '拾った子犬と仲良くなった', 'お祭りの太鼓の音に夢中になった', '転んで膝をすりむいたが、泣かなかった',
+    '親に連れられて初めて街へ出た', '字を覚えて、看板が読めるようになった'],
+  '青年期': [
+    '夜明けまで語り合う友ができた', '初めての失恋をした', '腕試しの大会でそこそこ勝てた',
+    '旅の商人から遠い国の話を聞いた', '稽古に明け暮れた季節だった', '小さな恋が芽生えた',
+    '酒場で喧嘩を仲裁して一目置かれた', '手紙を書いた。返事はまだ来ない'],
+  '壮年期': [
+    '仕事が軌道に乗り、忙しい日々が続く', '懐かしい友と再会し、酒を酌み交わした', '小さな家を建てた（気分だけ）',
+    '部下や弟子が育ってきた', '体の疲れが抜けにくくなってきた', '故郷の祭りに顔を出した',
+    '思いがけない臨時収入があった', '静かな幸福を噛みしめる日々'],
+  '老年期': [
+    '庭いじりが日課になった', '孫のような若者たちに昔話を聞かせた', '古い友の訃報が届いた',
+    '穏やかな秋の日々', '若い頃の夢を思い出して笑った', '体は重いが、心は軽い',
+    '最後の旅に出たい気持ちが芽生えた', '静寂の中で本を読んだ'],
+};
+const ORPHAN_CHILD = [
+  '路地の段ボールで雨をしのいだ', '市場の隅で残り物のパンを分けてもらった', '野良犬と寝床を分け合った',
+  '橋の下で星を見上げた', '路地の顔役に気に入られ、面倒を見てもらえた', '凍える夜を何とか越した',
+  '捨てられていた道具を拾って直した', '誰にも気づかれず、誕生日が過ぎた'];
+function yearPassage() {
+  saveRun();
+  const age = Math.floor(G.age);
+  const phase = phaseOf(age, G.lifeSpan);
+  let pool = AMBIENT[phase];
+  if (G.birth.fam.name === '浮浪児') {
+    if (phase === '幼少期') pool = ORPHAN_CHILD;
+    else pool = pool.filter(t => !t.includes('親') && !t.includes('故郷'));
+  }
+  let text = pick(pool);
+  // world-flavored insertions
+  if (G.world.war === 2 && Math.random() < 0.3) text = '遠くで戦争の報せが届いた。' + text;
+  if (G.world.disaster === '疫病' && Math.random() < 0.2) { text = '疫病の噂がまた広がっている。' + text; G.stats.health = clamp(G.stats.health - 2); }
+  if (Math.random() < 0.25) { const d = pick([{ happy: 3 }, { health: 2 }, { int: 2 }, { charm: 2 }, { wealth: 3 }, { happy: -2 }, { health: -2 }]); eff(G, d); }
+  log(age, text);
+  if (!G.paused) el('eventText').textContent = age + '歳 ― ' + text;
+}
+// ---------- real-time clock: 1 year = 6 sec at x1 ----------
+let clockTimer = null;
+function startClock() {
+  clearInterval(clockTimer);
+  clockTimer = setInterval(tick, 100);
+}
+function tick() {
+  if (!G || G.paused || G.dead) return;
+  try { tickInner(); } catch (e) {
+    G.eventOpen = false;
+    el('bigEvent').style.display = 'none';
+    G.nextEventAge = G.age + 2;
+    G.paused = false;
+  }
+}
+function tickInner() {
+  const yearsPerSec = G.speed / 6;
+  const before = Math.floor(G.age);
+  G.age += yearsPerSec * 0.1;
+  if (Math.floor(G.age) > before) yearPassage();
+  // aging pressure after 70% of lifespan
+  if (G.age > G.lifeSpan * 0.7 && Math.random() < 0.1) G.stats.health = clamp(G.stats.health - 1);
+  renderClock();
+  if (G.age >= G.nextEventAge) { presentEvent(); return; }
+  // death check (evaluated as time passes)
+  const over = G.age >= G.lifeSpan;
+  const deathRisk = over ? 0.06 : G.stats.health <= 8 ? 0.03 : G.world.temper.tragedy * 0.0012;
+  if ((over && Math.random() < deathRisk) || G.age >= G.lifeSpan * 1.15 || (G.age > 10 && Math.random() < deathRisk)) { die(); }
+}
+const SEASONS = ['🌸春', '🌻夏', '🍂秋', '❄️冬'];
+function renderClock() {
+  el('ageView').textContent = Math.floor(G.age) + '歳' + Math.floor((G.age % 1) * 12) + 'ヶ月';
+  el('phaseView').textContent = phaseOf(Math.floor(G.age), G.lifeSpan);
+  el('seasonView').textContent = SEASONS[Math.floor((G.age % 1) * 4) % 4];
+  el('yearBar').style.width = ((G.age % 1) * 100).toFixed(1) + '%';
+  el('dayView').textContent = '人生 ' + Math.floor(G.age * 365).toLocaleString() + ' 日目';
+  const stuck = G.paused && !G.dead && !G.eventOpen && !G.revealOpen;
+  el('btnRescue').classList.toggle('hidden', !stuck);
+  const ph = phaseOf(Math.floor(G.age), G.lifeSpan);
+  if (G._phase !== ph) { G._phase = ph; drawAvatar(); }
+  document.querySelectorAll('.spd').forEach(b => {
+    const active = Number(b.dataset.spd) === (G.paused ? 0 : G.speed);
+    b.style.background = active ? '#00897b' : '#241d4d';
+  });
+  renderStats();
+}
+function presentEvent() {
+  G.paused = true; renderClock();
+  const age = Math.floor(G.age);
+  const pool = EVENTS.map((e, i) => [e, i]).filter(([e, i]) => !G.usedEvents.has(i) && age >= e.min && age <= e.max && (!e.when || e.when(G)));
+  let ev;
+  if (pool.length && Math.random() < 0.82) { const [e, i] = pick(pool); ev = e; G.usedEvents.add(i); }
+  else ev = pick(FILLERS);
+  const text = typeof ev.text === 'function' ? ev.text(G) : ev.text;
+  showBigEvent(ev, text, age);
+}
+function showBigEvent(ev, text, age) {
+  el('bigEventText').textContent = text;
+  el('bigEventResult').textContent = '';
+  el('btnBigClose').classList.add('hidden');
+  const box = el('bigEventChoices');
+  box.innerHTML = '';
+  ev.choices.forEach(c => {
+    const b = document.createElement('button');
+    b.textContent = c.label;
+    b.addEventListener('click', () => {
+      log(age, '【重要イベント】' + text.slice(0, 40) + '…');
+      log(age, '【選択】「' + c.label + '」');
+      const res = c.run(G);
+      el('bigEventResult').textContent = res;
+      log(age, res);
+      box.innerHTML = '';
+      el('btnBigClose').classList.remove('hidden');
+      renderStats();
+    });
+    box.appendChild(b);
+  });
+  el('bigEvent').style.display = 'block'; G.eventOpen = true;
+}
+el('btnBigClose').addEventListener('click', () => {
+  el('bigEvent').style.display = 'none';
+  if (G) G.eventOpen = false;
+  if (G.dead) return;
+  G.nextEventAge = G.age + R(2, 6) * Math.max(0.4, G.lifeSpan / 90);
+  G.paused = false; renderClock(); saveRun();
+  if (G.stats.health <= 0) die();
+});
+el('btnRescue').addEventListener('click', () => {
+  if (!G || G.dead) return;
+  G.eventOpen = false; G.revealOpen = false;
+  el('bigEvent').style.display = 'none';
+  el('birthReveal').style.display = 'none';
+  G.nextEventAge = G.age + 2;
+  G.paused = false; renderClock();
+});
+el('btnReroll').addEventListener('click', () => {
+  if (SAVE.toku < 30 || G.rerolled) return;
+  SAVE.toku -= 30; G.rerolled = true; saveSave();
+  const better = FAMILIES.filter(f => f.w <= G.birth.fam.w);
+  const nf = wpick(better.map(f => [f, Math.max(1, 14 - f.w)]));
+  for (const k in G.birth.fam.mod) G.birth.stats[k] = clamp(G.birth.stats[k] - G.birth.fam.mod[k]);
+  G.birth.fam = nf;
+  for (const k in nf.mod) G.birth.stats[k] = clamp(G.birth.stats[k] + nf.mod[k]);
+  showReveal();
+  revealIdx = revealSteps.findIndex(s => s.title.includes('家柄'));
+  renderRevealStep(); renderStats();
+  el('tokuView').textContent = SAVE.toku;
+});
+document.querySelectorAll('.spd').forEach(b => b.addEventListener('click', () => {
+  if (!G) return;
+  const v = Number(b.dataset.spd);
+  if (v === 0) { G.paused = true; } else { G.speed = v; G.paused = false; }
+  renderClock();
+}));
+function die() {
+  clearRun();
+  if (G.dead) return; G.dead = true; G.paused = true;
+  const s = G.stats, age = Math.floor(G.age);
+  const cause = age >= G.lifeSpan ? '老衰' : s.health <= 10 ? '病' : G.world.war === 2 && Math.random() < 0.4 ? '戦禍' : '事故';
+  let title = '名もなき一生';
+  if (G.flags.exposed) title = '世界で唯一の魔法使い';
+  else if (G.flags.restored) title = '王家を復興させた者';
+  else if (G.flags.livingSaint) title = '生ける聖者';
+  else
+  if (s.wealth >= 80) title = '一代の大富豪'; else if (G.flags.warHero) title = '戦の英雄';
+  else if (s.fame >= 75) title = '時代の寵児'; else if (G.flags.scholar || s.int >= 80) title = '大賢者';
+  else if (G.flags.path === '冒険' && s.fame >= 45) title = '伝説の冒険者'; else if (G.flags.bigMerchant) title = '国を動かした大商人'; else if (G.flags.mageMaster) title = '魔法の系譜の祖'; else if (G.flags.duelist) title = '宿敵を越えた剣士'; else if (G.flags.healer) title = '人々の希望';
+  else if (s.happy >= 80) title = '誰より幸せな人'; else if (G.flags.defiedGod) title = '神に背いた者';
+  else if (age < 13) title = '早世の魂'; else if (s.happy >= 55) title = '穏やかな一生';
+  const score = Math.round(age + (s.wealth + s.fame + s.int + s.happy) / 2);
+  const rank = score >= 300 ? 'S' : score >= 240 ? 'A' : score >= 180 ? 'B' : score >= 120 ? 'C' : 'D';
+  const rankEl = el('deathRank');
+  rankEl.textContent = '評価 ' + rank;
+  rankEl.style.color = rank === 'S' ? '#ffd54f' : rank === 'A' ? '#ce93d8' : rank === 'B' ? '#81d4fa' : '#a79fd0';
+  rankEl.style.textShadow = rank === 'S' ? '0 0 22px rgba(255,213,79,.7)' : 'none';
+  const tokuGain = Math.max(1, Math.round(score / 40));
+  const epi =
+    G.world.name + '。\n' + G.birth.race.name + 'の' + G.birth.fam.name + 'として生まれ、' + G.place + 'で育った。\n' +
+    '才能は「' + G.birth.talents[0] + '」と「' + G.birth.talents[1] + '」。\n' +
+    (G.flags.partner ? G.flags.partner + 'と出会い、' : '') + (G.flags.path ? G.flags.path + 'の道を歩み、' : '') +
+    (G.flags.warHero ? '戦場で名を上げ、' : '') + (G.flags.sailor ? '新大陸を見、' : '') + (G.flags.revolutionary ? '革命を成し、' : '') + (G.flags.relic ? '遺跡の財宝を手にし、' : '') + (G.flags.rivalFriend ? '宿敵と友となり、' : '') + (G.flags.partner ? '' : '') + (G.flags.lastWork ? '晩年に大仕事を成し、' : '') + '\n' +
+    age + '歳、' + cause + 'で死去。世はその人を「' + title + '」と呼んだ。\n' +
+    'この世界は実は――' + G.world.temper.name + 'だった。';
+  SAVE.toku += tokuGain;
+  SAVE.lives.unshift({ title, age, cause, race: G.birth.race.name, fam: G.birth.fam.name, world: G.world.name, temper: G.world.temper.name, score, chronicle: G.chronicle.slice().reverse() });
+  persist();
+  el('deathTitle').textContent = age + '歳没 ― ' + title;
+  el('deathCause').textContent = '死因: ' + cause + ' ／ 生きた世界: ' + G.world.name;
+  const dnames = { health: '健康', int: '知力', charm: '魅力', wealth: '富', fame: '名声', happy: '幸福' };
+  el('deathStats').innerHTML = Object.keys(dnames).map(k => '<div style="background:#171233;border:1px solid #3a2f7a;border-radius:8px;padding:7px">' + dnames[k] + '<br><b style="font-size:15px;color:#ffd54f">' + s[k] + '</b></div>').join('');
+  el('epitaph').textContent = epi;
+  el('tokuGain').textContent = tokuGain;
+  el('death').style.display = 'block';
+  renderLives();
+}
+function renderCollection() {
+  const box = el('collection');
+  if (!box) return;
+  const gotRaces = new Set(SAVE.lives.map(l => l.race));
+  const gotFams = new Set(SAVE.lives.map(l => l.fam));
+  const gotTitles = new Set(SAVE.lives.map(l => l.title));
+  const best = SAVE.lives.reduce((m, l) => Math.max(m, l.score || 0), 0);
+  const pct = Math.round(gotRaces.size / RACES.length * 100);
+  box.innerHTML = '🧬 種族図鑑 <b style="color:#ffd54f">' + gotRaces.size + ' / ' + RACES.length + '</b>（' + pct + '%）' +
+    RACES.map(r => '<span style="display:inline-block;margin:2px 3px;padding:2px 8px;border-radius:99px;font-size:11px;' +
+      (gotRaces.has(r.name) ? 'background:#4a2a96;color:#fff' : 'background:#241d4d;color:#6f68a0') + '">' + (gotRaces.has(r.name) ? r.name : '？？？') + '</span>').join('') +
+    '<br>🏠 家柄 <b style="color:#ffd54f">' + gotFams.size + ' / ' + FAMILIES.length + '</b>　🏆 称号 <b style="color:#ffd54f">' + gotTitles.size + '</b> 種　⭐ 最高スコア <b style="color:#ffd54f">' + best + '</b>';
+}
+function renderLives() {
+  renderCollection();
+  el('tokuView').textContent = SAVE.toku;
+  el('lives').innerHTML = SAVE.lives.length ? SAVE.lives.slice(0, 10).map((l, li) =>
+    '<div class="life-card"><span class="ttl">' + l.title + '</span>（' + l.age + '歳没・' + l.cause + '）<br>' +
+    l.race + '／' + l.fam + ' ― ' + l.world + '［' + l.temper + '］ スコア ' + l.score +
+    (l.chronicle ? '<br><button class="sub2" style="width:auto;padding:6px 12px;margin-top:6px" onclick="document.getElementById(\'lg' + li + '\').style.display = document.getElementById(\'lg' + li + '\').style.display === \'none\' ? \'block\' : \'none\'">人生ログを見る</button>' +
+    '<div id="lg' + li + '" style="display:none;margin-top:7px;color:#a79fd0;line-height:1.8">' + l.chronicle.map(c => '<div><span style="color:#ffd54f">' + c.age + '歳</span> ' + c.text + '</div>').join('') + '</div>' : '') + '</div>').join('')
+    : '<div style="color:#a79fd0;font-size:12px">まだ記録はない。最初の人生を生きよう。</div>';
+}
+el('btnBirth').addEventListener('click', startLife);
+el('btnRevealNext').addEventListener('click', () => {
+  if (revealIdx < revealSteps.length - 1) { revealIdx++; renderRevealStep(); }
+});
+el('btnBegin').addEventListener('click', () => {
+  el('birthReveal').style.display = 'none';
+  if (G) G.revealOpen = false;
+  G.paused = false; renderClock(); startClock();
+});
+el('btnAgain').addEventListener('click', () => { el('gamePanel').classList.add('hidden'); el('startPanel').classList.remove('hidden'); el('death').style.display = 'none'; renderLives(); });
+// ---------- run save (continue a life later) ----------
+const RUN_KEY = 'tensei-life-run-v1';
+function saveRun() {
+  if (!G || G.dead || G.revealOpen) return;
+  try {
+    const data = { ...G, usedEvents: [...G.usedEvents], eventOpen: false, revealOpen: false, paused: true,
+      birthRaw: { ...G.birth, race: undefined, fam: undefined }, birthRace: G.birth.race.name, birthFam: G.birth.fam.name };
+    delete data.birth;
+    localStorage.setItem(RUN_KEY, JSON.stringify(data));
+  } catch (e) { /* ignore */ }
+}
+function clearRun() { try { localStorage.removeItem(RUN_KEY); } catch (e) {} }
+function loadRun() {
+  try { const d = JSON.parse(localStorage.getItem(RUN_KEY)); return d && !d.dead ? d : null; } catch (e) { return null; }
+}
+function restoreRun(d) {
+  const race = RACES.find(r => r.name === d.birthRace) || RACES[0];
+  const fam = FAMILIES.find(f => f.name === d.birthFam) || FAMILIES[0];
+  G = { ...d, birth: { ...d.birthRaw, race, fam }, usedEvents: new Set(d.usedEvents || []), paused: true, dead: false, eventOpen: false, revealOpen: false };
+  el('startPanel').classList.add('hidden');
+  el('gamePanel').classList.remove('hidden');
+  el('worldName').textContent = G.world.name;
+  el('worldParams').textContent = '魔力: ' + ['なし', '微か', '豊か', '過剰'][G.world.magic] + ' ／ 技術: ' + techLabel(G.world) + ' ／ 情勢: ' + ['平和', '冷戦', '大戦'][G.world.war] + ' ／ 神々: ' + (G.world.gods ? '干渉的' : '沈黙') + ' ／ 災厄: ' + G.world.disaster;
+  el('birthInfo').innerHTML = '種族: <b>' + G.birth.race.name + '</b> ／ 性別: ' + G.birth.gender + ' ／ 家柄: <b>' + G.birth.fam.name + '</b><br>才能: ' + G.birth.talents.join('、');
+  el('chronicle').innerHTML = G.chronicle.map(c => '<div><span class="yr">' + c.age + '歳</span> ' + c.text + '</div>').join('');
+  drawAvatar(); renderStats(); renderClock(); startClock();
+}
+
+renderLives();
+if (loadRun()) el('btnContinue').classList.remove('hidden');
+el('btnContinue').addEventListener('click', () => { const d = loadRun(); if (d) restoreRun(d); });
+el('btnShare').addEventListener('click', () => {
+  const l = SAVE.lives[0];
+  if (!l) return;
+  const txt = '【転生ライフ】' + l.title + '（' + l.age + '歳没）\n' + l.race + '／' + l.fam + ' ― ' + l.world + '\nスコア ' + l.score + ' でした。次の転生では何になれる？ #転生ライフ';
+  window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(txt), '_blank');
+});
+</script>
+</body>
+</html>
