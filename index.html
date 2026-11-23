@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>転生ライフ（サンプル）| 同じ人生は二度とない</title>
+<title>転生先は選べません（サンプル）| 同じ人生は二度とない</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   html { scroll-behavior: smooth; }
@@ -97,7 +97,7 @@
 </style>
 </head>
 <body>
-<h1>🌀 転生ライフ <span style="font-size:12px;color:#a79fd0">サンプル</span></h1>
+<h1>🌀 転生先は選べません <span style="font-size:12px;color:#a79fd0">サンプル</span></h1>
 <div class="sub">世界も、出生も、トーンも、寿命も、すべてランダム。同じ人生は二度とない。</div>
 
 <div id="startPanel" class="panel" style="text-align:center">
@@ -149,15 +149,15 @@
     <button class="sub2" id="btnAutoMode">🤖 おまかせ（選択を自動）: OFF</button>
     <div style="color:#a79fd0;font-size:12px">キーボード: スペース=一時停止／再開、1=×1、2=×4、3=×16、4=×64</div>
   </div>
-  <h2>❓ 転生ライフについて</h2>
+  <h2>❓ 転生先は選べませんについて</h2>
   <div class="panel" style="font-size:13px;line-height:1.9;text-align:left">
-    <details><summary><b>転生ライフとは何ですか？</b></summary>異世界にランダムに転生して、一人の一生を最初から最後まで生きる人生シミュレーションです。どの世界に、どの種族の、どんな家柄の子として生まれるかは選べません。その代わり、同じ人生は二度とありません。</details>
+    <details><summary><b>転生先は選べませんとは何ですか？</b></summary>異世界にランダムに転生して、一人の一生を最初から最後まで生きる人生シミュレーションです。どの世界に、どの種族の、どんな家柄の子として生まれるかは選べません。その代わり、同じ人生は二度とありません。</details>
     <details><summary><b>生まれる世界や種族はどう決まりますか？</b></summary>世界の魔力・技術・情勢と、種族・家柄・才能を抽選で決めます。確率は転生の発表でそのつど表示します。魔力のない世界に魔族は生まれないなど、世界のルールが出生を縛ります。ごく稀に、ルールを破る「特異点」の出生もあります。</details>
     <details><summary><b>人生はどう進みますか？</b></summary>時間は自動で流れ、速度を変えられます。大事な出来事では時間が止まり、選択を迫られます。選択はステータスだけでなく、その後の出来事や称号、死に方にまで影響します。5歳・15歳・30歳・50歳・70歳には節目の問いも来ます。眺めるだけにしたいときは「おまかせ」をどうぞ。</details>
     <details><summary><b>一つの人生にどれくらいかかりますか？</b></summary>寿命しだいです。人間なら×1で数分、×64なら数十秒。エルフや吸血鬼の何百年という人生もあります。閉じても、同じブラウザで続きから生きられます。</details>
     <details><summary><b>無料ですか？</b></summary>最初から最後まで無料です。登録も広告もなく、課金で人生が変わることもありません。</details>
     <details><summary><b>記録はどこに残りますか？</b></summary>この端末のブラウザにだけ保存され、サーバーには送りません。「記録の管理」から書き出して、別の端末へ移すこともできます。</details>
-    <details><summary><b>配信や動画にしてもいいですか？</b></summary>はい、自由にどうぞ。出典に「転生ライフ」と書いていただけるとうれしいです。</details>
+    <details><summary><b>配信や動画にしてもいいですか？</b></summary>はい、自由にどうぞ。出典に「転生先は選べません」と書いていただけるとうれしいです。</details>
     <details><summary><b>誰がつくっていますか？</b></summary>田邉雄次のもとで、AIアシスタント「のんちゃん」が設計・実装しています。数字や確率はフィクションで、実在の統計ではありません。</details>
   </div>
 <h2>💾 記録の管理</h2>
@@ -974,7 +974,7 @@ function drawCard(l) {
   x.strokeStyle = '#ffd54f'; x.lineWidth = 6; x.strokeRect(18, 18, 864, 1144);
   x.strokeStyle = '#7e57c2'; x.lineWidth = 2; x.strokeRect(34, 34, 832, 1112);
   x.textAlign = 'center'; x.fillStyle = '#ffd54f';
-  x.font = 'bold 44px serif'; x.fillText('転 生 ラ イ フ', 450, 110);
+  x.font = 'bold 44px serif'; x.fillText('転生先は選べません', 450, 110);
   x.font = '26px sans-serif'; x.fillStyle = '#a79fd0';
   x.fillText(l.world, 450, 158);
   x.font = 'bold 54px serif'; x.fillStyle = '#ffffff';
@@ -1050,7 +1050,7 @@ el('btnContinue').addEventListener('click', () => { const d = loadRun(); if (d) 
 el('btnShare').addEventListener('click', () => {
   const l = SAVE.lives[0];
   if (!l) return;
-  const txt = '【転生ライフ】' + l.title + '（' + l.age + '歳没）\n' + l.race + '／' + l.fam + ' ― ' + l.world + '\nスコア ' + l.score + ' でした。次の転生では何になれる？ #転生ライフ';
+  const txt = '【転生先は選べません】' + l.title + '（' + l.age + '歳没）\n' + l.race + '／' + l.fam + ' ― ' + l.world + '\nスコア ' + l.score + ' でした。次の転生では何になれる？ #転生先は選べません';
   window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(txt), '_blank');
 });
 </script>
