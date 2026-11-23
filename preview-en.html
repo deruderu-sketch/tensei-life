@@ -148,6 +148,7 @@
     <button class="sub2" id="btnGentle">🌿 Filter Scary Scenes: OFF</button>
     <button class="sub2" id="btnClass">🏫 Classroom Mode: OFF</button>
     <button class="sub2" id="btnAutoMode">🤖 Auto-Play (Auto-Select): OFF</button>
+    <button class="sub2" id="btnSound">🔊 Sound: ON</button>
     <div style="color:#a79fd0;font-size:12px">Keyboard: Space = Pause/Resume, 1 = x1, 2 = x4, 3 = x16, 4 = x64</div>
   </div>
   <h2>📖 The Making Of</h2>
@@ -166,6 +167,7 @@
   </div>
 <h2>📜 Update History</h2>
   <div class="panel" style="font-size:12.5px;line-height:1.9;text-align:left">
+    <details><summary><b>2026-11-23 v32</b></summary>Added sound: a code-generated chiptune BGM (a Fmaj7–Em7–Dm7–Cmaj7 loop) and sound effects for the birth reveal, events, choice payoffs, and death. Can be turned off in Settings.</details>
     <details><summary><b>2026-11-23 v31</b></summary>Added choice payoffs: choices from your younger days (staying to support your town, declining a reward, keeping a secret, apprenticing to a scholar, nursing the sick, defying a god, hiding royal blood) now come back years later. Payoff scenes appear with a gold "A Choice from Long Ago" banner and stay in your chronicle. Also fixed a disciple-flag mismatch.</details>
     <details><summary><b>2026-11-23 v30</b></summary>Finished freeze prevention. The cause was identified as the system stopping if an error occurred during an event. We added safeguards to choice processing so life never stops, no matter what happens.</details>
     <details><summary><b>2026-11-23 v29</b></summary>Added a "Legal Notation" page, accessible from the Memory Pass section. Seller info will be disclosed promptly upon request.</details>
@@ -273,6 +275,94 @@ const pick = arr => arr[Math.floor(Math.random() * arr.length)];
 function wpick(pairs) { let t = pairs.reduce((s, p) => s + p[1], 0), r = Math.random() * t; for (const p of pairs) { r -= p[1]; if (r <= 0) return p[0]; } return pairs[0][0]; }
 const clamp = v => Math.max(0, Math.min(100, Math.round(v)));
 const el = id => document.getElementById(id);
+// ===== 音（WebAudioチップチューン：コード生成BGMと効果音） =====
+let AC = null, masterGain = null, bgmBus = null, seBus = null, bgmTimer = null, bgmStep = 0, bgmNext = 0;
+const MF = m => 440 * Math.pow(2, (m - 69) / 12);
+function makeImpulse(dur, decay) {
+  const rate = AC.sampleRate, len = Math.floor(rate * dur), buf = AC.createBuffer(2, len, rate);
+  for (let ch = 0; ch < 2; ch++) { const d = buf.getChannelData(ch); for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, decay); }
+  return buf;
+}
+function initAudio() {
+  if (AC) { if (AC.state === 'suspended') AC.resume(); return; }
+  const Ctor = window.AudioContext || window.webkitAudioContext;
+  if (!Ctor) return;
+  try {
+    AC = new Ctor();
+    masterGain = AC.createGain();
+    masterGain.gain.value = (typeof SAVE !== 'undefined' && SAVE.settings && SAVE.settings.sound === false) ? 0 : 0.9;
+    const lp = AC.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 3200;
+    masterGain.connect(lp); lp.connect(AC.destination);
+    const conv = AC.createConvolver(); conv.buffer = makeImpulse(1.6, 2.4);
+    const wet = AC.createGain(); wet.gain.value = 0.20;
+    masterGain.connect(conv); conv.connect(wet); wet.connect(lp);
+    bgmBus = AC.createGain(); bgmBus.gain.value = 0.85; bgmBus.connect(masterGain);
+    seBus = AC.createGain(); seBus.gain.value = 0.9; seBus.connect(masterGain);
+  } catch (e) { AC = null; }
+}
+function tone(midi, t, dur, type, vol, dest, glideTo) {
+  if (!AC) return;
+  const o = AC.createOscillator(), g = AC.createGain();
+  o.type = type;
+  o.frequency.setValueAtTime(MF(midi), t);
+  if (glideTo) o.frequency.exponentialRampToValueAtTime(MF(glideTo), t + dur);
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(vol, t + 0.025);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g); g.connect(dest || seBus);
+  o.start(t); o.stop(t + dur + 0.05);
+}
+function phrase(notes, gap, type, vol, dur) {
+  if (!AC) return;
+  const t0 = AC.currentTime + 0.02;
+  notes.forEach((m, i) => { if (m) tone(m, t0 + i * gap, dur || 0.34, type, vol); });
+}
+function sndChoice() { phrase([76, 81], 0.07, 'square', 0.10, 0.22); }
+function sndEvent() { phrase([72, 76, 79], 0.075, 'triangle', 0.20, 0.30); }
+function sndMotif() { phrase([65, 69, 72, 76, 77], 0.095, 'square', 0.11, 0.40); }
+function sndReveal(i) { if (!AC) return; const scale = [72, 74, 76, 79, 81, 84, 86, 88]; tone(scale[Math.min(i, scale.length - 1)], AC.currentTime, 0.4, 'triangle', 0.16); }
+function sndSparkle() { phrase([81, 84, 88, 93], 0.05, 'square', 0.08, 0.30); }
+function sndDeath() {
+  if (!AC) return;
+  phrase([64, 60, 57, 53], 0.30, 'triangle', 0.20, 0.62);
+  const t = AC.currentTime + 1.35;
+  [53, 57, 60].forEach(m => tone(m, t, 1.6, 'triangle', 0.07));
+}
+const BGM_CHORDS = [
+  { root: 41, tones: [57, 60, 64, 69] }, { root: 41, tones: [57, 60, 64, 69] },
+  { root: 40, tones: [55, 59, 62, 67] }, { root: 40, tones: [55, 59, 62, 67] },
+  { root: 38, tones: [53, 57, 60, 65] }, { root: 38, tones: [53, 57, 60, 65] },
+  { root: 36, tones: [52, 55, 59, 64] }, { root: 36, tones: [52, 55, 59, 64] },
+];
+const BGM_MELODY = [
+  [69, 72, 76, 72], [69, 65, 69, 0],
+  [67, 71, 74, 71], [67, 64, 67, 0],
+  [65, 69, 72, 69], [65, 62, 65, 0],
+  [64, 67, 71, 67], [72, 71, 67, 64],
+];
+const BGM_STEP = 60 / 76 / 2;
+function bgmSchedule() {
+  if (!AC) return;
+  while (bgmNext < AC.currentTime + 0.30) {
+    const bar = Math.floor(bgmStep / 8) % 8, s = bgmStep % 8, ch = BGM_CHORDS[bar];
+    if (s % 4 === 0) tone(ch.root, bgmNext, BGM_STEP * 3.6, 'triangle', 0.16, bgmBus);
+    if (s % 4 === 2) tone(ch.root + 7, bgmNext, BGM_STEP * 1.8, 'triangle', 0.10, bgmBus);
+    const arp = ch.tones[[0, 1, 2, 3, 2, 1, 2, 3][s]];
+    tone(arp + 12, bgmNext, BGM_STEP * 0.95, 'triangle', 0.045, bgmBus);
+    if (s % 2 === 0) { const mel = BGM_MELODY[bar][s / 2]; if (mel) tone(mel, bgmNext, BGM_STEP * 1.9, 'square', 0.055, bgmBus); }
+    bgmNext += BGM_STEP; bgmStep++;
+  }
+}
+function startBGM() {
+  initAudio();
+  if (!AC || bgmTimer) return;
+  bgmStep = 0; bgmNext = AC.currentTime + 0.06;
+  bgmTimer = setInterval(bgmSchedule, 110);
+}
+function stopBGM() { if (bgmTimer) { clearInterval(bgmTimer); bgmTimer = null; } }
+function applySoundSetting() { if (masterGain && AC) masterGain.gain.setTargetAtTime(SAVE.settings.sound === false ? 0 : 0.9, AC.currentTime, 0.03); }
+document.addEventListener('pointerdown', initAudio);
+document.addEventListener('keydown', initAudio);
 
 // ---------- name generation ----------
 const SYL_A = ["A", "Ka", "Sa", "Ta", "Na", "Ha", "Ma", "Ya", "Ra", "Ru", "Re", "Ro", "E", "O", "Fi", "Shi", "Ti", "Mi", "Gu", "Ze"];
@@ -944,6 +1034,7 @@ function renderRevealStep() {
   const famStep = revealSteps.findIndex(s => s.title.includes("Lineage"));
   el('btnRevealNext').classList.toggle('hidden', revealIdx >= revealSteps.length - 1);
   el('btnBegin').classList.toggle('hidden', revealIdx < revealSteps.length - 1);
+  if (s.title.startsWith('★')) sndSparkle(); else sndReveal(revealIdx);
 }
 function showReveal() {
   const w = G.world, b = G.birth;
@@ -994,7 +1085,7 @@ function startLife() {
     birth.talents[0] + '</b> / <b>' + birth.talents[1] + '</b>';
   log(0, "Born as " + (/^[AEIOU]/.test(birth.race.name) ? "an " : "a ") + birth.race.name + " of the " + birth.fam.name + " in " + G.place + ".");
   G.speed = 1; G.paused = true; G.nextEventAge = R(2, 5);
-  renderStats(); drawAvatar(); showReveal();
+  renderStats(); drawAvatar(); showReveal(); startBGM();
 }
 function log(age, text) { G.chronicle.unshift({ age, text }); el('chronicle').innerHTML = G.chronicle.map(c => '<div><span class="yr">' + c.age + " years old</span> " + c.text + '</div>').join(''); }
 function renderStats() {
@@ -1141,6 +1232,7 @@ function showBigEvent(ev, text, age) {
   if (ev.payoff) { bt.textContent = '🔗 A Choice from Long Ago'; bt.style.color = '#ffd54f'; bt.style.textShadow = '0 0 18px rgba(255,213,79,.65)'; }
   else { bt.textContent = '⚠ Important Event ⚠'; bt.style.color = '#ff8a80'; bt.style.textShadow = ''; }
   el('bigEventResult').textContent = '';
+  if (ev.payoff) sndMotif(); else sndEvent();
   el('btnBigClose').classList.add('hidden');
   const box = el('bigEventChoices');
   box.innerHTML = '';
@@ -1149,7 +1241,7 @@ function showBigEvent(ev, text, age) {
     b.textContent = c.label;
     b.addEventListener('click', () => {
       log(age, (ev.payoff ? "[Payoff]" : "[Important Event]") + text.slice(0, 40) + '…');
-      log(age, "[Choice]\"" + c.label + '"');
+      log(age, "[Choice]\"" + c.label + '"'); sndChoice();
       let res;
       try { res = c.run(G); } catch (e) { res = "Something happened, but life goes on."; }
       el('bigEventResult').textContent = res;
@@ -1196,6 +1288,7 @@ document.querySelectorAll('.spd').forEach(b => b.addEventListener('click', () =>
   renderClock();
 }));
 function die() {
+  stopBGM(); sndDeath();
   clearRun();
   if (G.dead) return; G.dead = true; G.paused = true;
   const s = G.stats, age = Math.floor(G.age);
@@ -1265,7 +1358,7 @@ el('btnRevealNext').addEventListener('click', () => {
   if (revealIdx < revealSteps.length - 1) { revealIdx++; renderRevealStep(); }
 });
 el('btnBegin').addEventListener('click', () => {
-  el('birthReveal').style.display = 'none';
+  el('birthReveal').style.display = 'none'; sndMotif();
   if (G) G.revealOpen = false;
   G.paused = false; renderClock(); startClock();
 });
@@ -1366,11 +1459,14 @@ el('fileImport').addEventListener('change', ev => {
 
 function syncSettings() {
   SAVE.settings = SAVE.settings || { gentle: false, auto: false };
+  if (SAVE.settings.sound === undefined) SAVE.settings.sound = true;
   el('btnGentle').textContent = "🌿 Skip the Scary Bits: " + (SAVE.settings.gentle ? 'ON' : 'OFF');
   el('btnAutoMode').textContent = "🤖 Let Fate Decide (Auto): " + (SAVE.settings.auto ? 'ON' : 'OFF');
+  el('btnSound').textContent = "🔊 Sound: " + (SAVE.settings.sound ? 'ON' : 'OFF');
 }
 el('btnGentle').addEventListener('click', () => { SAVE.settings.gentle = !SAVE.settings.gentle; saveSave(); syncSettings(); });
 el('btnAutoMode').addEventListener('click', () => { SAVE.settings.auto = !SAVE.settings.auto; saveSave(); syncSettings(); });
+el('btnSound').addEventListener('click', () => { SAVE.settings.sound = !SAVE.settings.sound; saveSave(); syncSettings(); initAudio(); applySoundSetting(); if (SAVE.settings.sound) sndChoice(); });
 syncSettings();
 document.addEventListener('keydown', e => {
   if (!G || G.dead || el('gamePanel').classList.contains('hidden')) return;
@@ -1421,6 +1517,7 @@ const PASS_HASHES = ["d5cf6936be67a2793ccbeef5a3a0a2398993ce55c78160d9a268badb48
 async function sha256hex(s) { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join(''); }
 function renderPass() {
   SAVE.settings = SAVE.settings || { gentle: false, auto: false };
+  if (SAVE.settings.sound === undefined) SAVE.settings.sound = true;
   if (SAVE.pass) { el('passState').innerHTML = "✅ <b>Memory Pass Active</b> ― Film and Memorial are enabled. Thank you."; el('passForm').style.display = 'none'; }
   else el('passState').innerHTML = "You do not have a pass yet.";
 }
