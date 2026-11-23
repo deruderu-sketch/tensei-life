@@ -160,6 +160,15 @@
     <details><summary><b>配信や動画にしてもいいですか？</b></summary>はい、自由にどうぞ。出典に「転生先は選べません」と書いていただけるとうれしいです。</details>
     <details><summary><b>誰がつくっていますか？</b></summary>田邉雄次のもとで、AIアシスタント「のんちゃん」が設計・実装しています。数字や確率はフィクションで、実在の統計ではありません。</details>
   </div>
+<h2>🎫 思い出パス</h2>
+  <div class="panel" style="font-size:13px;line-height:1.9">
+    <div id="passState"></div>
+    <div id="passForm">
+      <div style="color:#a79fd0;font-size:12.5px">終わった人生を「フィルム（自動再生の記録映像）」と「メモリアル（保存用ページ）」にできる買い切りのパスです。本体はいつまでも無料・広告なしで、パスがなくても同じように遊べます。価格は¥480を予定し、販売ページは準備中です。</div>
+      <input id="passCodeInput" type="text" placeholder="購入コード（例: TSN-XXXX-XXXX）" style="width:100%;box-sizing:border-box;margin-top:8px;padding:10px;border-radius:10px;border:1px solid #4a4380;background:#14122b;color:#e8e4ff">
+      <button class="sub2" id="btnUnlock" style="margin-top:8px">🔓 パスを有効にする</button>
+    </div>
+  </div>
 <h2>💾 記録の管理</h2>
   <div class="panel" style="font-size:12.5px;line-height:1.9">
     記録はこの端末のブラウザにだけ保存されます（サーバーには送りません）。端末を変えるときは書き出して移せます。<br>
@@ -209,6 +218,8 @@
   <div id="epitaph"></div>
   <button class="center" id="btnShare">𝕏 結果をシェアする</button>
   <button class="center" id="btnCard">🃏 人生カードを画像で保存</button>
+    <button class="sub" id="btnFilm">🎬 フィルムを再生（思い出パス）</button>
+    <button class="sub" id="btnMemorial">🕯️ メモリアルを書き出す（思い出パス）</button>
   <button class="center" id="btnAlbum">📖 人生アルバムを見る</button>
   <button class="gold" id="btnAgain">✦ 次の転生へ（徳 +<span id="tokuGain"></span>）</button>
 </div></div>
@@ -1047,6 +1058,56 @@ document.addEventListener('keydown', e => {
 renderLives();
 if (loadRun()) el('btnContinue').classList.remove('hidden');
 el('btnContinue').addEventListener('click', () => { const d = loadRun(); if (d) restoreRun(d); });
+
+const PASS_HASHES = ["d5cf6936be67a2793ccbeef5a3a0a2398993ce55c78160d9a268badb4890a011", "74cc8191e674bbebbeabb1caa022b1231cf5195e8edaad9a893edb4ed643c575", "bee3784b492e777b0ec1d57b434734b196fa3730d0cebb7f12653e4ef2f7080a", "02e92354fb94b2359b4009cd82f954a11ce5be4ce4028862fdbfd476724efdbc", "1e066c328e8d14d35bab3651f503a53647d989ac92e43618645f87b873b2ad74", "85691d49e66d1e81b4341598582f5749c0f71e61294aee6c9e798e91c6e6921b", "389453cd96164b2c650e9e7846e2ed880799b5ddf83de2bdb4ec59b7e23a3fec", "7822d88211cdd197b2000a162da488c4d806c0272a55bcef29ea485fd061274d", "4bd68b184f7647a80bfd1fd75f5cfa937ec21f1f74383c44f09197e4860e16dd", "9b835cec0a30ec6dd4bd3d8e75f6abfd9bfaa4d5a08753badd0a672d99f41546", "fdaf818c2369b8e235260258f12e5f75d55ebf36c1d1433519eac736db5b99f0", "33583f589d5c6f71718aa4f801dd757e1e04039a47fe776f466ee247fe462260", "195926673154f8747412aeabedc6b0a04ded4cbb1dc5b7eb3b260140bc8f44ee", "012adff2ac35498ff6abfa76cea764de6f49af574588afcede9dac8af5c701e6", "377253107eb592530d3dd70ae55593a42f6ff9de49c086801eb0c4bef7872e13", "dd0ab15136d5a7cc3ca6483729520d6f6a3ee5d338d0817fca76ef2bcf775ee0", "101835d304fef1852898d9d74dbdffd6507b670b9320b36505213fd14112cfd3", "7913d1a6a4bbb2f726056dc1a57c4243be1ce45313c04d4c1b1fb8b597212d8f", "83259077f3c4a1b012a6cf450b8f24f9ac8b935de845da235da6ecebcb781625", "370239299a142c6506ca471211c6496fb3d4d99d4a0ed7f757e0de0ad2c55cc9"];
+async function sha256hex(s) { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join(''); }
+function renderPass() {
+  SAVE.settings = SAVE.settings || { gentle: false, auto: false };
+  if (SAVE.pass) { el('passState').innerHTML = '✅ <b>思い出パス有効</b> ― フィルムとメモリアルが使えます。ありがとうございます。'; el('passForm').style.display = 'none'; }
+  else el('passState').innerHTML = 'まだパスを持っていません。';
+}
+el('btnUnlock').addEventListener('click', async () => {
+  const code = el('passCodeInput').value.trim().toUpperCase();
+  if (!code) return;
+  const h = await sha256hex(code);
+  if (PASS_HASHES.includes(h)) { SAVE.pass = true; saveSave(); renderPass(); alert('思い出パスが有効になりました！'); }
+  else alert('コードが正しくありません');
+});
+renderPass();
+function needPass() { if (SAVE.pass) return true; alert('思い出パスが必要です。最初の画面の「🎫 思い出パス」から有効にできます（販売ページは準備中）'); return false; }
+let filmTimer = null, filmIdx = 0, filmRec = null, filmPlaying = false;
+function openFilm(rec) {
+  filmRec = rec; filmIdx = 0; filmPlaying = true;
+  el('filmOverlay').style.display = 'flex';
+  filmStep();
+}
+function filmStep() {
+  clearTimeout(filmTimer);
+  if (!filmRec) return;
+  const items = [{ age: '', text: '『' + (filmRec.title || '名もなき人生') + '』\n' + filmRec.name + ' の人生' }].concat((filmRec.chronicle || []).map(c => ({ age: c.age + '歳', text: c.text }))).concat([{ age: '墓碑銘', text: filmRec.epitaph || '' }]);
+  if (filmIdx >= items.length) { closeFilm(); return; }
+  const it = items[filmIdx];
+  el('filmAge').textContent = it.age;
+  el('filmText').textContent = it.text;
+  el('filmBar').style.width = Math.round(filmIdx / items.length * 100) + '%';
+  el('btnFilmPause').textContent = filmPlaying ? '⏸ 一時停止' : '▶ 再生';
+  if (filmPlaying) { filmIdx++; filmTimer = setTimeout(filmStep, Math.min(3400, 1300 + it.text.length * 55)); }
+}
+function closeFilm() { clearTimeout(filmTimer); el('filmOverlay').style.display = 'none'; filmRec = null; }
+el('btnFilmPause').addEventListener('click', () => { filmPlaying = !filmPlaying; if (filmPlaying) { filmIdx = Math.max(0, filmIdx - 1); filmStep(); } else { clearTimeout(filmTimer); el('btnFilmPause').textContent = '▶ 再生'; } });
+el('btnFilmClose').addEventListener('click', closeFilm);
+el('btnFilm').addEventListener('click', () => { if (needPass() && lastRecord) openFilm(lastRecord); });
+function memorialHTML(rec) {
+  const esc = s => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  const rows = (rec.chronicle || []).map(c => '<div class="row"><span class="age">' + c.age + '歳</span><span>' + esc(c.text) + '</span></div>').join('');
+  return '<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><title>メモリアル | ' + esc(rec.name) + '</title><style>body{background:#0b0a1a;color:#e8e4ff;font-family:serif;margin:0;padding:32px 18px;line-height:1.9}.wrap{max-width:680px;margin:0 auto}h1{color:#c9a86a;text-align:center;font-weight:normal}.sub{text-align:center;color:#a79fd0}.epi{text-align:center;font-size:19px;margin:26px 0}.row{display:flex;gap:12px;padding:7px 0;border-bottom:1px solid #262250}.age{color:#c9a86a;min-width:52px;text-align:right}.candle{text-align:center;font-size:26px;margin:20px 0}</style></head><body><div class="wrap"><div class="candle">🕯️</div><h1>' + esc(rec.title || '名もなき人生') + '</h1><div class="sub">' + esc(rec.name) + ' ／ ' + esc(rec.world || '') + ' ／ ' + Math.floor(rec.age || 0) + '歳で永眠 ／ スコア ' + (rec.score || 0) + '</div><div class="epi">「' + esc(rec.epitaph || '') + '」</div>' + rows + '<div class="sub" style="margin-top:28px">転生先は選べません ― メモリアル</div></div></body></html>';
+}
+el('btnMemorial').addEventListener('click', () => {
+  if (!needPass() || !lastRecord) return;
+  const blob = new Blob([memorialHTML(lastRecord)], { type: 'text/html' });
+  const a = document.createElement('a'); a.download = 'memorial.html'; a.href = URL.createObjectURL(blob); a.click();
+});
+
 el('btnShare').addEventListener('click', () => {
   const l = SAVE.lives[0];
   if (!l) return;
@@ -1054,5 +1115,15 @@ el('btnShare').addEventListener('click', () => {
   window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(txt), '_blank');
 });
 </script>
+
+<div id="filmOverlay" style="display:none;position:fixed;inset:0;background:#05040f;z-index:60;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center">
+  <div id="filmAge" style="color:#c9a86a;font-size:14px;letter-spacing:.3em"></div>
+  <div id="filmText" style="font-size:clamp(18px,4.6vw,28px);line-height:2;max-width:640px;min-height:120px;margin-top:14px"></div>
+  <div style="width:min(640px,90%);height:4px;background:#262250;border-radius:2px;margin-top:26px"><div id="filmBar" style="height:100%;width:0%;background:#c9a86a;border-radius:2px;transition:width .3s"></div></div>
+  <div style="margin-top:18px">
+    <button class="sub2" id="btnFilmPause">⏸ 一時停止</button>
+    <button class="sub2" id="btnFilmClose">✕ 閉じる</button>
+  </div>
+</div>
 </body>
 </html>
