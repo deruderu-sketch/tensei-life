@@ -164,8 +164,9 @@
   <div class="panel" style="font-size:13px;line-height:1.9">
     <div id="passState"></div>
     <div id="passForm">
-      <div style="color:#a79fd0;font-size:12.5px">終わった人生を「フィルム（自動再生の記録映像）」と「メモリアル（保存用ページ）」にできる買い切りのパスです。本体はいつまでも無料・広告なしで、パスがなくても同じように遊べます。価格は¥480を予定し、販売ページは準備中です。</div>
+      <div style="color:#a79fd0;font-size:12.5px">終わった人生を「フィルム（自動再生の記録映像）」と「メモリアル（保存用ページ）」にできる買い切りのパスです。本体はいつまでも無料・広告なしで、パスがなくても同じように遊べます。価格は¥480（買い切り）です。購入すると、有効化コードを購入時のメールアドレスへ24時間以内にお送りします。</div>
       <input id="passCodeInput" type="text" placeholder="購入コード（例: TSN-XXXX-XXXX）" style="width:100%;box-sizing:border-box;margin-top:8px;padding:10px;border-radius:10px;border:1px solid #4a4380;background:#14122b;color:#e8e4ff">
+      <a href="https://buy.stripe.com/dRmaEYcnF18LdQ6faZ2Nq00" target="_blank" rel="noopener" style="display:inline-block;margin-top:8px;margin-right:8px;padding:10px 18px;border-radius:999px;background:linear-gradient(180deg,#ffd98a,#c9a86a);color:#241f4d;font-weight:bold;text-decoration:none">🛒 思い出パスを購入（¥480）</a>
       <button class="sub2" id="btnUnlock" style="margin-top:8px">🔓 パスを有効にする</button>
     </div>
   </div>
@@ -1074,7 +1075,7 @@ el('btnUnlock').addEventListener('click', async () => {
   else alert('コードが正しくありません');
 });
 renderPass();
-function needPass() { if (SAVE.pass) return true; alert('思い出パスが必要です。最初の画面の「🎫 思い出パス」から有効にできます（販売ページは準備中）'); return false; }
+function needPass() { if (SAVE.pass) return true; alert('思い出パスが必要です。最初の画面の「🎫 思い出パス」から購入・有効化できます'); return false; }
 let filmTimer = null, filmIdx = 0, filmRec = null, filmPlaying = false;
 function openFilm(rec) {
   filmRec = rec; filmIdx = 0; filmPlaying = true;
