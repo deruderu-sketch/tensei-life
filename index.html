@@ -166,6 +166,7 @@
   </div>
 <h2>📜 更新履歴</h2>
   <div class="panel" style="font-size:12.5px;line-height:1.9;text-align:left">
+    <details><summary><b>2026-11-23 v30</b></summary>フリーズ対策を仕上げた。原因は「イベント表示の途中でエラーが起きると、止まったまま二度と動かなくなる」構造だったと特定し、選択肢の処理にも保険をかけて、どこで何が起きても人生が止まらないようにした。</details>
     <details><summary><b>2026-11-23 v29</b></summary>「特定商取引法に基づく表記」のページを追加し、思い出パスの欄から開けるようにした。販売者の氏名・住所・電話番号は、請求があれば遅滞なく開示する方式にした。</details>
     <details><summary><b>2026-11-23 v28</b></summary>イベントを35本から117本へ、日常の出来事文を32行から92行へ増やした。下書きはGeminiが作り、世界のルールに合うよう選別・調整して組み込んだ。</details>
     <details><summary><b>2026-11-23 v27</b></summary>「徳で家柄を引き直す」を廃止した。生まれる家は、徳でもお金でも変えられない。それがこのゲームの約束だから。</details>
@@ -1103,7 +1104,8 @@ function showBigEvent(ev, text, age) {
     b.addEventListener('click', () => {
       log(age, '【重要イベント】' + text.slice(0, 40) + '…');
       log(age, '【選択】「' + c.label + '」');
-      const res = c.run(G);
+      let res;
+      try { res = c.run(G); } catch (e) { res = '何かが起きたが、人生は続いていく。'; }
       el('bigEventResult').textContent = res;
       log(age, res);
       box.innerHTML = '';
