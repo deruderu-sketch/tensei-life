@@ -172,6 +172,7 @@
   </div>
 <h2>📜 更新履歴</h2>
   <div class="panel" style="font-size:12.5px;line-height:1.9;text-align:left">
+    <details><summary><b>2026-11-24 v39</b></summary>重大な不具合を直した。フィルム再生用の画面部品がプログラムより後ろに置かれていたため、読み込みが途中で止まり、「結果をシェア」「フィルム」「メモリアル」のボタンが実際のブラウザで一切反応しない状態だった（フィルム機能を入れた時からの不具合）。部品を正しい位置に移し、全てのボタンが動くようにした。ご指摘ありがとうございました。</details>
     <details><summary><b>2026-11-24 v38</b></summary>「𝕏 結果をシェアする」ボタンを直した。スマホのブラウザでは新しい画面を開く方式が無反応になることがあったため、端末の共有シート（Xアプリにも直接渡せる）を使う方式に変えた。共有が使えない環境では従来の画面を開き、それも止められた場合は文章をコピーして知らせる。</details>
     <details><summary><b>2026-11-24 v37</b></summary>物語に深みを足した。選んだ道（学問・冒険・商い）には「一人前への試練」と「師匠と呼ばれる日」の連鎖が続き、伴侶がいれば子どもが生まれ、反抗期・巣立ち・便りと成長していく。子が残れば、墓碑銘の最後に子どもの視点のエピローグが付く。</details>
     <details><summary><b>2026-11-24 v36</b></summary>音を拡張した。タイトル画面でもBGMが流れるようになり、大戦・疫病・魔王復活の世界では曲が短調の別バージョンに切り替わる。世界の空気が、耳からも伝わるようになった。</details>
@@ -278,6 +279,16 @@
   <button class="center" id="btnAlbum">📖 人生アルバムを見る</button>
   <button class="gold" id="btnAgain">✦ 次の転生へ（徳 +<span id="tokuGain"></span>）</button>
 </div></div>
+
+<div id="filmOverlay" style="display:none;position:fixed;inset:0;background:#05040f;z-index:60;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center">
+  <div id="filmAge" style="color:#c9a86a;font-size:14px;letter-spacing:.3em"></div>
+  <div id="filmText" style="font-size:clamp(18px,4.6vw,28px);line-height:2;max-width:640px;min-height:120px;margin-top:14px"></div>
+  <div style="width:min(640px,90%);height:4px;background:#262250;border-radius:2px;margin-top:26px"><div id="filmBar" style="height:100%;width:0%;background:#c9a86a;border-radius:2px;transition:width .3s"></div></div>
+  <div style="margin-top:18px">
+    <button class="sub2" id="btnFilmPause">⏸ 一時停止</button>
+    <button class="sub2" id="btnFilmClose">✕ 閉じる</button>
+  </div>
+</div>
 
 <script>
 // ---------- utils ----------
@@ -1748,15 +1759,5 @@ el('btnShare').addEventListener('click', async () => {
   }
 });
 </script>
-
-<div id="filmOverlay" style="display:none;position:fixed;inset:0;background:#05040f;z-index:60;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center">
-  <div id="filmAge" style="color:#c9a86a;font-size:14px;letter-spacing:.3em"></div>
-  <div id="filmText" style="font-size:clamp(18px,4.6vw,28px);line-height:2;max-width:640px;min-height:120px;margin-top:14px"></div>
-  <div style="width:min(640px,90%);height:4px;background:#262250;border-radius:2px;margin-top:26px"><div id="filmBar" style="height:100%;width:0%;background:#c9a86a;border-radius:2px;transition:width .3s"></div></div>
-  <div style="margin-top:18px">
-    <button class="sub2" id="btnFilmPause">⏸ 一時停止</button>
-    <button class="sub2" id="btnFilmClose">✕ 閉じる</button>
-  </div>
-</div>
 </body>
 </html>
