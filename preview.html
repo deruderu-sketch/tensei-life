@@ -84,6 +84,8 @@
   h2 { font-size: 14px; margin: 18px 0 9px; letter-spacing: 2px; color: #d9d2f5; font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; }
   #chronicle { font-size: 12px; color: #a79fd0; line-height: 1.85; border-left: 2px solid rgba(126,87,194,.4); padding-left: 12px; margin-left: 4px; }
   #chronicle .yr { color: #ffd54f; }
+  @keyframes sparkFly { from { opacity: 1; transform: translate(-50%, -50%) scale(1); } to { opacity: 0; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(.35); } }
+  #chronicle div:first-child { animation: fadeSwap .35s ease; }
   .life-card { background: linear-gradient(160deg, rgba(32,26,64,.9), rgba(18,15,38,.94)); border: 1px solid rgba(126,100,255,.3); border-radius: 12px; padding: 11px; font-size: 12px; margin-bottom: 9px; line-height: 1.7; animation: panelIn .5s ease both; }
   .life-card .ttl { color: #ffd54f; font-weight: bold; font-size: 13px; }
   #death, #birthReveal, #bigEvent { animation: overlayIn .45s ease both; }
@@ -170,6 +172,9 @@
   </div>
 <h2>📜 更新履歴</h2>
   <div class="panel" style="font-size:12.5px;line-height:1.9;text-align:left">
+    <details><summary><b>2026-11-24 v37</b></summary>物語に深みを足した。選んだ道（学問・冒険・商い）には「一人前への試練」と「師匠と呼ばれる日」の連鎖が続き、伴侶がいれば子どもが生まれ、反抗期・巣立ち・便りと成長していく。子が残れば、墓碑銘の最後に子どもの視点のエピローグが付く。</details>
+    <details><summary><b>2026-11-24 v36</b></summary>音を拡張した。タイトル画面でもBGMが流れるようになり、大戦・疫病・魔王復活の世界では曲が短調の別バージョンに切り替わる。世界の空気が、耳からも伝わるようになった。</details>
+    <details><summary><b>2026-11-24 v35</b></summary>演出を強化した。アバターの風景が世界の情勢で変わる（大戦の世界は赤く燃える粒子、疫病の世界は緑のもや、魔力過剰の世界は紫の気配）。伏線回収とレアな出生発表では金の粒子が舞い、死の場面では静かな光が散る。年代記の新しい行もふわりと現れる。</details>
     <details><summary><b>2026-11-24 v34</b></summary>「続く関係」を追加。幼なじみ・ライバル・親友・伴侶・師匠・弟子といった名前のある人々が人生に登場し、何十年も絡み続ける。絆の深さは画面に表示され、相手が先に亡くなることもある。死後の記録にも「共に生きた人々」が残る。</details>
     <details><summary><b>2026-11-23 v33</b></summary>設定のON/OFFが見た目で分かるようにした。ONのボタンは金色に光って「● ON」、OFFは「○ OFF」と表示される。音をONにした瞬間にモチーフが鳴るので、機能していることも耳で分かる。あわせて、設定ボタンや思い出パスの有効化で保存処理がエラーになっていた不具合を修正した。</details>
     <details><summary><b>2026-11-23 v32</b></summary>音を入れた。コードで生成するチップチューンのBGM（Fmaj7–Em7–Dm7–Cmaj7の循環）と効果音で、出生の発表・イベント・伏線回収・死の場面にそれぞれ音が付く。設定でON/OFFできる。</details>
@@ -303,6 +308,7 @@ function initAudio() {
     const wet = AC.createGain(); wet.gain.value = 0.20;
     masterGain.connect(conv); conv.connect(wet); wet.connect(lp);
     bgmBus = AC.createGain(); bgmBus.gain.value = 0.85; bgmBus.connect(masterGain);
+    if (!bgmTimer) setTimeout(() => { try { if (!G || G.dead) startBGM(); } catch (e) {} }, 60);
     seBus = AC.createGain(); seBus.gain.value = 0.9; seBus.connect(masterGain);
   } catch (e) { AC = null; }
 }
@@ -346,16 +352,30 @@ const BGM_MELODY = [
   [65, 69, 72, 69], [65, 62, 65, 0],
   [64, 67, 71, 67], [72, 71, 67, 64],
 ];
+const BGM_CHORDS_DARK = [
+  { root: 38, tones: [53, 57, 60, 65] }, { root: 38, tones: [53, 57, 60, 65] },
+  { root: 34, tones: [50, 53, 57, 62] }, { root: 34, tones: [50, 53, 57, 62] },
+  { root: 41, tones: [57, 60, 64, 69] }, { root: 41, tones: [57, 60, 64, 69] },
+  { root: 33, tones: [52, 55, 61, 64] }, { root: 33, tones: [52, 55, 61, 64] },
+];
+const BGM_MELODY_DARK = [
+  [62, 65, 69, 65], [62, 60, 62, 0],
+  [70, 69, 65, 62], [65, 62, 58, 62],
+  [65, 69, 72, 69], [65, 64, 65, 0],
+  [61, 64, 67, 64], [69, 67, 65, 62],
+];
 const BGM_STEP = 60 / 76 / 2;
 function bgmSchedule() {
   if (!AC) return;
   while (bgmNext < AC.currentTime + 0.30) {
-    const bar = Math.floor(bgmStep / 8) % 8, s = bgmStep % 8, ch = BGM_CHORDS[bar];
+    const dark = (typeof G !== 'undefined' && G && G.world) ? (G.world.war === 2 || G.world.disaster === '魔王復活' || G.world.disaster === '疫病') : false;
+    const CH = dark ? BGM_CHORDS_DARK : BGM_CHORDS, MEL = dark ? BGM_MELODY_DARK : BGM_MELODY;
+    const bar = Math.floor(bgmStep / 8) % 8, s = bgmStep % 8, ch = CH[bar];
     if (s % 4 === 0) tone(ch.root, bgmNext, BGM_STEP * 3.6, 'triangle', 0.16, bgmBus);
     if (s % 4 === 2) tone(ch.root + 7, bgmNext, BGM_STEP * 1.8, 'triangle', 0.10, bgmBus);
     const arp = ch.tones[[0, 1, 2, 3, 2, 1, 2, 3][s]];
     tone(arp + 12, bgmNext, BGM_STEP * 0.95, 'triangle', 0.045, bgmBus);
-    if (s % 2 === 0) { const mel = BGM_MELODY[bar][s / 2]; if (mel) tone(mel, bgmNext, BGM_STEP * 1.9, 'square', 0.055, bgmBus); }
+    if (s % 2 === 0) { const mel = MEL[bar][s / 2]; if (mel) tone(mel, bgmNext, BGM_STEP * 1.9, 'square', 0.055, bgmBus); }
     bgmNext += BGM_STEP; bgmStep++;
   }
 }
@@ -369,6 +389,19 @@ function stopBGM() { if (bgmTimer) { clearInterval(bgmTimer); bgmTimer = null; }
 function applySoundSetting() { if (masterGain && AC) masterGain.gain.setTargetAtTime(SAVE.settings.sound === false ? 0 : 0.9, AC.currentTime, 0.03); }
 document.addEventListener('pointerdown', initAudio);
 document.addEventListener('keydown', initAudio);
+function burstFX(n, glyph, color) {
+  const host = document.createElement('div');
+  host.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:60;overflow:hidden';
+  document.body.appendChild(host);
+  for (let i = 0; i < (n || 14); i++) {
+    const s = document.createElement('span');
+    s.textContent = glyph || '✦';
+    const ang = Math.random() * Math.PI * 2, dist = 60 + Math.random() * 140;
+    s.style.cssText = 'position:absolute;left:50%;top:42%;color:' + (color || '#ffd54f') + ';font-size:' + (11 + Math.random() * 10) + 'px;--dx:' + Math.cos(ang) * dist + 'px;--dy:' + Math.sin(ang) * dist + 'px;animation:sparkFly ' + (0.9 + Math.random() * 0.5) + 's ease-out forwards';
+    host.appendChild(s);
+  }
+  setTimeout(() => { try { host.remove(); } catch (e) {} }, 1600);
+}
 function paintToggles() {
   const map = [['btnGentle', SAVE.settings && SAVE.settings.gentle], ['btnAutoMode', SAVE.settings && SAVE.settings.auto], ['btnSound', !SAVE.settings || SAVE.settings.sound !== false], ['btnClass', (typeof isClassroom === 'function') ? isClassroom() : false]];
   map.forEach(([id, on]) => { const b = el(id); if (!b) return; b.classList.toggle('on', !!on); b.classList.toggle('off', !on); b.textContent = b.textContent.replace(/(● |○ )?(ON|OFF)/, on ? '● ON' : '○ OFF'); });
@@ -490,13 +523,13 @@ const EVENTS = [
       { label: '弟子入りを頼む', run: S => Math.random() < 0.35 + S.stats.int / 200 ? (eff(S, { int: 12, happy: 3 }), S.flags.scholar = true, addPerson(S, S.npc, '師匠', RI(25, 45), 55), '学者は頷いた。学びの日々が始まる。') : (eff(S, { happy: -5 }), '学者は首を振った。「まだ早い」') },
       { label: '見送る', run: S => { eff(S, { happy: 1 }); return '学者は去った。いつか自分も旅に出たい。'; } },
     ] },
-  { min: 13, max: 25, text: S => `人生の岐路だ。${S.org}から誘いが来ている。何を目指す？`,
+  { min: 12, max: 28, prio: true, text: S => `人生の岐路だ。${S.org}から誘いが来ている。何を目指す？`,
     choices: [
       { label: '学問の道', run: S => { eff(S, { int: 14, wealth: -4 }); S.flags.path = '学問'; return '勉学に身を投じた。'; } },
       { label: '剣と冒険の道', run: S => { eff(S, { health: 10, fame: 5, wealth: -2 }); S.flags.path = '冒険'; return '剣を取った。世界は広い。'; } },
       { label: '商いの道', run: S => { eff(S, { wealth: 12, charm: 4 }); S.flags.path = '商い'; return '帳簿と笑顔が武器になった。'; } },
     ] },
-  { min: 16, max: 40, text: S => `${S.npc}という人物と出会った。妙に気が合う。`,
+  { min: 16, max: 40, meet: true, text: S => `${S.npc}という人物と出会った。妙に気が合う。`,
     choices: [
       { label: '深く付き合う', run: S => { eff(S, { happy: 10, charm: 4 }); S.flags.partner = S.npc; addPerson(S, S.npc, '伴侶', RI(-6, 6), 70); return S.npc + 'は、あなたの人生に欠かせない人になった。'; } },
       { label: '距離を保つ', run: S => { eff(S, { int: 2 }); return '悪くない距離感だった。'; } },
@@ -844,6 +877,38 @@ EVENTS.push(
       { label: '一緒にやる', run: S => { const p = findPerson(S, '親友'); if (Math.random() < 0.55) { if (p) p.bond = Math.min(100, p.bond + 10); eff(S, { wealth: 18, happy: 6 }); return '当たった！ 友情と商売、両方うまくいくこともある。'; } if (p) p.bond = Math.max(0, p.bond - 6); eff(S, { wealth: -10, happy: -4 }); return '外れた。金は失ったが、友情はなんとか残った。'; } },
       { label: '丁重に断る', run: S => { eff(S, { happy: 1 }); return '断った。友情と金は分ける主義だった。'; } },
     ] });
+EVENTS.push(
+  // ===== 物語の深み（キャリア連鎖と子ども） =====
+  { min: 22, max: 55, prio: true, when: S => !!S.flags.path && !S.flags.career2, text: S => ({ '学問': '学会で自説を発表する機会が巡ってきた。これが認められれば一人前だ。', '冒険': '一人前の冒険者として認められるための、大きな試練の依頼が来た。', '商い': '自分の店を持つ話が具体化してきた。一人前として独立する時だ。' })[S.flags.path] || '一人前になるための試練が訪れた。',
+    choices: [
+      { label: '全力で挑む', run: S => { const key = S.flags.path === '学問' ? 'int' : S.flags.path === '冒険' ? 'health' : 'wealth'; if (Math.random() < 0.45 + (S.stats[key] || 50) / 200) { S.flags.career2 = true; eff(S, { fame: 12, happy: 8 }); return 'やってのけた！ もう見習いとは呼ばせない。一人前だ。'; } eff(S, { happy: -5 }); return '力及ばず。だが試練はまだ終わっていない。'; } },
+      { label: 'まだ早いと見送る', run: S => { eff(S, { happy: 1 }); return '見送った。機が熟すのを待つ。'; } },
+    ] },
+  { min: 48, max: 80, prio: true, when: S => !!S.flags.career2 && !S.flags.career3, text: S => `いつの間にか、若い者たちがあなたを「師匠」と呼ぶようになっていた。${S.flags.path}の道の大先輩として、指南を頼まれた。`,
+    choices: [
+      { label: '引き受ける', run: S => { S.flags.career3 = true; eff(S, { fame: 10, happy: 8 }); if (!findPerson(S, '弟子') && Math.random() < 0.6) { const nm = genName(); addPerson(S, nm, '弟子', -RI(25, 40), 50); return '見事にこなした。その場で弟子入りを志願する若者がいた。名は' + nm + 'といった。'; } return '見事にこなした。拍手が鳴り止まなかった。'; } },
+      { label: '静かに断る', run: S => { eff(S, { happy: 3 }); return '断った。名声より静かな日々を選んだ。'; } },
+    ] },
+  { min: 26, max: 46, meet: true, when: S => !!findPerson(S, '伴侶') && !(S.people || []).some(p => p.role === '子ども'), text: S => { const p = findPerson(S, '伴侶'); S._meetName = genName(); return `${p.name}との間に、子どもが生まれた。名前は${S._meetName}。小さな命が家にやってきた。`; },
+    choices: [
+      { label: '大切に育てる', run: S => { addPerson(S, S._meetName, '子ども', -Math.floor(S.age), 75); eff(S, { wealth: -6, happy: 12 }); return '子育ての日々が始まった。眠れない夜も、悪くなかった。'; } },
+      { label: '厳しく育てる', run: S => { addPerson(S, S._meetName, '子ども', -Math.floor(S.age), 45); eff(S, { happy: 6 }); return '厳しく育てると決めた。それも愛の形だった。'; } },
+    ] },
+  { min: 30, max: 75, when: S => { const p = (S.people || []).find(x => x.role === '子ども' && x.alive); return !!p && (S.age + p.rel) >= 12 && (S.age + p.rel) <= 18; }, text: S => { const p = S.people.find(x => x.role === '子ども'); return `子どもの${p.name}が反抗期だ。何を言っても反発してくる。`; },
+    choices: [
+      { label: '正面から叱る', run: S => { const p = S.people.find(x => x.role === '子ども'); if (p) p.bond = Math.max(0, p.bond - 8); eff(S, { happy: -3 }); return 'ぶつかった。だが、それも成長の証だった。'; } },
+      { label: '静かに見守る', run: S => { const p = S.people.find(x => x.role === '子ども'); if (p) p.bond = Math.min(100, p.bond + 6); eff(S, { happy: 2 }); return '見守った。嵐はいつか過ぎる。'; } },
+    ] },
+  { min: 40, max: 85, when: S => { const p = (S.people || []).find(x => x.role === '子ども' && x.alive); return !!p && (S.age + p.rel) >= 19 && (S.age + p.rel) <= 27; }, text: S => { const p = S.people.find(x => x.role === '子ども'); return `${p.name}が家を出て独立したいと言い出した。`; },
+    choices: [
+      { label: '送り出す', run: S => { const p = S.people.find(x => x.role === '子ども'); if (p) p.bond = Math.min(100, p.bond + 10); eff(S, { happy: 4, wealth: -4 }); return '送り出した。小さかった背中が、もう頼もしい。'; } },
+      { label: '引き止める', run: S => { const p = S.people.find(x => x.role === '子ども'); if (p) p.bond = Math.max(0, p.bond - 12); eff(S, { happy: -4 }); return '引き止めた。言い争いになった。'; } },
+    ] },
+  { min: 58, max: 200, when: S => { const p = (S.people || []).find(x => x.role === '子ども' && x.alive); return !!p && (S.age + p.rel) >= 28; }, text: S => { const p = S.people.find(x => x.role === '子ども'); return `独立した${p.name}から便りが届いた。元気でやっているらしい。`; },
+    choices: [
+      { label: '返事を書く', run: S => { const p = S.people.find(x => x.role === '子ども'); if (p) p.bond = Math.min(100, p.bond + 8); eff(S, { happy: 8 }); return '返事を書いた。便りのやり取りが、老後の楽しみになった。'; } },
+    ] },
+);
 // 選択の伏線回収（v31）：序盤〜中盤の選択が、後年の出来事で返ってくる
 EVENTS.push(
   { min: 30, max: 95, payoff: true, when: S => !!S.flags.supporter, text: S => `戦が終わってから、ずっと噂だった。${S.place}の人々が、あの時街に残って支えてくれたあなたへの感謝祭を開くという。`,
@@ -1035,10 +1100,13 @@ function drawAvatar() {
   // sky tint by season
   const sky = ['#2a2148', '#1d2a4a', '#3a2340', '#232338'][season];
   P(0, 0, 16, 16, sky);
+  if (G.world.war === 2) P(0, 0, 16, 16, 'rgba(140,30,10,0.20)');
+  else if (G.world.disaster === '疫病') P(0, 0, 16, 16, 'rgba(30,90,40,0.22)');
+  else if (G.world.magic >= 3) P(0, 0, 16, 16, 'rgba(90,50,160,0.18)');
   P(0, 13, 16, 3, '#171233'); // ground
   // seasonal particles (petals / sparkles / leaves / snow)
   if (AV.season !== season) { AV.season = season; AV.parts = Array.from({ length: 7 }, () => ({ x: Math.random() * 16, y: Math.random() * 16 })); }
-  const pcol = ['#f8bbd0', '#fff59d', '#ffab91', '#ffffff'][season];
+  const pcol = G.world.war === 2 ? '#ff7043' : (G.world.disaster === '疫病' ? '#a5d6a7' : ['#f8bbd0', '#fff59d', '#ffab91', '#ffffff'][season]);
   if (moving) for (const p of AV.parts) { p.y += season === 1 ? 0.25 : 0.55; p.x += season === 2 ? 0.3 : 0.08; if (p.y > 15) { p.y = -1; p.x = Math.random() * 16; } if (p.x > 16) p.x = 0; }
   for (const p of AV.parts) P(Math.floor(p.x), Math.floor(p.y), 1, 1, pcol);
   const skin = ({ '人間': '#f2c49b', 'エルフ': '#f7ddba', '獣人': '#d99e63', 'ドワーフ': '#e0aa72', '魔族': '#b08cc7', '天使の末裔': '#ffe9c9', '吸血鬼': '#e8e3da', '妖精': '#ffe3ec', '竜人': '#c98a5e', 'ゴブリン': '#9ccc65', 'スライム': '#64b5f6' })[race] || '#f2c49b';
@@ -1099,6 +1167,7 @@ function renderRevealStep() {
   el('revealBody').innerHTML = '<div style="font-size:17px;color:#ffd54f;font-weight:bold;margin-bottom:8px">' + (isRareStep ? '✨ ' : '') + s.title + (isRareStep ? ' ✨' : '') + '</div>' + s.html;
   el('revealBody').style.borderColor = isRareStep ? '#ffd54f' : '#3a2f7a';
   el('revealBody').style.boxShadow = isRareStep ? '0 0 24px rgba(255,213,79,.35)' : '';
+  if (isRareStep) burstFX(12);
   const famStep = revealSteps.findIndex(s => s.title.includes('家柄'));
   el('btnRevealNext').classList.toggle('hidden', revealIdx >= revealSteps.length - 1);
   el('btnBegin').classList.toggle('hidden', revealIdx < revealSteps.length - 1);
@@ -1247,7 +1316,7 @@ function tickInner() {
   const deathRisk = over ? 0.06 : G.stats.health <= 8 ? 0.03 : G.world.temper.tragedy * 0.0012;
   if ((over && Math.random() < deathRisk) || G.age >= G.lifeSpan * 1.15 || (G.age > 10 && Math.random() < deathRisk)) { die(); }
 }
-const ROLE_EMOJI = { '幼なじみ': '🧒', '親友': '🤝', 'ライバル': '⚔️', '伴侶': '💞', '師匠': '🎓', '弟子': '🌱' };
+const ROLE_EMOJI = { '子ども': '👶', '幼なじみ': '🧒', '親友': '🤝', 'ライバル': '⚔️', '伴侶': '💞', '師匠': '🎓', '弟子': '🌱' };
 function addPerson(S, name, role, rel, bond) {
   S.people = S.people || [];
   if (!name || S.people.some(p => p.name === name)) return;
@@ -1315,7 +1384,8 @@ function presentEvent() {
   if (poolUse.length && Math.random() < 0.82) {
     const pay = poolUse.filter(([e]) => e.payoff);
     const meet = poolUse.filter(([e]) => e.meet);
-    const [e, i] = (meet.length && (G.people || []).length < 4 && Math.random() < 0.75) ? pick(meet) : (pay.length && Math.random() < 0.55) ? pick(pay) : pick(poolUse);
+    const prio = poolUse.filter(([e]) => e.prio);
+    const [e, i] = (meet.length && (G.people || []).length < 4 && Math.random() < 0.75) ? pick(meet) : (prio.length && Math.random() < 0.85) ? pick(prio) : (pay.length && Math.random() < 0.55) ? pick(pay) : pick(poolUse);
     ev = e; G.usedEvents.add(i);
   }
   else ev = pick(FILLERS);
@@ -1328,7 +1398,7 @@ function showBigEvent(ev, text, age) {
   if (ev.payoff) { bt.textContent = '🔗 あの日の選択'; bt.style.color = '#ffd54f'; bt.style.textShadow = '0 0 18px rgba(255,213,79,.65)'; }
   else { bt.textContent = '⚠ 重要な出来事 ⚠'; bt.style.color = '#ff8a80'; bt.style.textShadow = ''; }
   el('bigEventResult').textContent = '';
-  if (ev.payoff) sndMotif(); else sndEvent();
+  if (ev.payoff) { sndMotif(); burstFX(16); } else sndEvent();
   el('btnBigClose').classList.add('hidden');
   const box = el('bigEventChoices');
   box.innerHTML = '';
@@ -1384,7 +1454,7 @@ document.querySelectorAll('.spd').forEach(b => b.addEventListener('click', () =>
   renderClock();
 }));
 function die() {
-  stopBGM(); sndDeath();
+  stopBGM(); sndDeath(); burstFX(9, '✧', '#b39ddb');
   clearRun();
   if (G.dead) return; G.dead = true; G.paused = true;
   const s = G.stats, age = Math.floor(G.age);
@@ -1406,13 +1476,15 @@ function die() {
   rankEl.style.color = rank === 'S' ? '#ffd54f' : rank === 'A' ? '#ce93d8' : rank === 'B' ? '#81d4fa' : '#a79fd0';
   rankEl.style.textShadow = rank === 'S' ? '0 0 22px rgba(255,213,79,.7)' : 'none';
   const tokuGain = Math.max(1, Math.round(score / 40));
-  const epi =
+  let epi =
     G.world.name + '。\n' + G.birth.race.name + 'の' + G.birth.fam.name + 'として生まれ、' + G.place + 'で育った。\n' +
     '才能は「' + G.birth.talents[0] + '」と「' + G.birth.talents[1] + '」。\n' +
     (G.flags.partner ? G.flags.partner + 'と出会い、' : '') + (G.flags.path ? G.flags.path + 'の道を歩み、' : '') +
     (G.flags.warHero ? '戦場で名を上げ、' : '') + (G.flags.sailor ? '新大陸を見、' : '') + (G.flags.revolutionary ? '革命を成し、' : '') + (G.flags.relic ? '遺跡の財宝を手にし、' : '') + (G.flags.rivalFriend ? '宿敵と友となり、' : '') + (G.flags.partner ? '' : '') + (G.flags.lastWork ? '晩年に大仕事を成し、' : '') + '\n' +
     age + '歳、' + cause + 'で死去。世はその人を「' + title + '」と呼んだ。\n' +
     'この世界は実は――' + G.world.temper.name + 'だった。';
+  const childP = (G.people || []).find(p => p.role === '子ども' && p.alive);
+  if (childP) epi += '\n――残された' + childP.name + 'は、あなたの背中を見て育ち、その話を次の世代へ語り継いでいく。';
   SAVE.toku += tokuGain;
   SAVE.lives.unshift({ name: G.name, tezawari: (typeof tezawariOf === 'function' ? tezawariOf(G, s) : ''), title, age, cause, epitaph: epi, race: G.birth.race.name, fam: G.birth.fam.name, world: G.world.name, temper: G.world.temper.name, score, chronicle: G.chronicle.slice().reverse(), people: (G.people || []).map(p => ({ name: p.name, role: p.role, bond: p.bond, alive: p.alive })) });
   persist();
@@ -1459,7 +1531,7 @@ el('btnBegin').addEventListener('click', () => {
   if (G) G.revealOpen = false;
   G.paused = false; renderClock(); startClock();
 });
-el('btnAgain').addEventListener('click', () => { el('gamePanel').classList.add('hidden'); el('startPanel').classList.remove('hidden'); el('death').style.display = 'none'; renderLives(); });
+el('btnAgain').addEventListener('click', () => { el('gamePanel').classList.add('hidden'); el('startPanel').classList.remove('hidden'); el('death').style.display = 'none'; renderLives(); startBGM(); });
 // ---------- run save (continue a life later) ----------
 const RUN_KEY = 'tensei-life-run-v1';
 function saveRun() {
