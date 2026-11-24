@@ -172,6 +172,7 @@
   </div>
 <h2>📜 Update History</h2>
   <div class="panel" style="font-size:12.5px;line-height:1.9;text-align:left">
+    <details><summary><b>2026-11-24 v38</b></summary>Fixed the "Share on X" button: on mobile browsers the open-a-new-window approach could silently do nothing, so it now uses the device share sheet (which can hand off to the X app directly). Where sharing is unavailable it opens the post screen as before, and if that is blocked too, it copies the text and tells you.</details>
     <details><summary><b>2026-11-24 v37</b></summary>Added story depth: your chosen path (Academics, Adventure, Commerce) now continues with a "Trial of Mastery" and a "Called Master" chapter, and with a partner a child may be born — rebellion, leaving home, and letters included. If your child outlives you, the epitaph gains an epilogue from their eyes.</details>
     <details><summary><b>2026-11-24 v36</b></summary>Expanded sound: the BGM now plays on the title screen too, and in worlds of great war, plague, or the Demon Lord's revival it switches to a minor-key version. You can hear the world's mood.</details>
     <details><summary><b>2026-11-24 v35</b></summary>Stronger presentation: the avatar scenery now reflects the world — embers and a red cast in a world at war, green haze in a plague world, a violet shimmer where magic overflows. Gold particles burst on choice payoffs and rare birth reveals, quiet light drifts at death, and new chronicle lines fade in softly.</details>
@@ -218,7 +219,7 @@
   <div class="panel" style="font-size:13px;line-height:1.9">
     <div style="color:#a79fd0;font-size:12.5px">Please send bugs or ideas here. I read them all.</div>
     <a class="sub2" href="mailto:deruderudouga@gmail.com?subject=%E8%BB%A2%E7%94%9F%E5%85%88%E3%81%AF%E9%81%B8%E3%81%B9%E3%81%BE%E3%81%9B%E3%82%93%E3%81%B8%E3%81%AE%E6%84%8F%E8%A6%8B" style="display:inline-block;text-decoration:none;margin-top:6px">✉️ Send Feedback via Email</a>
-    <a class="sub2" href="https://twitter.com/intent/tweet?text=%E8%BB%A2%E7%94%9F%E5%85%88%E3%81%AF%E9%81%B8%E3%81%B9%E3%81%BE%E3%81%9B%E3%82%93%20%E3%82%92%E9%81%8A%E3%82%93%E3%81%A0%E6%84%9F%E6%83%B3" target="_blank" rel="noopener" style="display:inline-block;text-decoration:none;margin-top:6px">𝕏 Post your thoughts</a>
+    <a class="sub2" href="https://x.com/intent/tweet?text=%E8%BB%A2%E7%94%9F%E5%85%88%E3%81%AF%E9%81%B8%E3%81%B9%E3%81%BE%E3%81%9B%E3%82%93%20%E3%82%92%E9%81%8A%E3%82%93%E3%81%A0%E6%84%9F%E6%83%B3" target="_blank" rel="noopener" style="display:inline-block;text-decoration:none;margin-top:6px">𝕏 Post your thoughts</a>
   </div>
 <h2>💾 Data Management</h2>
   <div class="panel" style="font-size:12.5px;line-height:1.9">
@@ -1734,11 +1735,19 @@ el('btnMemorial').addEventListener('click', () => {
   const a = document.createElement('a'); a.download = 'memorial.html'; a.href = URL.createObjectURL(blob); a.click();
 });
 
-el('btnShare').addEventListener('click', () => {
+el('btnShare').addEventListener('click', async () => {
   const l = SAVE.lives[0];
   if (!l) return;
   const txt = "[You Can't Choose Your Next Life]" + l.title + '(Died at age ' + l.age + ")\\n" + l.race + ' / ' + l.fam + ' ― ' + l.world + "\nScore " + l.score + ". That was your life. What will you be in the next reincarnation? #YouCantChooseYourNextLife";
-  window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(txt), '_blank');
+  if (navigator.share) {
+    try { await navigator.share({ text: txt }); return; }
+    catch (e) { if (e && e.name === 'AbortError') return; }
+  }
+  const w = window.open('https://x.com/intent/tweet?text=' + encodeURIComponent(txt), '_blank');
+  if (!w) {
+    try { await navigator.clipboard.writeText(txt); alert('Could not open the share screen, so the text was copied. You can paste it into X.'); }
+    catch (e) { alert('Could not open the share screen. Your browser may be blocking popups.'); }
+  }
 });
 </script>
 
