@@ -84,6 +84,8 @@
   h2 { font-size: 14px; margin: 18px 0 9px; letter-spacing: 2px; color: #d9d2f5; font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; }
   #chronicle { font-size: 12px; color: #a79fd0; line-height: 1.85; border-left: 2px solid rgba(126,87,194,.4); padding-left: 12px; margin-left: 4px; }
   #chronicle .yr { color: #ffd54f; }
+  @keyframes sparkFly { from { opacity: 1; transform: translate(-50%, -50%) scale(1); } to { opacity: 0; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(.35); } }
+  #chronicle div:first-child { animation: fadeSwap .35s ease; }
   .life-card { background: linear-gradient(160deg, rgba(32,26,64,.9), rgba(18,15,38,.94)); border: 1px solid rgba(126,100,255,.3); border-radius: 12px; padding: 11px; font-size: 12px; margin-bottom: 9px; line-height: 1.7; animation: panelIn .5s ease both; }
   .life-card .ttl { color: #ffd54f; font-weight: bold; font-size: 13px; }
   #death, #birthReveal, #bigEvent { animation: overlayIn .45s ease both; }
@@ -170,6 +172,9 @@
   </div>
 <h2>📜 Update History</h2>
   <div class="panel" style="font-size:12.5px;line-height:1.9;text-align:left">
+    <details><summary><b>2026-11-24 v37</b></summary>Added story depth: your chosen path (Academics, Adventure, Commerce) now continues with a "Trial of Mastery" and a "Called Master" chapter, and with a partner a child may be born — rebellion, leaving home, and letters included. If your child outlives you, the epitaph gains an epilogue from their eyes.</details>
+    <details><summary><b>2026-11-24 v36</b></summary>Expanded sound: the BGM now plays on the title screen too, and in worlds of great war, plague, or the Demon Lord's revival it switches to a minor-key version. You can hear the world's mood.</details>
+    <details><summary><b>2026-11-24 v35</b></summary>Stronger presentation: the avatar scenery now reflects the world — embers and a red cast in a world at war, green haze in a plague world, a violet shimmer where magic overflows. Gold particles burst on choice payoffs and rare birth reveals, quiet light drifts at death, and new chronicle lines fade in softly.</details>
     <details><summary><b>2026-11-24 v34</b></summary>Added lasting relationships: named people — a childhood friend, a rival, a close friend, a partner, a mentor, a disciple — enter your life and stay in it for decades. Bond strength is shown on screen, and they may die before you do. The record of your life now keeps a "People You Lived With" list.</details>
     <details><summary><b>2026-11-23 v33</b></summary>Settings toggles are now visible at a glance: ON buttons glow gold and read "● ON", OFF reads "○ OFF". Turning Sound on plays the motif immediately so you can hear it works. Also fixed a bug where saving failed with an error in the Settings buttons and Memory Pass activation.</details>
     <details><summary><b>2026-11-23 v32</b></summary>Added sound: a code-generated chiptune BGM (a Fmaj7–Em7–Dm7–Cmaj7 loop) and sound effects for the birth reveal, events, choice payoffs, and death. Can be turned off in Settings.</details>
@@ -303,6 +308,7 @@ function initAudio() {
     const wet = AC.createGain(); wet.gain.value = 0.20;
     masterGain.connect(conv); conv.connect(wet); wet.connect(lp);
     bgmBus = AC.createGain(); bgmBus.gain.value = 0.85; bgmBus.connect(masterGain);
+    if (!bgmTimer) setTimeout(() => { try { if (!G || G.dead) startBGM(); } catch (e) {} }, 60);
     seBus = AC.createGain(); seBus.gain.value = 0.9; seBus.connect(masterGain);
   } catch (e) { AC = null; }
 }
@@ -346,16 +352,30 @@ const BGM_MELODY = [
   [65, 69, 72, 69], [65, 62, 65, 0],
   [64, 67, 71, 67], [72, 71, 67, 64],
 ];
+const BGM_CHORDS_DARK = [
+  { root: 38, tones: [53, 57, 60, 65] }, { root: 38, tones: [53, 57, 60, 65] },
+  { root: 34, tones: [50, 53, 57, 62] }, { root: 34, tones: [50, 53, 57, 62] },
+  { root: 41, tones: [57, 60, 64, 69] }, { root: 41, tones: [57, 60, 64, 69] },
+  { root: 33, tones: [52, 55, 61, 64] }, { root: 33, tones: [52, 55, 61, 64] },
+];
+const BGM_MELODY_DARK = [
+  [62, 65, 69, 65], [62, 60, 62, 0],
+  [70, 69, 65, 62], [65, 62, 58, 62],
+  [65, 69, 72, 69], [65, 64, 65, 0],
+  [61, 64, 67, 64], [69, 67, 65, 62],
+];
 const BGM_STEP = 60 / 76 / 2;
 function bgmSchedule() {
   if (!AC) return;
   while (bgmNext < AC.currentTime + 0.30) {
-    const bar = Math.floor(bgmStep / 8) % 8, s = bgmStep % 8, ch = BGM_CHORDS[bar];
+    const dark = (typeof G !== 'undefined' && G && G.world) ? (G.world.war === 2 || G.world.disaster === 'Resurrection of the Demon King' || G.world.disaster === 'Plague') : false;
+    const CH = dark ? BGM_CHORDS_DARK : BGM_CHORDS, MEL = dark ? BGM_MELODY_DARK : BGM_MELODY;
+    const bar = Math.floor(bgmStep / 8) % 8, s = bgmStep % 8, ch = CH[bar];
     if (s % 4 === 0) tone(ch.root, bgmNext, BGM_STEP * 3.6, 'triangle', 0.16, bgmBus);
     if (s % 4 === 2) tone(ch.root + 7, bgmNext, BGM_STEP * 1.8, 'triangle', 0.10, bgmBus);
     const arp = ch.tones[[0, 1, 2, 3, 2, 1, 2, 3][s]];
     tone(arp + 12, bgmNext, BGM_STEP * 0.95, 'triangle', 0.045, bgmBus);
-    if (s % 2 === 0) { const mel = BGM_MELODY[bar][s / 2]; if (mel) tone(mel, bgmNext, BGM_STEP * 1.9, 'square', 0.055, bgmBus); }
+    if (s % 2 === 0) { const mel = MEL[bar][s / 2]; if (mel) tone(mel, bgmNext, BGM_STEP * 1.9, 'square', 0.055, bgmBus); }
     bgmNext += BGM_STEP; bgmStep++;
   }
 }
@@ -369,6 +389,19 @@ function stopBGM() { if (bgmTimer) { clearInterval(bgmTimer); bgmTimer = null; }
 function applySoundSetting() { if (masterGain && AC) masterGain.gain.setTargetAtTime(SAVE.settings.sound === false ? 0 : 0.9, AC.currentTime, 0.03); }
 document.addEventListener('pointerdown', initAudio);
 document.addEventListener('keydown', initAudio);
+function burstFX(n, glyph, color) {
+  const host = document.createElement('div');
+  host.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:60;overflow:hidden';
+  document.body.appendChild(host);
+  for (let i = 0; i < (n || 14); i++) {
+    const s = document.createElement('span');
+    s.textContent = glyph || '✦';
+    const ang = Math.random() * Math.PI * 2, dist = 60 + Math.random() * 140;
+    s.style.cssText = 'position:absolute;left:50%;top:42%;color:' + (color || '#ffd54f') + ';font-size:' + (11 + Math.random() * 10) + 'px;--dx:' + Math.cos(ang) * dist + 'px;--dy:' + Math.sin(ang) * dist + 'px;animation:sparkFly ' + (0.9 + Math.random() * 0.5) + 's ease-out forwards';
+    host.appendChild(s);
+  }
+  setTimeout(() => { try { host.remove(); } catch (e) {} }, 1600);
+}
 function paintToggles() {
   const map = [['btnGentle', SAVE.settings && SAVE.settings.gentle], ['btnAutoMode', SAVE.settings && SAVE.settings.auto], ['btnSound', !SAVE.settings || SAVE.settings.sound !== false], ['btnClass', (typeof isClassroom === 'function') ? isClassroom() : false]];
   map.forEach(([id, on]) => { const b = el(id); if (!b) return; b.classList.toggle('on', !!on); b.classList.toggle('off', !on); b.textContent = b.textContent.replace(/(● |○ )?(ON|OFF)/, on ? '● ON' : '○ OFF'); });
@@ -490,13 +523,13 @@ const EVENTS = [
       { label: "Ask to be an apprentice", run: S => Math.random() < 0.35 + S.stats.int / 200 ? (eff(S, { int: 12, happy: 3 }), S.flags.scholar = true, addPerson(S, S.npc, 'Mentor', RI(25, 45), 55), "The scholar nodded. Your days of learning have begun.") : (eff(S, { happy: -5 }), "The scholar shook their head. \"It's too soon.\"") },
       { label: "See them off", run: S => { eff(S, { happy: 1 }); return "The scholar left. Someday, you want to set out on a journey too."; } },
     ] },
-  { min: 13, max: 25, text: S => `A true crossroads in life. You've received an offer from ${S.org}. What path will you choose?`,
+  { min: 12, max: 28, prio: true, text: S => `A true crossroads in life. You've received an offer from ${S.org}. What path will you choose?`,
     choices: [
       { label: "The path of scholarship", run: S => { eff(S, { int: 14, wealth: -4 }); S.flags.path = "Academics"; return "You threw yourself into your studies."; } },
       { label: "The path of the sword and adventure", run: S => { eff(S, { health: 10, fame: 5, wealth: -2 }); S.flags.path = "Adventure"; return "You took up the sword. The world is a vast place."; } },
       { label: "The path of trade", run: S => { eff(S, { wealth: 12, charm: 4 }); S.flags.path = "Commerce"; return "Ledgers and a smile became your greatest weapons."; } },
     ] },
-  { min: 16, max: 40, text: S => `You met someone named ${S.npc}. For some reason, you two just click!`,
+  { min: 16, max: 40, meet: true, text: S => `You met someone named ${S.npc}. For some reason, you two just click!`,
     choices: [
       { label: "Forming a deep bond", run: S => { eff(S, { happy: 10, charm: 4 }); S.flags.partner = S.npc; addPerson(S, S.npc, 'Partner', RI(-6, 6), 70); return S.npc + " became an indispensable person in your life."; } },
       { label: "Keep your distance.", run: S => { eff(S, { int: 2 }); return "It was a comfortable distance to keep."; } },
@@ -847,6 +880,38 @@ EVENTS.push(
     ] },
 );
 EVENTS.push(
+  // ===== Story Depth (career chains and children) =====
+  { min: 22, max: 55, prio: true, when: S => !!S.flags.path && !S.flags.career2, text: S => ({ 'Academics': 'Your chance has come to present your theory before the academy. If it is accepted, you will be a full scholar.', 'Adventure': 'A great trial quest has arrived — the kind that earns an adventurer their full standing.', 'Commerce': 'The chance to open your own shop has become real. Time to stand on your own.' })[S.flags.path] || 'A trial toward full mastery has arrived.',
+    choices: [
+      { label: 'Give it everything', run: S => { const key = S.flags.path === 'Academics' ? 'int' : S.flags.path === 'Adventure' ? 'health' : 'wealth'; if (Math.random() < 0.45 + (S.stats[key] || 50) / 200) { S.flags.career2 = true; eff(S, { fame: 12, happy: 8 }); return 'You did it! No one calls you an apprentice anymore. You have come into your own.'; } eff(S, { happy: -5 }); return 'Not enough. But the trial is not over yet.'; } },
+      { label: 'Wait for a better time', run: S => { eff(S, { happy: 1 }); return 'You let it pass. Ripeness will come.'; } },
+    ] },
+  { min: 48, max: 80, prio: true, when: S => !!S.flags.career2 && !S.flags.career3, text: S => `Before you knew it, the young ones had started calling you "Master." As a senior of the ${S.flags.path} path, you are asked to give guidance.`,
+    choices: [
+      { label: 'Accept', run: S => { S.flags.career3 = true; eff(S, { fame: 10, happy: 8 }); if (!findPerson(S, 'Disciple') && Math.random() < 0.6) { const nm = genName(); addPerson(S, nm, 'Disciple', -RI(25, 40), 50); return 'You handled it splendidly. A young person even asked to become your disciple on the spot. Their name was ' + nm + '.'; } return 'You handled it splendidly. The applause would not stop.'; } },
+      { label: 'Quietly decline', run: S => { eff(S, { happy: 3 }); return 'You declined. Quiet days over fame.'; } },
+    ] },
+  { min: 26, max: 46, meet: true, when: S => !!findPerson(S, 'Partner') && !(S.people || []).some(p => p.role === 'Child'), text: S => { const p = findPerson(S, 'Partner'); S._meetName = genName(); return `You and ${p.name} have a child. The name is ${S._meetName}. A small life has come into your home.`; },
+    choices: [
+      { label: 'Raise them with care', run: S => { addPerson(S, S._meetName, 'Child', -Math.floor(S.age), 75); eff(S, { wealth: -6, happy: 12 }); return 'The days of child-rearing begin. The sleepless nights were not so bad.'; } },
+      { label: 'Raise them strictly', run: S => { addPerson(S, S._meetName, 'Child', -Math.floor(S.age), 45); eff(S, { happy: 6 }); return 'You decided on a strict upbringing. That, too, was a form of love.'; } },
+    ] },
+  { min: 30, max: 75, when: S => { const p = (S.people || []).find(x => x.role === 'Child' && x.alive); return !!p && (S.age + p.rel) >= 12 && (S.age + p.rel) <= 18; }, text: S => { const p = S.people.find(x => x.role === 'Child'); return `Your child ${p.name} is in a rebellious phase. Everything you say gets pushed back.`; },
+    choices: [
+      { label: 'Scold them head-on', run: S => { const p = S.people.find(x => x.role === 'Child'); if (p) p.bond = Math.max(0, p.bond - 8); eff(S, { happy: -3 }); return 'You clashed. But that, too, was proof of growth.'; } },
+      { label: 'Watch over them quietly', run: S => { const p = S.people.find(x => x.role === 'Child'); if (p) p.bond = Math.min(100, p.bond + 6); eff(S, { happy: 2 }); return 'You watched. Every storm passes.'; } },
+    ] },
+  { min: 40, max: 85, when: S => { const p = (S.people || []).find(x => x.role === 'Child' && x.alive); return !!p && (S.age + p.rel) >= 19 && (S.age + p.rel) <= 27; }, text: S => { const p = S.people.find(x => x.role === 'Child'); return `${p.name} says they want to leave home and live independently.`; },
+    choices: [
+      { label: 'See them off', run: S => { const p = S.people.find(x => x.role === 'Child'); if (p) p.bond = Math.min(100, p.bond + 10); eff(S, { happy: 4, wealth: -4 }); return 'You saw them off. That once-small back now looks dependable.'; } },
+      { label: 'Hold them back', run: S => { const p = S.people.find(x => x.role === 'Child'); if (p) p.bond = Math.max(0, p.bond - 12); eff(S, { happy: -4 }); return 'You held them back. It became an argument.'; } },
+    ] },
+  { min: 58, max: 200, when: S => { const p = (S.people || []).find(x => x.role === 'Child' && x.alive); return !!p && (S.age + p.rel) >= 28; }, text: S => { const p = S.people.find(x => x.role === 'Child'); return `A letter arrives from ${p.name}, now independent. They seem to be doing well.`; },
+    choices: [
+      { label: 'Write back', run: S => { const p = S.people.find(x => x.role === 'Child'); if (p) p.bond = Math.min(100, p.bond + 8); eff(S, { happy: 8 }); return 'You wrote back. The exchange of letters became a joy of your later years.'; } },
+    ] },
+);
+EVENTS.push(
   { min: 30, max: 95, payoff: true, when: S => !!S.flags.supporter, text: S => `Word had been going around ever since the war ended. The people of ${S.place} are holding a festival of thanks for you — the one who stayed behind and kept the town going.`,
     choices: [
       { label: "Join the festival", run: S => { eff(S, { fame: 10, happy: 10 }); return "Their smiles surrounded you. The choice you made that day was the right one."; } },
@@ -1036,10 +1101,13 @@ function drawAvatar() {
   // sky tint by season
   const sky = ['#2a2148', '#1d2a4a', '#3a2340', '#232338'][season];
   P(0, 0, 16, 16, sky);
+  if (G.world.war === 2) P(0, 0, 16, 16, 'rgba(140,30,10,0.20)');
+  else if (G.world.disaster === 'Plague') P(0, 0, 16, 16, 'rgba(30,90,40,0.22)');
+  else if (G.world.magic >= 3) P(0, 0, 16, 16, 'rgba(90,50,160,0.18)');
   P(0, 13, 16, 3, '#171233'); // ground
   // seasonal particles (petals / sparkles / leaves / snow)
   if (AV.season !== season) { AV.season = season; AV.parts = Array.from({ length: 7 }, () => ({ x: Math.random() * 16, y: Math.random() * 16 })); }
-  const pcol = ['#f8bbd0', '#fff59d', '#ffab91', '#ffffff'][season];
+  const pcol = G.world.war === 2 ? '#ff7043' : (G.world.disaster === 'Plague' ? '#a5d6a7' : ['#f8bbd0', '#fff59d', '#ffab91', '#ffffff'][season]);
   if (moving) for (const p of AV.parts) { p.y += season === 1 ? 0.25 : 0.55; p.x += season === 2 ? 0.3 : 0.08; if (p.y > 15) { p.y = -1; p.x = Math.random() * 16; } if (p.x > 16) p.x = 0; }
   for (const p of AV.parts) P(Math.floor(p.x), Math.floor(p.y), 1, 1, pcol);
   const skin = ({ "Human": '#f2c49b', "Elf": '#f7ddba', "Beastfolk": '#d99e63', "Dwarf": '#e0aa72', "Demon Race": '#b08cc7', "Descendant of Angels": '#ffe9c9', "Vampire": '#e8e3da', "Fairy": '#ffe3ec', "Dragonkin": '#c98a5e', "Goblin": '#9ccc65', "Slime": '#64b5f6' })[race] || '#f2c49b';
@@ -1100,6 +1168,7 @@ function renderRevealStep() {
   el('revealBody').innerHTML = '<div style="font-size:17px;color:#ffd54f;font-weight:bold;margin-bottom:8px">' + (isRareStep ? '✨ ' : '') + s.title + (isRareStep ? ' ✨' : '') + '</div>' + s.html;
   el('revealBody').style.borderColor = isRareStep ? '#ffd54f' : '#3a2f7a';
   el('revealBody').style.boxShadow = isRareStep ? '0 0 24px rgba(255,213,79,.35)' : '';
+  if (isRareStep) burstFX(12);
   const famStep = revealSteps.findIndex(s => s.title.includes("Lineage"));
   el('btnRevealNext').classList.toggle('hidden', revealIdx >= revealSteps.length - 1);
   el('btnBegin').classList.toggle('hidden', revealIdx < revealSteps.length - 1);
@@ -1248,7 +1317,7 @@ function tickInner() {
   const deathRisk = over ? 0.06 : G.stats.health <= 8 ? 0.03 : G.world.temper.tragedy * 0.0012;
   if ((over && Math.random() < deathRisk) || G.age >= G.lifeSpan * 1.15 || (G.age > 10 && Math.random() < deathRisk)) { die(); }
 }
-const ROLE_EMOJI = { 'Childhood Friend': '🧒', 'Close Friend': '🤝', 'Rival': '⚔️', 'Partner': '💞', 'Mentor': '🎓', 'Disciple': '🌱' };
+const ROLE_EMOJI = { 'Child': '👶', 'Childhood Friend': '🧒', 'Close Friend': '🤝', 'Rival': '⚔️', 'Partner': '💞', 'Mentor': '🎓', 'Disciple': '🌱' };
 function addPerson(S, name, role, rel, bond) {
   S.people = S.people || [];
   if (!name || S.people.some(p => p.name === name)) return;
@@ -1315,7 +1384,9 @@ function presentEvent() {
   let ev;
   if (poolUse.length && Math.random() < 0.82) {
     const pay = poolUse.filter(([e]) => e.payoff);
-    const [e, i] = (pay.length && Math.random() < 0.55) ? pick(pay) : pick(poolUse);
+    const meet = poolUse.filter(([e]) => e.meet);
+    const prio = poolUse.filter(([e]) => e.prio);
+    const [e, i] = (meet.length && (G.people || []).length < 4 && Math.random() < 0.75) ? pick(meet) : (prio.length && Math.random() < 0.85) ? pick(prio) : (pay.length && Math.random() < 0.55) ? pick(pay) : pick(poolUse);
     ev = e; G.usedEvents.add(i);
   }
   else ev = pick(FILLERS);
@@ -1328,7 +1399,7 @@ function showBigEvent(ev, text, age) {
   if (ev.payoff) { bt.textContent = '🔗 A Choice from Long Ago'; bt.style.color = '#ffd54f'; bt.style.textShadow = '0 0 18px rgba(255,213,79,.65)'; }
   else { bt.textContent = '⚠ Important Event ⚠'; bt.style.color = '#ff8a80'; bt.style.textShadow = ''; }
   el('bigEventResult').textContent = '';
-  if (ev.payoff) sndMotif(); else sndEvent();
+  if (ev.payoff) { sndMotif(); burstFX(16); } else sndEvent();
   el('btnBigClose').classList.add('hidden');
   const box = el('bigEventChoices');
   box.innerHTML = '';
@@ -1384,7 +1455,7 @@ document.querySelectorAll('.spd').forEach(b => b.addEventListener('click', () =>
   renderClock();
 }));
 function die() {
-  stopBGM(); sndDeath();
+  stopBGM(); sndDeath(); burstFX(9, '✧', '#b39ddb');
   clearRun();
   if (G.dead) return; G.dead = true; G.paused = true;
   const s = G.stats, age = Math.floor(G.age);
@@ -1406,13 +1477,15 @@ function die() {
   rankEl.style.color = rank === 'S' ? '#ffd54f' : rank === 'A' ? '#ce93d8' : rank === 'B' ? '#81d4fa' : '#a79fd0';
   rankEl.style.textShadow = rank === 'S' ? '0 0 22px rgba(255,213,79,.7)' : 'none';
   const tokuGain = Math.max(1, Math.round(score / 40));
-  const epi =
+  let epi =
     G.world.name + '.\n' + "Born as " + (/^[AEIOU]/.test(G.birth.race.name) ? "an " : "a ") + G.birth.race.name + " of the " + G.birth.fam.name + " in " + G.place + ", and raised there.\n" +
     "Talent is \"" + G.birth.talents[0] + "\" and \"" + G.birth.talents[1] + '".\n' +
     (G.flags.partner ? "Met " + G.flags.partner + ", and " : '') + (G.flags.path ? "Walked the path of " + G.flags.path + ", and " : '') +
     (G.flags.warHero ? "Made a name on the battlefield, and..." : '') + (G.flags.sailor ? "Saw the new continent, and..." : '') + (G.flags.revolutionary ? "Accomplished a revolution, and..." : '') + (G.flags.relic ? "Seized the treasure of the ruins, and..." : '') + (G.flags.rivalFriend ? "Becoming friends with your rival," : '') + (G.flags.partner ? '' : '') + (G.flags.lastWork ? "Accomplished a great feat in later years, and..." : '') + '\n' +
     "At " + age + " years old, died of " + cause + ". The world called them \"" + title + ".\" \n" +
     "This world is actually—" + G.world.temper.name + ".";
+  const childP = (G.people || []).find(p => p.role === 'Child' && p.alive);
+  if (childP) epi += "\n— Your child, " + childP.name + ", grew up watching your back, and will pass your story on to the next generation.";
   SAVE.toku += tokuGain;
   SAVE.lives.unshift({ name: G.name, tezawari: (typeof tezawariOf === 'function' ? tezawariOf(G, s) : ''), title, age, cause, epitaph: epi, race: G.birth.race.name, fam: G.birth.fam.name, world: G.world.name, temper: G.world.temper.name, score, chronicle: G.chronicle.slice().reverse(), people: (G.people || []).map(p => ({ name: p.name, role: p.role, bond: p.bond, alive: p.alive })) });
   persist();
@@ -1459,7 +1532,7 @@ el('btnBegin').addEventListener('click', () => {
   if (G) G.revealOpen = false;
   G.paused = false; renderClock(); startClock();
 });
-el('btnAgain').addEventListener('click', () => { el('gamePanel').classList.add('hidden'); el('startPanel').classList.remove('hidden'); el('death').style.display = 'none'; renderLives(); });
+el('btnAgain').addEventListener('click', () => { el('gamePanel').classList.add('hidden'); el('startPanel').classList.remove('hidden'); el('death').style.display = 'none'; renderLives(); startBGM(); });
 // ---------- run save (continue a life later) ----------
 const RUN_KEY = 'tensei-life-run-v1';
 function saveRun() {
