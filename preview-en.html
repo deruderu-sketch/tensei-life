@@ -172,6 +172,7 @@
   </div>
 <h2>📜 Update History</h2>
   <div class="panel" style="font-size:12.5px;line-height:1.9;text-align:left">
+    <details><summary><b>2026-11-24 v39</b></summary>Fixed a serious bug: the film player's screen parts were placed after the program code, which stopped loading partway and left the Share, Film and Memorial buttons completely unresponsive in real browsers (present since the film feature was added). The parts are now in the right place and every button works. Thank you for reporting it.</details>
     <details><summary><b>2026-11-24 v38</b></summary>Fixed the "Share on X" button: on mobile browsers the open-a-new-window approach could silently do nothing, so it now uses the device share sheet (which can hand off to the X app directly). Where sharing is unavailable it opens the post screen as before, and if that is blocked too, it copies the text and tells you.</details>
     <details><summary><b>2026-11-24 v37</b></summary>Added story depth: your chosen path (Academics, Adventure, Commerce) now continues with a "Trial of Mastery" and a "Called Master" chapter, and with a partner a child may be born — rebellion, leaving home, and letters included. If your child outlives you, the epitaph gains an epilogue from their eyes.</details>
     <details><summary><b>2026-11-24 v36</b></summary>Expanded sound: the BGM now plays on the title screen too, and in worlds of great war, plague, or the Demon Lord's revival it switches to a minor-key version. You can hear the world's mood.</details>
@@ -278,6 +279,16 @@
   <button class="center" id="btnAlbum">📖 View Life Album</button>
   <button class="gold" id="btnAgain">✦ To Next Reincarnation (Virtue +<span id="tokuGain"></span>)</button>
 </div></div>
+
+<div id="filmOverlay" style="display:none;position:fixed;inset:0;background:#05040f;z-index:60;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center">
+  <div id="filmAge" style="color:#c9a86a;font-size:14px;letter-spacing:.3em"></div>
+  <div id="filmText" style="font-size:clamp(18px,4.6vw,28px);line-height:2;max-width:640px;min-height:120px;margin-top:14px"></div>
+  <div style="width:min(640px,90%);height:4px;background:#262250;border-radius:2px;margin-top:26px"><div id="filmBar" style="height:100%;width:0%;background:#c9a86a;border-radius:2px;transition:width .3s"></div></div>
+  <div style="margin-top:18px">
+    <button class="sub2" id="btnFilmPause">⏸ Pause</button>
+    <button class="sub2" id="btnFilmClose">✕ Close</button>
+  </div>
+</div>
 
 <script>
 // ---------- utils ----------
@@ -1750,15 +1761,5 @@ el('btnShare').addEventListener('click', async () => {
   }
 });
 </script>
-
-<div id="filmOverlay" style="display:none;position:fixed;inset:0;background:#05040f;z-index:60;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center">
-  <div id="filmAge" style="color:#c9a86a;font-size:14px;letter-spacing:.3em"></div>
-  <div id="filmText" style="font-size:clamp(18px,4.6vw,28px);line-height:2;max-width:640px;min-height:120px;margin-top:14px"></div>
-  <div style="width:min(640px,90%);height:4px;background:#262250;border-radius:2px;margin-top:26px"><div id="filmBar" style="height:100%;width:0%;background:#c9a86a;border-radius:2px;transition:width .3s"></div></div>
-  <div style="margin-top:18px">
-    <button class="sub2" id="btnFilmPause">⏸ Pause</button>
-    <button class="sub2" id="btnFilmClose">✕ Close</button>
-  </div>
-</div>
 </body>
 </html>
