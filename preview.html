@@ -172,6 +172,7 @@
   </div>
 <h2>📜 更新履歴</h2>
   <div class="panel" style="font-size:12.5px;line-height:1.9;text-align:left">
+    <details><summary><b>2026-11-24 v38</b></summary>「𝕏 結果をシェアする」ボタンを直した。スマホのブラウザでは新しい画面を開く方式が無反応になることがあったため、端末の共有シート（Xアプリにも直接渡せる）を使う方式に変えた。共有が使えない環境では従来の画面を開き、それも止められた場合は文章をコピーして知らせる。</details>
     <details><summary><b>2026-11-24 v37</b></summary>物語に深みを足した。選んだ道（学問・冒険・商い）には「一人前への試練」と「師匠と呼ばれる日」の連鎖が続き、伴侶がいれば子どもが生まれ、反抗期・巣立ち・便りと成長していく。子が残れば、墓碑銘の最後に子どもの視点のエピローグが付く。</details>
     <details><summary><b>2026-11-24 v36</b></summary>音を拡張した。タイトル画面でもBGMが流れるようになり、大戦・疫病・魔王復活の世界では曲が短調の別バージョンに切り替わる。世界の空気が、耳からも伝わるようになった。</details>
     <details><summary><b>2026-11-24 v35</b></summary>演出を強化した。アバターの風景が世界の情勢で変わる（大戦の世界は赤く燃える粒子、疫病の世界は緑のもや、魔力過剰の世界は紫の気配）。伏線回収とレアな出生発表では金の粒子が舞い、死の場面では静かな光が散る。年代記の新しい行もふわりと現れる。</details>
@@ -218,7 +219,7 @@
   <div class="panel" style="font-size:13px;line-height:1.9">
     <div style="color:#a79fd0;font-size:12.5px">不具合やアイデアは、こちらから送ってください。すべて読みます。</div>
     <a class="sub2" href="mailto:deruderudouga@gmail.com?subject=%E8%BB%A2%E7%94%9F%E5%85%88%E3%81%AF%E9%81%B8%E3%81%B9%E3%81%BE%E3%81%9B%E3%82%93%E3%81%B8%E3%81%AE%E6%84%8F%E8%A6%8B" style="display:inline-block;text-decoration:none;margin-top:6px">✉️ メールで意見を送る</a>
-    <a class="sub2" href="https://twitter.com/intent/tweet?text=%E8%BB%A2%E7%94%9F%E5%85%88%E3%81%AF%E9%81%B8%E3%81%B9%E3%81%BE%E3%81%9B%E3%82%93%20%E3%82%92%E9%81%8A%E3%82%93%E3%81%A0%E6%84%9F%E6%83%B3" target="_blank" rel="noopener" style="display:inline-block;text-decoration:none;margin-top:6px">𝕏 感想をポストする</a>
+    <a class="sub2" href="https://x.com/intent/tweet?text=%E8%BB%A2%E7%94%9F%E5%85%88%E3%81%AF%E9%81%B8%E3%81%B9%E3%81%BE%E3%81%9B%E3%82%93%20%E3%82%92%E9%81%8A%E3%82%93%E3%81%A0%E6%84%9F%E6%83%B3" target="_blank" rel="noopener" style="display:inline-block;text-decoration:none;margin-top:6px">𝕏 感想をポストする</a>
   </div>
 <h2>💾 記録の管理</h2>
   <div class="panel" style="font-size:12.5px;line-height:1.9">
@@ -1732,11 +1733,19 @@ el('btnMemorial').addEventListener('click', () => {
   const a = document.createElement('a'); a.download = 'memorial.html'; a.href = URL.createObjectURL(blob); a.click();
 });
 
-el('btnShare').addEventListener('click', () => {
+el('btnShare').addEventListener('click', async () => {
   const l = SAVE.lives[0];
   if (!l) return;
   const txt = '【転生先は選べません】' + l.title + '（' + l.age + '歳没）\n' + l.race + '／' + l.fam + ' ― ' + l.world + '\nスコア ' + l.score + ' でした。次の転生では何になれる？ #転生先は選べません';
-  window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(txt), '_blank');
+  if (navigator.share) {
+    try { await navigator.share({ text: txt }); return; }
+    catch (e) { if (e && e.name === 'AbortError') return; }
+  }
+  const w = window.open('https://x.com/intent/tweet?text=' + encodeURIComponent(txt), '_blank');
+  if (!w) {
+    try { await navigator.clipboard.writeText(txt); alert('シェア画面を開けなかったので、文章をコピーしました。Xに貼り付けて投稿できます。'); }
+    catch (e) { alert('シェア画面を開けませんでした。ブラウザがポップアップを止めているかもしれません。'); }
+  }
 });
 </script>
 
