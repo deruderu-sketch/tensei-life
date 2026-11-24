@@ -116,6 +116,7 @@
     <div style="text-align:center;margin-top:8px">
       <canvas id="avatarCv" width="16" height="16" style="width:112px;height:112px;image-rendering:pixelated;background:linear-gradient(#1b1440,#0d0a24);border:1px solid #3a2f7a;border-radius:10px"></canvas>
       <div id="peersView" style="font-size:11.5px;color:#a79fd0;margin-top:6px;line-height:1.7"></div>
+      <div id="peopleView" style="font-size:12px;color:#f8bbd0;margin-top:4px;line-height:1.8"></div>
       <div id="avatarCap" style="font-size:11px;color:#a79fd0;margin-top:4px"></div>
     </div>
   </div>
@@ -169,6 +170,7 @@
   </div>
 <h2>📜 更新履歴</h2>
   <div class="panel" style="font-size:12.5px;line-height:1.9;text-align:left">
+    <details><summary><b>2026-11-24 v34</b></summary>「続く関係」を追加。幼なじみ・ライバル・親友・伴侶・師匠・弟子といった名前のある人々が人生に登場し、何十年も絡み続ける。絆の深さは画面に表示され、相手が先に亡くなることもある。死後の記録にも「共に生きた人々」が残る。</details>
     <details><summary><b>2026-11-23 v33</b></summary>設定のON/OFFが見た目で分かるようにした。ONのボタンは金色に光って「● ON」、OFFは「○ OFF」と表示される。音をONにした瞬間にモチーフが鳴るので、機能していることも耳で分かる。あわせて、設定ボタンや思い出パスの有効化で保存処理がエラーになっていた不具合を修正した。</details>
     <details><summary><b>2026-11-23 v32</b></summary>音を入れた。コードで生成するチップチューンのBGM（Fmaj7–Em7–Dm7–Cmaj7の循環）と効果音で、出生の発表・イベント・伏線回収・死の場面にそれぞれ音が付く。設定でON/OFFできる。</details>
     <details><summary><b>2026-11-23 v31</b></summary>選択の伏線回収を追加した。若い頃の選択（街を支えた、恩を辞退した、秘密を守った、学者に弟子入りした、病人を看病した、神を断った、王家の血を隠した）が、後年の出来事で返ってくる。回収の場面は金の「🔗 あの日の選択」で表示され、年代記にも残る。弟子フラグの食い違いも直した。</details>
@@ -262,6 +264,7 @@
   <div id="deathTezawari" style="margin-top:10px;font-size:13.5px;color:#ce93d8"></div>
   <div id="deathStats" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;font-size:12px;margin-top:12px"></div>
   <div id="epitaph"></div>
+  <div id="deathPeople" style="font-size:13px;color:#ce93d8;margin:10px 0;line-height:1.9"></div>
   <button class="center" id="btnShare">𝕏 結果をシェアする</button>
   <button class="center" id="btnCard">🃏 人生カードを画像で保存</button>
     <button class="sub" id="btnFilm">🎬 フィルムを再生（パスなしは見本）</button>
@@ -484,7 +487,7 @@ const EVENTS = [
     ] },
   { min: 6, max: 15, text: S => `旅の学者が${S.place}に滞在している。弟子入りを願い出る？`,
     choices: [
-      { label: '弟子入りを頼む', run: S => Math.random() < 0.35 + S.stats.int / 200 ? (eff(S, { int: 12, happy: 3 }), S.flags.scholar = true, '学者は頷いた。学びの日々が始まる。') : (eff(S, { happy: -5 }), '学者は首を振った。「まだ早い」') },
+      { label: '弟子入りを頼む', run: S => Math.random() < 0.35 + S.stats.int / 200 ? (eff(S, { int: 12, happy: 3 }), S.flags.scholar = true, addPerson(S, S.npc, '師匠', RI(25, 45), 55), '学者は頷いた。学びの日々が始まる。') : (eff(S, { happy: -5 }), '学者は首を振った。「まだ早い」') },
       { label: '見送る', run: S => { eff(S, { happy: 1 }); return '学者は去った。いつか自分も旅に出たい。'; } },
     ] },
   { min: 13, max: 25, text: S => `人生の岐路だ。${S.org}から誘いが来ている。何を目指す？`,
@@ -495,7 +498,7 @@ const EVENTS = [
     ] },
   { min: 16, max: 40, text: S => `${S.npc}という人物と出会った。妙に気が合う。`,
     choices: [
-      { label: '深く付き合う', run: S => { eff(S, { happy: 10, charm: 4 }); S.flags.partner = S.npc; return S.npc + 'は、あなたの人生に欠かせない人になった。'; } },
+      { label: '深く付き合う', run: S => { eff(S, { happy: 10, charm: 4 }); S.flags.partner = S.npc; addPerson(S, S.npc, '伴侶', RI(-6, 6), 70); return S.npc + 'は、あなたの人生に欠かせない人になった。'; } },
       { label: '距離を保つ', run: S => { eff(S, { int: 2 }); return '悪くない距離感だった。'; } },
     ] },
   { min: 18, max: 55, when: S => S.world.war === 2, text: S => `大戦が激しくなった。あなたの街にも徴兵の知らせが届く。`,
@@ -516,7 +519,7 @@ const EVENTS = [
     ] },
   { min: 30, max: 75, text: S => `弟子を名乗る若者、${S.npc2}が訪ねてきた。`,
     choices: [
-      { label: '弟子に取る', run: S => { eff(S, { fame: 8, happy: 6 }); S.flags.disciple = true; S.flags.hasDisciple = true; return '教えることは、学ぶことだった。'; } },
+      { label: '弟子に取る', run: S => { eff(S, { fame: 8, happy: 6 }); S.flags.disciple = true; S.flags.hasDisciple = true; addPerson(S, S.npc2, '弟子', -RI(18, 30), 45); return '教えることは、学ぶことだった。'; } },
       { label: '追い返す', run: S => { eff(S, { happy: -3 }); return '扉は閉ざされた。若者は去った。'; } },
     ] },
   { min: 40, max: 200, text: S => `体の衰えを感じる朝が増えた。どう過ごす？`,
@@ -784,6 +787,63 @@ const EVENTS = [
     { label: '別々に作業する', run: S => { eff(S, { int: 8, happy: 6 }); return '二身一体の動きで作業が捗った。'; } },
     { label: 'すぐに融合する', run: S => { eff(S, { health: 7, charm: 6 }); return 'より大きく、艶やかな体に戻った。'; } } ] },
 ];
+EVENTS.push(
+  // ===== 続く関係（名前のある人々） =====
+  { min: 5, max: 14, meet: true, when: S => !(S.people || []).some(p => p.role === '幼なじみ'), text: S => { S._meetName = genName(); return `近所に住む${S._meetName}という子と、毎日のように顔を合わせる。`; },
+    choices: [
+      { label: '一緒に遊ぶ', run: S => { eff(S, { happy: 8, charm: 3 }); addPerson(S, S._meetName, '幼なじみ', RI(-2, 2), 65); return S._meetName + 'は幼なじみになった。長い付き合いの始まりだった。'; } },
+      { label: '一人の方が好き', run: S => { eff(S, { int: 3 }); return '誘いを断った。静かな子ども時代だった。'; } },
+    ] },
+  { min: 10, max: 35, meet: true, when: S => !(S.people || []).some(p => p.role === 'ライバル'), text: S => { S._meetName = genName(); return `何かと張り合ってくる${S._meetName}という人物が現れた。放っておけない。`; },
+    choices: [
+      { label: '競い合う', run: S => { eff(S, { happy: 4 }); addPerson(S, S._meetName, 'ライバル', RI(-3, 3), 40); return S._meetName + 'は好敵手になった。'; } },
+      { label: '相手にしない', run: S => { eff(S, { happy: 1 }); return '張り合う気はない。自分の道を行く。'; } },
+    ] },
+  { min: 12, max: 45, meet: true, when: S => !(S.people || []).some(p => p.role === '親友'), text: S => { S._meetName = genName(); return `旅先で${S._meetName}という人物と意気投合した。一晩中語り明かした。`; },
+    choices: [
+      { label: '親友になる', run: S => { eff(S, { happy: 9 }); addPerson(S, S._meetName, '親友', RI(-5, 5), 60); return S._meetName + 'は親友になった。'; } },
+      { label: '一期一会で別れる', run: S => { eff(S, { happy: 3 }); return '名も聞かずに別れた。それも旅の味だった。'; } },
+    ] },
+  { min: 8, max: 60, when: S => !!findPerson(S, '幼なじみ'), text: S => { const p = findPerson(S, '幼なじみ'); return `些細なことで${p.name}と大喧嘩をした。数日、口をきいていない。`; },
+    choices: [
+      { label: '先に謝る', run: S => { const p = findPerson(S, '幼なじみ'); if (p) p.bond = Math.min(100, p.bond + 15); eff(S, { happy: 5 }); return '仲直りした。前より少しだけ絆が深まった気がした。'; } },
+      { label: '意地を張る', run: S => { const p = findPerson(S, '幼なじみ'); if (p) p.bond = Math.max(0, p.bond - 20); eff(S, { happy: -4 }); return '意地を張った。気まずさだけが残った。'; } },
+    ] },
+  { min: 10, max: 70, when: S => !!findPerson(S, '幼なじみ'), text: S => { const p = findPerson(S, '幼なじみ'); return `${p.name}が困っているという知らせが届いた。放っておけない。`; },
+    choices: [
+      { label: '駆けつけて助ける', run: S => { const p = findPerson(S, '幼なじみ'); if (p) p.bond = Math.min(100, p.bond + 20); eff(S, { wealth: -6, happy: 6 }); return '助けた。「あの時」が、二人の間で何度も語られる思い出になった。'; } },
+      { label: '見守るだけにする', run: S => { const p = findPerson(S, '幼なじみ'); if (p) p.bond = Math.max(0, p.bond - 10); eff(S, { happy: -3 }); return '見守るだけにした。少しだけ胸が痛んだ。'; } },
+    ] },
+  { min: 18, max: 50, when: S => !!findPerson(S, 'ライバル'), text: S => { const p = findPerson(S, 'ライバル'); return `${p.name}が勝負を挑んできた。今度こそ決着をつける時だ。`; },
+    choices: [
+      { label: '勝負を受ける', run: S => { const p = findPerson(S, 'ライバル'); if (Math.random() < 0.5 + (S.stats.int + S.stats.fame + S.stats.charm - 150) / 300) { if (p) p.bond = Math.min(100, p.bond + 10); eff(S, { fame: 12, happy: 8 }); return '勝った！ ' + (p ? p.name : '相手') + 'は悔しそうに笑った。いい勝負だった。'; } if (p) p.bond = Math.min(100, p.bond + 5); eff(S, { happy: -5 }); return '負けた。だが不思議と清々しい。好敵手とはこういうものだ。'; } },
+      { label: '断る', run: S => { eff(S, { happy: -2 }); return '勝負を断った。相手は肩をすくめて去った。'; } },
+    ] },
+  { min: 20, max: 90, when: S => !!findPerson(S, '伴侶'), text: S => { const p = findPerson(S, '伴侶'); return `${p.name}との記念日が近い。どう祝う？`; },
+    choices: [
+      { label: '贈り物を用意する', run: S => { const p = findPerson(S, '伴侶'); if (p) p.bond = Math.min(100, p.bond + 12); eff(S, { wealth: -5, happy: 10 }); return '喜んでくれた。何でもない日が、少し特別になった。'; } },
+      { label: 'いつも通りに過ごす', run: S => { const p = findPerson(S, '伴侶'); if (p) p.bond = Math.min(100, p.bond + 3); eff(S, { happy: 4 }); return 'いつも通り。それが一番落ち着くのだった。'; } },
+    ] },
+  { min: 35, max: 110, when: S => !!findPerson(S, '伴侶'), text: S => { const p = findPerson(S, '伴侶'); return `${p.name}が病に倒れた。予断を許さない状態だ。`; },
+    choices: [
+      { label: '付きっきりで看病する', run: S => { const p = findPerson(S, '伴侶'); if (p) p.bond = Math.min(100, p.bond + 18); eff(S, { health: -4, happy: 3 }); S.flags.healer = true; return '看病の日々。弱った手を握る時間が、二人の絆を深めた。'; } },
+      { label: '腕のいい医者を呼ぶ', run: S => { const p = findPerson(S, '伴侶'); if (p) p.bond = Math.min(100, p.bond + 8); eff(S, { wealth: -10 }); return '医者に任せた。回復を祈るしかなかった。'; } },
+    ] },
+  { min: 20, max: 80, when: S => !!findPerson(S, '師匠'), text: S => { const p = findPerson(S, '師匠'); return `師匠の${p.name}から便りが届いた。近況と、短い助言が添えられている。`; },
+    choices: [
+      { label: '丁寧に返事を書く', run: S => { const p = findPerson(S, '師匠'); if (p) p.bond = Math.min(100, p.bond + 8); eff(S, { int: 4 }); return '返事を書いた。学びは今も続いている。'; } },
+      { label: '直接訪ねる', run: S => { const p = findPerson(S, '師匠'); if (p) p.bond = Math.min(100, p.bond + 12); eff(S, { happy: 6 }); return '訪ねた。昔と変わらぬ目で迎えてくれた。'; } },
+    ] },
+  { min: 45, max: 100, when: S => !!findPerson(S, '弟子'), text: S => { const p = findPerson(S, '弟子'); return `弟子の${p.name}が「一人前になりたい」と独立を願い出た。`; },
+    choices: [
+      { label: '送り出す', run: S => { const p = findPerson(S, '弟子'); if (p) p.bond = Math.min(100, p.bond + 10); eff(S, { fame: 8, happy: 5 }); return '送り出した。巣立っていく背中が、眩しかった。'; } },
+      { label: '引き止める', run: S => { const p = findPerson(S, '弟子'); if (p) p.bond = Math.max(0, p.bond - 8); eff(S, { happy: -3 }); return '引き止めた。少しだけ空気が重くなった。'; } },
+    ] },
+  { min: 25, max: 60, when: S => !!findPerson(S, '親友'), text: S => { const p = findPerson(S, '親友'); return `${p.name}が「一緒に商売をやらないか」と誘ってきた。`; },
+    choices: [
+      { label: '一緒にやる', run: S => { const p = findPerson(S, '親友'); if (Math.random() < 0.55) { if (p) p.bond = Math.min(100, p.bond + 10); eff(S, { wealth: 18, happy: 6 }); return '当たった！ 友情と商売、両方うまくいくこともある。'; } if (p) p.bond = Math.max(0, p.bond - 6); eff(S, { wealth: -10, happy: -4 }); return '外れた。金は失ったが、友情はなんとか残った。'; } },
+      { label: '丁重に断る', run: S => { eff(S, { happy: 1 }); return '断った。友情と金は分ける主義だった。'; } },
+    ] });
 // 選択の伏線回収（v31）：序盤〜中盤の選択が、後年の出来事で返ってくる
 EVENTS.push(
   { min: 30, max: 95, payoff: true, when: S => !!S.flags.supporter, text: S => `戦が終わってから、ずっと噂だった。${S.place}の人々が、あの時街に残って支えてくれたあなたへの感謝祭を開くという。`,
@@ -1080,7 +1140,7 @@ function startLife() {
   const birth = genBirth(world, SAVE.toku);
   G = { world, birth, age: 0, stats: birth.stats, lifeSpan: birth.lifeSpan, flags: {},
         place: genPlace(), org: genName() + pick(['学院', '商会', '騎士団', 'ギルド']),
-        npc: genName(), npc2: genName(), usedEvents: new Set(), chronicle: [], milestonesDone: new Set(), peers: [0, 1, 2].map(() => { const pr = pick(RACES.filter(r => raceAllowed(r, world))); return { name: genName(), race: pr.name, lifeSpan: RI(pr.life[0], pr.life[1]), dead: false }; }) };
+        npc: genName(), npc2: genName(), people: [], usedEvents: new Set(), chronicle: [], milestonesDone: new Set(), peers: [0, 1, 2].map(() => { const pr = pick(RACES.filter(r => raceAllowed(r, world))); return { name: genName(), race: pr.name, lifeSpan: RI(pr.life[0], pr.life[1]), dead: false }; }) };
   el('startPanel').classList.add('hidden');
   el('gamePanel').classList.remove('hidden');
   el('death').style.display = 'none';
@@ -1131,6 +1191,16 @@ function yearPassage() {
     if (G.age > p.lifeSpan) { p.dead = true; log(Math.floor(G.age), '同じ日に生まれた' + p.name + '（' + p.race + '）が ' + Math.floor(p.lifeSpan) + '歳で亡くなった。'); }
     else if (Math.random() < 0.10) log(Math.floor(G.age), pick(['同じ日に生まれた' + p.name + 'は元気に暮らしているらしい', p.name + 'の活躍が噂に聞こえてきた', p.name + 'とは一度も会わないまま、時だけが過ぎていく']));
   }
+  if (G.people) for (const p of G.people) {
+    if (!p.alive) continue;
+    if (G.age + p.rel > p.lifeSpan) {
+      p.alive = false; p.deadAge = Math.floor(p.lifeSpan);
+      log(Math.floor(G.age), p.name + '（' + p.role + '）が ' + Math.floor(p.lifeSpan) + '歳で亡くなった。');
+      if (p.bond >= 55) { eff(G, { happy: -10 }); log(Math.floor(G.age), p.name + 'のいない日々に、しばらく慣れなかった。'); }
+      else eff(G, { happy: -3 });
+      if (p.role === '伴侶') G.flags.partnerLost = true;
+    }
+  }
   const age = Math.floor(G.age);
   const phase = phaseOf(age, G.lifeSpan);
   let pool = AMBIENT[phase];
@@ -1177,6 +1247,21 @@ function tickInner() {
   const deathRisk = over ? 0.06 : G.stats.health <= 8 ? 0.03 : G.world.temper.tragedy * 0.0012;
   if ((over && Math.random() < deathRisk) || G.age >= G.lifeSpan * 1.15 || (G.age > 10 && Math.random() < deathRisk)) { die(); }
 }
+const ROLE_EMOJI = { '幼なじみ': '🧒', '親友': '🤝', 'ライバル': '⚔️', '伴侶': '💞', '師匠': '🎓', '弟子': '🌱' };
+function addPerson(S, name, role, rel, bond) {
+  S.people = S.people || [];
+  if (!name || S.people.some(p => p.name === name)) return;
+  S.people.push({ name, role, rel: rel || 0, bond: bond == null ? 50 : bond, alive: true, lifeSpan: RI(58, 102), metAge: Math.floor(S.age) });
+}
+function findPerson(S, role) { return (S.people || []).find(p => p.role === role && p.alive); }
+function renderPeople() {
+  const pv = el('peopleView');
+  if (!pv || !G || !G.people) return;
+  if (!G.people.length) { pv.innerHTML = ''; return; }
+  pv.innerHTML = '💗 共に生きる人々: ' + G.people.map(p => p.alive
+    ? (ROLE_EMOJI[p.role] || '👤') + p.name + '（' + p.role + '）' + '♥'.repeat(Math.max(1, Math.round(p.bond / 25)))
+    : '<s>' + p.name + '（' + p.role + '）</s>').join('、');
+}
 const SEASONS = ['🌸春', '🌻夏', '🍂秋', '❄️冬'];
 function renderClock() {
   el('ageView').textContent = Math.floor(G.age) + '歳' + Math.floor((G.age % 1) * 12) + 'ヶ月';
@@ -1186,6 +1271,7 @@ function renderClock() {
   el('dayView').textContent = '人生 ' + Math.floor(G.age * 365).toLocaleString() + ' 日目';
   const pv = el('peersView');
   if (pv && G.peers) pv.innerHTML = '👥 同じ日に生まれた者たち: ' + G.peers.map(p => p.dead ? '<s>' + p.name + '（' + p.race + '）</s>' : p.name + '（' + p.race + '）').join('、');
+  renderPeople();
   const stuck = G.paused && !G.dead && !G.eventOpen && !G.revealOpen;
   el('btnRescue').classList.toggle('hidden', !stuck);
   const ph = phaseOf(Math.floor(G.age), G.lifeSpan);
@@ -1228,7 +1314,8 @@ function presentEvent() {
   let ev;
   if (poolUse.length && Math.random() < 0.82) {
     const pay = poolUse.filter(([e]) => e.payoff);
-    const [e, i] = (pay.length && Math.random() < 0.55) ? pick(pay) : pick(poolUse);
+    const meet = poolUse.filter(([e]) => e.meet);
+    const [e, i] = (meet.length && (G.people || []).length < 4 && Math.random() < 0.75) ? pick(meet) : (pay.length && Math.random() < 0.55) ? pick(pay) : pick(poolUse);
     ev = e; G.usedEvents.add(i);
   }
   else ev = pick(FILLERS);
@@ -1327,7 +1414,7 @@ function die() {
     age + '歳、' + cause + 'で死去。世はその人を「' + title + '」と呼んだ。\n' +
     'この世界は実は――' + G.world.temper.name + 'だった。';
   SAVE.toku += tokuGain;
-  SAVE.lives.unshift({ name: G.name, tezawari: (typeof tezawariOf === 'function' ? tezawariOf(G, s) : ''), title, age, cause, epitaph: epi, race: G.birth.race.name, fam: G.birth.fam.name, world: G.world.name, temper: G.world.temper.name, score, chronicle: G.chronicle.slice().reverse() });
+  SAVE.lives.unshift({ name: G.name, tezawari: (typeof tezawariOf === 'function' ? tezawariOf(G, s) : ''), title, age, cause, epitaph: epi, race: G.birth.race.name, fam: G.birth.fam.name, world: G.world.name, temper: G.world.temper.name, score, chronicle: G.chronicle.slice().reverse(), people: (G.people || []).map(p => ({ name: p.name, role: p.role, bond: p.bond, alive: p.alive })) });
   persist();
   el('deathTitle').textContent = age + '歳没 ― ' + title;
   el('deathTezawari').textContent = age >= 18 ? '🖐 この人生の手ざわり: ' + tezawariOf(G, s) : '';
@@ -1335,6 +1422,7 @@ function die() {
   const dnames = { health: '健康', int: '知力', charm: '魅力', wealth: '富', fame: '名声', happy: '幸福' };
   el('deathStats').innerHTML = Object.keys(dnames).map(k => '<div style="background:#171233;border:1px solid #3a2f7a;border-radius:8px;padding:7px">' + dnames[k] + '<br><b style="font-size:15px;color:#ffd54f">' + s[k] + '</b></div>').join('');
   el('epitaph').textContent = epi;
+  el('deathPeople').innerHTML = (G.people && G.people.length) ? '💗 共に生きた人々<br>' + G.people.map(p => (ROLE_EMOJI[p.role] || '👤') + p.name + '（' + p.role + '）' + (p.alive ? '' : ' ― 先に旅立った')).join('、') : '';
   el('tokuGain').textContent = tokuGain;
   el('death').style.display = 'block';
   renderLives();
