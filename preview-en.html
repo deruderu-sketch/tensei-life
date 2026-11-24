@@ -116,6 +116,7 @@
     <div style="text-align:center;margin-top:8px">
       <canvas id="avatarCv" width="16" height="16" style="width:112px;height:112px;image-rendering:pixelated;background:linear-gradient(#1b1440,#0d0a24);border:1px solid #3a2f7a;border-radius:10px"></canvas>
       <div id="peersView" style="font-size:11.5px;color:#a79fd0;margin-top:6px;line-height:1.7"></div>
+      <div id="peopleView" style="font-size:12px;color:#f8bbd0;margin-top:4px;line-height:1.8"></div>
       <div id="avatarCap" style="font-size:11px;color:#a79fd0;margin-top:4px"></div>
     </div>
   </div>
@@ -169,6 +170,7 @@
   </div>
 <h2>📜 Update History</h2>
   <div class="panel" style="font-size:12.5px;line-height:1.9;text-align:left">
+    <details><summary><b>2026-11-24 v34</b></summary>Added lasting relationships: named people — a childhood friend, a rival, a close friend, a partner, a mentor, a disciple — enter your life and stay in it for decades. Bond strength is shown on screen, and they may die before you do. The record of your life now keeps a "People You Lived With" list.</details>
     <details><summary><b>2026-11-23 v33</b></summary>Settings toggles are now visible at a glance: ON buttons glow gold and read "● ON", OFF reads "○ OFF". Turning Sound on plays the motif immediately so you can hear it works. Also fixed a bug where saving failed with an error in the Settings buttons and Memory Pass activation.</details>
     <details><summary><b>2026-11-23 v32</b></summary>Added sound: a code-generated chiptune BGM (a Fmaj7–Em7–Dm7–Cmaj7 loop) and sound effects for the birth reveal, events, choice payoffs, and death. Can be turned off in Settings.</details>
     <details><summary><b>2026-11-23 v31</b></summary>Added choice payoffs: choices from your younger days (staying to support your town, declining a reward, keeping a secret, apprenticing to a scholar, nursing the sick, defying a god, hiding royal blood) now come back years later. Payoff scenes appear with a gold "A Choice from Long Ago" banner and stay in your chronicle. Also fixed a disciple-flag mismatch.</details>
@@ -262,6 +264,7 @@
   <div id="deathTezawari" style="margin-top:10px;font-size:13.5px;color:#ce93d8"></div>
   <div id="deathStats" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;font-size:12px;margin-top:12px"></div>
   <div id="epitaph"></div>
+  <div id="deathPeople" style="font-size:13px;color:#ce93d8;margin:10px 0;line-height:1.9"></div>
   <button class="center" id="btnShare">𝕏 Share your results</button>
   <button class="center" id="btnCard">🃏 Save Life Card as Image</button>
     <button class="sub" id="btnFilm">🎬 Play Film (Preview without Pass)</button>
@@ -484,7 +487,7 @@ const EVENTS = [
     ] },
   { min: 6, max: 15, text: S => `A traveling scholar is staying in ${S.place}. Should you ask to become their pupil?`,
     choices: [
-      { label: "Ask to be an apprentice", run: S => Math.random() < 0.35 + S.stats.int / 200 ? (eff(S, { int: 12, happy: 3 }), S.flags.scholar = true, "The scholar nodded. Your days of learning have begun.") : (eff(S, { happy: -5 }), "The scholar shook their head. \"It's too soon.\"") },
+      { label: "Ask to be an apprentice", run: S => Math.random() < 0.35 + S.stats.int / 200 ? (eff(S, { int: 12, happy: 3 }), S.flags.scholar = true, addPerson(S, S.npc, 'Mentor', RI(25, 45), 55), "The scholar nodded. Your days of learning have begun.") : (eff(S, { happy: -5 }), "The scholar shook their head. \"It's too soon.\"") },
       { label: "See them off", run: S => { eff(S, { happy: 1 }); return "The scholar left. Someday, you want to set out on a journey too."; } },
     ] },
   { min: 13, max: 25, text: S => `A true crossroads in life. You've received an offer from ${S.org}. What path will you choose?`,
@@ -495,7 +498,7 @@ const EVENTS = [
     ] },
   { min: 16, max: 40, text: S => `You met someone named ${S.npc}. For some reason, you two just click!`,
     choices: [
-      { label: "Forming a deep bond", run: S => { eff(S, { happy: 10, charm: 4 }); S.flags.partner = S.npc; return S.npc + "became an indispensable person in your life."; } },
+      { label: "Forming a deep bond", run: S => { eff(S, { happy: 10, charm: 4 }); S.flags.partner = S.npc; addPerson(S, S.npc, 'Partner', RI(-6, 6), 70); return S.npc + " became an indispensable person in your life."; } },
       { label: "Keep your distance.", run: S => { eff(S, { int: 2 }); return "It was a comfortable distance to keep."; } },
     ] },
   { min: 18, max: 55, when: S => S.world.war === 2, text: S => `The Great War is intensifying. A draft notice has arrived at your doorstep.`,
@@ -516,7 +519,7 @@ const EVENTS = [
     ] },
   { min: 30, max: 75, text: S => `A young person named ${S.npc2} has arrived, claiming to be your new apprentice!`,
     choices: [
-      { label: "Take as an apprentice", run: S => { eff(S, { fame: 8, happy: 6 }); S.flags.disciple = true; S.flags.hasDisciple = true; return "To teach was to learn."; } },
+      { label: "Take as an apprentice", run: S => { eff(S, { fame: 8, happy: 6 }); S.flags.disciple = true; S.flags.hasDisciple = true; addPerson(S, S.npc2, 'Disciple', -RI(18, 30), 45); return "To teach was to learn."; } },
       { label: "Drive them away.", run: S => { eff(S, { happy: -3 }); return "The door was closed. The youth departed."; } },
     ] },
   { min: 40, max: 200, text: S => `You're waking up feeling your age more and more. How will you spend your days now?`,
@@ -785,6 +788,64 @@ const EVENTS = [
     { label: "Merge immediately", run: S => { eff(S, { health: 7, charm: 6 }); return "Returned to a larger, glossier body."; } } ] },
 ];
 // Choice payoffs (v31): choices from early and middle life come back years later
+EVENTS.push(
+  // ===== Lasting Relationships (people with names) =====
+  { min: 5, max: 14, meet: true, when: S => !(S.people || []).some(p => p.role === 'Childhood Friend'), text: S => { S._meetName = genName(); return `A kid named ${S._meetName} lives nearby, and you cross paths almost every day.`; },
+    choices: [
+      { label: 'Play together', run: S => { eff(S, { happy: 8, charm: 3 }); addPerson(S, S._meetName, 'Childhood Friend', RI(-2, 2), 65); return S._meetName + ' became your childhood friend. The start of a long story.'; } },
+      { label: 'I prefer being alone', run: S => { eff(S, { int: 3 }); return 'You turned down the invitation. A quiet childhood.'; } },
+    ] },
+  { min: 10, max: 35, meet: true, when: S => !(S.people || []).some(p => p.role === 'Rival'), text: S => { S._meetName = genName(); return `Someone named ${S._meetName} keeps trying to one-up you at everything. You cannot let it slide.`; },
+    choices: [
+      { label: 'Compete', run: S => { eff(S, { happy: 4 }); addPerson(S, S._meetName, 'Rival', RI(-3, 3), 40); return S._meetName + ' became your rival.'; } },
+      { label: 'Ignore them', run: S => { eff(S, { happy: 1 }); return 'No interest in competing. You walk your own path.'; } },
+    ] },
+  { min: 12, max: 45, meet: true, when: S => !(S.people || []).some(p => p.role === 'Close Friend'), text: S => { S._meetName = genName(); return `On your travels you hit it off with someone named ${S._meetName}. You talked all night.`; },
+    choices: [
+      { label: 'Become close friends', run: S => { eff(S, { happy: 9 }); addPerson(S, S._meetName, 'Close Friend', RI(-5, 5), 60); return S._meetName + ' became a close friend.'; } },
+      { label: 'Part as a fond memory', run: S => { eff(S, { happy: 3 }); return 'You parted without even asking a name. That, too, is travel.'; } },
+    ] },
+  { min: 8, max: 60, when: S => !!findPerson(S, 'Childhood Friend'), text: S => { const p = findPerson(S, 'Childhood Friend'); return `You had a huge fight with ${p.name} over something trivial. You have not spoken in days.`; },
+    choices: [
+      { label: 'Apologize first', run: S => { const p = findPerson(S, 'Childhood Friend'); if (p) p.bond = Math.min(100, p.bond + 15); eff(S, { happy: 5 }); return 'You made up. Somehow, the bond feels a little deeper than before.'; } },
+      { label: 'Stay stubborn', run: S => { const p = findPerson(S, 'Childhood Friend'); if (p) p.bond = Math.max(0, p.bond - 20); eff(S, { happy: -4 }); return 'You held your ground. Only awkwardness remained.'; } },
+    ] },
+  { min: 10, max: 70, when: S => !!findPerson(S, 'Childhood Friend'), text: S => { const p = findPerson(S, 'Childhood Friend'); return `Word arrives that ${p.name} is in trouble. You cannot ignore it.`; },
+    choices: [
+      { label: 'Rush to help', run: S => { const p = findPerson(S, 'Childhood Friend'); if (p) p.bond = Math.min(100, p.bond + 20); eff(S, { wealth: -6, happy: 6 }); return 'You helped. "That time" would be retold between you for years.'; } },
+      { label: 'Only watch from afar', run: S => { const p = findPerson(S, 'Childhood Friend'); if (p) p.bond = Math.max(0, p.bond - 10); eff(S, { happy: -3 }); return 'You only watched. Your chest ached a little.'; } },
+    ] },
+  { min: 18, max: 50, when: S => !!findPerson(S, 'Rival'), text: S => { const p = findPerson(S, 'Rival'); return `${p.name} has challenged you to a contest. Time to settle this.`; },
+    choices: [
+      { label: 'Accept the contest', run: S => { const p = findPerson(S, 'Rival'); if (Math.random() < 0.5 + (S.stats.int + S.stats.fame + S.stats.charm - 150) / 300) { if (p) p.bond = Math.min(100, p.bond + 10); eff(S, { fame: 12, happy: 8 }); return 'You won! ' + (p ? p.name : 'Your rival') + ' laughed in frustration. A fine contest.'; } if (p) p.bond = Math.min(100, p.bond + 5); eff(S, { happy: -5 }); return 'You lost. Yet strangely, you feel refreshed. That is what a rival is for.'; } },
+      { label: 'Decline', run: S => { eff(S, { happy: -2 }); return 'You declined. They shrugged and walked away.'; } },
+    ] },
+  { min: 20, max: 90, when: S => !!findPerson(S, 'Partner'), text: S => { const p = findPerson(S, 'Partner'); return `Your anniversary with ${p.name} is near. How will you mark it?`; },
+    choices: [
+      { label: 'Prepare a gift', run: S => { const p = findPerson(S, 'Partner'); if (p) p.bond = Math.min(100, p.bond + 12); eff(S, { wealth: -5, happy: 10 }); return 'They were delighted. An ordinary day became a little special.'; } },
+      { label: 'Spend it as usual', run: S => { const p = findPerson(S, 'Partner'); if (p) p.bond = Math.min(100, p.bond + 3); eff(S, { happy: 4 }); return 'As usual. That was the most comfortable way of all.'; } },
+    ] },
+  { min: 35, max: 110, when: S => !!findPerson(S, 'Partner'), text: S => { const p = findPerson(S, 'Partner'); return `${p.name} has fallen ill. The situation is serious.`; },
+    choices: [
+      { label: 'Nurse them day and night', run: S => { const p = findPerson(S, 'Partner'); if (p) p.bond = Math.min(100, p.bond + 18); eff(S, { health: -4, happy: 3 }); S.flags.healer = true; return 'Days of nursing. Holding that weakened hand deepened your bond.'; } },
+      { label: 'Call a skilled doctor', run: S => { const p = findPerson(S, 'Partner'); if (p) p.bond = Math.min(100, p.bond + 8); eff(S, { wealth: -10 }); return 'You left it to the doctor. All you could do was pray for recovery.'; } },
+    ] },
+  { min: 20, max: 80, when: S => !!findPerson(S, 'Mentor'), text: S => { const p = findPerson(S, 'Mentor'); return `A letter arrives from your mentor, ${p.name}. News, and a short piece of advice.`; },
+    choices: [
+      { label: 'Write a careful reply', run: S => { const p = findPerson(S, 'Mentor'); if (p) p.bond = Math.min(100, p.bond + 8); eff(S, { int: 4 }); return 'You wrote back. The learning continues, even now.'; } },
+      { label: 'Visit in person', run: S => { const p = findPerson(S, 'Mentor'); if (p) p.bond = Math.min(100, p.bond + 12); eff(S, { happy: 6 }); return 'You visited. Those eyes welcomed you, unchanged.'; } },
+    ] },
+  { min: 45, max: 100, when: S => !!findPerson(S, 'Disciple'), text: S => { const p = findPerson(S, 'Disciple'); return `Your disciple ${p.name} asks to strike out on their own: "I want to stand on my own feet."`; },
+    choices: [
+      { label: 'Send them off', run: S => { const p = findPerson(S, 'Disciple'); if (p) p.bond = Math.min(100, p.bond + 10); eff(S, { fame: 8, happy: 5 }); return 'You sent them off. That departing back was dazzling.'; } },
+      { label: 'Hold them back', run: S => { const p = findPerson(S, 'Disciple'); if (p) p.bond = Math.max(0, p.bond - 8); eff(S, { happy: -3 }); return 'You held them back. The air between you grew a little heavy.'; } },
+    ] },
+  { min: 25, max: 60, when: S => !!findPerson(S, 'Close Friend'), text: S => { const p = findPerson(S, 'Close Friend'); return `${p.name} asks: "Want to go into business together?"`; },
+    choices: [
+      { label: 'Do it together', run: S => { const p = findPerson(S, 'Close Friend'); if (Math.random() < 0.55) { if (p) p.bond = Math.min(100, p.bond + 10); eff(S, { wealth: 18, happy: 6 }); return 'It paid off! Sometimes friendship and business both work out.'; } if (p) p.bond = Math.max(0, p.bond - 6); eff(S, { wealth: -10, happy: -4 }); return 'It flopped. You lost money, but the friendship somehow survived.'; } },
+      { label: 'Politely decline', run: S => { eff(S, { happy: 1 }); return 'You declined. Friendship and money are kept separate, on principle.'; } },
+    ] },
+);
 EVENTS.push(
   { min: 30, max: 95, payoff: true, when: S => !!S.flags.supporter, text: S => `Word had been going around ever since the war ended. The people of ${S.place} are holding a festival of thanks for you — the one who stayed behind and kept the town going.`,
     choices: [
@@ -1080,7 +1141,7 @@ function startLife() {
   const birth = genBirth(world, SAVE.toku);
   G = { world, birth, age: 0, stats: birth.stats, lifeSpan: birth.lifeSpan, flags: {},
         place: genPlace(), org: genName() + pick(["Academy", "Merchant Guild", "Order of Knights", "Guild"]),
-        npc: genName(), npc2: genName(), usedEvents: new Set(), chronicle: [], milestonesDone: new Set(), peers: [0, 1, 2].map(() => { const pr = pick(RACES.filter(r => raceAllowed(r, world))); return { name: genName(), race: pr.name, lifeSpan: RI(pr.life[0], pr.life[1]), dead: false }; }) };
+        npc: genName(), npc2: genName(), people: [], usedEvents: new Set(), chronicle: [], milestonesDone: new Set(), peers: [0, 1, 2].map(() => { const pr = pick(RACES.filter(r => raceAllowed(r, world))); return { name: genName(), race: pr.name, lifeSpan: RI(pr.life[0], pr.life[1]), dead: false }; }) };
   el('startPanel').classList.add('hidden');
   el('gamePanel').classList.remove('hidden');
   el('death').style.display = 'none';
@@ -1131,6 +1192,16 @@ function yearPassage() {
     if (G.age > p.lifeSpan) { p.dead = true; log(Math.floor(G.age), p.name + " (" + p.race + "), born on the same day as you, passed away at " + Math.floor(p.lifeSpan) + "."); }
     else if (Math.random() < 0.10) log(Math.floor(G.age), pick([p.name + ", born on the same day as you, seems to be doing well.", p.name + " — rumors of their success reached your ears.", "You never crossed paths with " + p.name + " again as the years went by."]));
   }
+  if (G.people) for (const p of G.people) {
+    if (!p.alive) continue;
+    if (G.age + p.rel > p.lifeSpan) {
+      p.alive = false; p.deadAge = Math.floor(p.lifeSpan);
+      log(Math.floor(G.age), p.name + ' (' + p.role + ') died at ' + Math.floor(p.lifeSpan) + '.');
+      if (p.bond >= 55) { eff(G, { happy: -10 }); log(Math.floor(G.age), 'It took a long time to get used to a world without ' + p.name + '.'); }
+      else eff(G, { happy: -3 });
+      if (p.role === 'Partner') G.flags.partnerLost = true;
+    }
+  }
   const age = Math.floor(G.age);
   const phase = phaseOf(age, G.lifeSpan);
   let pool = AMBIENT[phase];
@@ -1177,6 +1248,21 @@ function tickInner() {
   const deathRisk = over ? 0.06 : G.stats.health <= 8 ? 0.03 : G.world.temper.tragedy * 0.0012;
   if ((over && Math.random() < deathRisk) || G.age >= G.lifeSpan * 1.15 || (G.age > 10 && Math.random() < deathRisk)) { die(); }
 }
+const ROLE_EMOJI = { 'Childhood Friend': '🧒', 'Close Friend': '🤝', 'Rival': '⚔️', 'Partner': '💞', 'Mentor': '🎓', 'Disciple': '🌱' };
+function addPerson(S, name, role, rel, bond) {
+  S.people = S.people || [];
+  if (!name || S.people.some(p => p.name === name)) return;
+  S.people.push({ name, role, rel: rel || 0, bond: bond == null ? 50 : bond, alive: true, lifeSpan: RI(58, 102), metAge: Math.floor(S.age) });
+}
+function findPerson(S, role) { return (S.people || []).find(p => p.role === role && p.alive); }
+function renderPeople() {
+  const pv = el('peopleView');
+  if (!pv || !G || !G.people) return;
+  if (!G.people.length) { pv.innerHTML = ''; return; }
+  pv.innerHTML = '💗 People in Your Life: ' + G.people.map(p => p.alive
+    ? (ROLE_EMOJI[p.role] || '👤') + p.name + ' (' + p.role + ') ' + '♥'.repeat(Math.max(1, Math.round(p.bond / 25)))
+    : '<s>' + p.name + ' (' + p.role + ')</s>').join(', ');
+}
 const SEASONS = ["🌸Spring", "🌻Summer", "🍂Autumn", "❄️Winter"];
 function renderClock() {
   el('ageView').textContent = Math.floor(G.age) + " years, " + Math.floor((G.age % 1) * 12) + " months old";
@@ -1186,6 +1272,7 @@ function renderClock() {
   el('dayView').textContent = "Day " + Math.floor(G.age * 365).toLocaleString() + " of this life";
   const pv = el('peersView');
   if (pv && G.peers) pv.innerHTML = "👥 Those Born on the Same Day: " + G.peers.map(p => p.dead ? '<s>' + p.name + ' (' + p.race + ')</s>' : p.name + ' (' + p.race + ')').join(', ');
+  renderPeople();
   const stuck = G.paused && !G.dead && !G.eventOpen && !G.revealOpen;
   el('btnRescue').classList.toggle('hidden', !stuck);
   const ph = phaseOf(Math.floor(G.age), G.lifeSpan);
@@ -1327,7 +1414,7 @@ function die() {
     "At " + age + " years old, died of " + cause + ". The world called them \"" + title + ".\" \n" +
     "This world is actually—" + G.world.temper.name + ".";
   SAVE.toku += tokuGain;
-  SAVE.lives.unshift({ name: G.name, tezawari: (typeof tezawariOf === 'function' ? tezawariOf(G, s) : ''), title, age, cause, epitaph: epi, race: G.birth.race.name, fam: G.birth.fam.name, world: G.world.name, temper: G.world.temper.name, score, chronicle: G.chronicle.slice().reverse() });
+  SAVE.lives.unshift({ name: G.name, tezawari: (typeof tezawariOf === 'function' ? tezawariOf(G, s) : ''), title, age, cause, epitaph: epi, race: G.birth.race.name, fam: G.birth.fam.name, world: G.world.name, temper: G.world.temper.name, score, chronicle: G.chronicle.slice().reverse(), people: (G.people || []).map(p => ({ name: p.name, role: p.role, bond: p.bond, alive: p.alive })) });
   persist();
   el('deathTitle').textContent = title + " — died at age " + age;
   el('deathTezawari').textContent = age >= 18 ? "🖐 The Vibe of This Life: " + tezawariOf(G, s) : '';
@@ -1335,6 +1422,7 @@ function die() {
   const dnames = { health: "Health", int: "Intelligence", charm: "Charm", wealth: "Wealth", fame: "Fame", happy: "Happiness" };
   el('deathStats').innerHTML = Object.keys(dnames).map(k => '<div style="background:#171233;border:1px solid #3a2f7a;border-radius:8px;padding:7px">' + dnames[k] + '<br><b style="font-size:15px;color:#ffd54f">' + s[k] + '</b></div>').join('');
   el('epitaph').textContent = epi;
+  el('deathPeople').innerHTML = (G.people && G.people.length) ? '💗 People You Lived With<br>' + G.people.map(p => (ROLE_EMOJI[p.role] || '👤') + p.name + ' (' + p.role + ')' + (p.alive ? '' : ' — departed before you')).join(', ') : '';
   el('tokuGain').textContent = tokuGain;
   el('death').style.display = 'block';
   renderLives();
